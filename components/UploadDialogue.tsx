@@ -70,7 +70,7 @@ export default function UploadDialogue() {
                 <p className="text-sm font-medium mb-2">
                   Tag{" "}
                   <span className="font-normal text-[#797979]">
-                    separate each tag with a comma "," (maximum 20)
+                    separate each tag with a comma &quot;,&quot; (maximum 20)
                   </span>
                 </p>
                 <TextField
