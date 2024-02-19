@@ -15,7 +15,7 @@ const ButtonSolid = ({ onClick, className, title }: Props) => {
       className={`${className}`}
       onClick={onClick}
     >
-      <p className="normal-case font-bold">{title}</p>
+      <p className="normal-case font-medium">{title}</p>
     </Button>
   );
 };
