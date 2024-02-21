@@ -8,9 +8,28 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
-import { TextField } from "@mui/material";
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  InputLabel,
+  LinearProgress,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  Stack,
+  TextField,
+} from "@mui/material";
 import ButtonOutlined from "./ButtonOutlined";
 import ButtonSolid from "./ButtonSolid";
+import { useMutation } from "@apollo/client";
+import { CREATE_DESIGN } from "@/mutations/designs";
+import { LiaTimesSolid } from "react-icons/lia";
+import { GET_ALL_DESIGNS } from "@/queries/designs";
+import { useRouter } from "next/navigation";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -21,15 +40,155 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function UploadDialogue() {
+interface Props {
+  selectedImage: any;
+  selectedDesignImages: any;
+  setSelectedImages: any;
+  setSelectedImage: any;
+  getPreviewImage: any;
+  getDesignImagesURLs: any;
+  projectTitle: string;
+  setProjectTitle: any;
+}
+
+export default function UploadDialogue({
+  selectedImage,
+  selectedDesignImages,
+  setSelectedImages,
+  setSelectedImage,
+  getPreviewImage,
+  getDesignImagesURLs,
+  projectTitle,
+  setProjectTitle,
+}: Props) {
   const [open, setOpen] = React.useState(false);
+  const [publishLoading, setPublishLoading] = React.useState(false);
+
+  const [designUploadData, setDesignUploadData] = React.useState({
+    tags: "",
+    description: "",
+    category: "",
+    subscription: "",
+  });
+  const [designUploadDataEmptyState, setDesignUploadDataEmptyState] = React.useState({
+    tags: false,
+    description: false,
+    category: false,
+    subscription: false,
+  });
+
+  const router = useRouter();
 
   const handleClickOpen = () => {
-    setOpen(true);
+    if (selectedImage && projectTitle) {
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const removeImage = (idx: number) => {
+    setSelectedImages((prevSelectedImages: any) =>
+      prevSelectedImages.filter((_: any, index: number) => index !== idx)
+    );
+  };
+
+  const cancelUpload = () => {
+    setSelectedImage(null);
+    setSelectedImages([]);
+    setDesignUploadData({
+      tags: "",
+      description: "",
+      category: "",
+      subscription: "",
+    });
+    setProjectTitle("");
+    handleClose();
+  };
+
+  const [createDesign, { error }] = useMutation(CREATE_DESIGN);
+
+  const filloutDesignData = async (designImages: any, preview: string) => {
+    let designTags = designUploadData.tags.split(",");
+
+    try {
+      console.log("started publishing...");
+
+      const { data } = await createDesign({
+        variables: {
+          createDesignInput: {
+            tags: designTags,
+            description: designUploadData.description,
+            category: designUploadData.category,
+            designSubscription: designUploadData.subscription,
+            designFiles: ["file1", "file2", "file3"],
+            designImages,
+            preview,
+            title: projectTitle,
+          },
+        },
+        update: (cache, { data: { createDesign } }) => {
+            // Read the existing designs from the cache
+            const existingDesigns = cache.readQuery<any>({
+              query: GET_ALL_DESIGNS,
+            });
+    
+            // Update the cache with the new design added to the beginning of the list
+            cache.writeQuery({
+              query: GET_ALL_DESIGNS,
+              data: {
+                getAllDesigns: [createDesign, ...(existingDesigns?.getAllDesigns || [])],
+              },
+            });
+          },
+        });
+      console.log("Design publish Data >>>", data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const CREATE_NEW_DESIGN = async () => {
+    setPublishLoading(true);
+
+    if (designUploadData.tags.length === 0) {
+        setDesignUploadDataEmptyState({ ...designUploadDataEmptyState, tags: true });
+         setPublishLoading(false);
+        return;
+      }
+
+    if (designUploadData.description.length === 0) {
+        setDesignUploadDataEmptyState({ ...designUploadDataEmptyState, description: true });
+         setPublishLoading(false);
+        return;
+      }
+
+    if (designUploadData.category.length === 0) {
+        setDesignUploadDataEmptyState({ ...designUploadDataEmptyState, category: true });
+         setPublishLoading(false);
+        return;
+      }
+    if (designUploadData.subscription.length === 0) {
+        setDesignUploadDataEmptyState({ ...designUploadDataEmptyState, subscription: true });
+         setPublishLoading(false);
+        return;
+      }
+
+    try {
+      const designImages = await getDesignImagesURLs();
+      const preview = await getPreviewImage();
+      console.log("Design Images >>>>", designImages);
+      console.log("Preview >>>", preview);
+
+      await filloutDesignData(designImages, preview);
+      cancelUpload();
+      setPublishLoading(false);
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -38,6 +197,7 @@ export default function UploadDialogue() {
         className="h-[2.8rem] w-[9rem]"
         color="inherit"
         variant="outlined"
+        sx={{cursor: selectedImage && projectTitle ? "pointer" : "not-allowed"}}
         onClick={handleClickOpen}
       >
         <p className="normal-case font-medium">Continue</p>
@@ -50,18 +210,33 @@ export default function UploadDialogue() {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
+        {publishLoading && <LinearProgress color="inherit" />}
         <DialogTitle>{"Final Touches"}</DialogTitle>
-        <DialogContent className="w-[60rem] ">
-          <p className="font-medium text-sm">Thumbnail preview</p>
+        <DialogContent className="w-[60rem] pb-[4rem] ">
+          <p className="font-medium text-sm mb-2">Thumbnail preview</p>
           <div className="w-full flex items-start space-x-4">
             <div className="space-y-6">
               <div className="relative h-[16rem] w-[16rem]">
                 <Image
-                  src={"/images/slide2.jpg"}
+                  src={selectedImage ? selectedImage : "/images/slide2.jpg"}
                   fill
                   alt=""
                   objectFit="cover"
                 />
+              </div>
+
+              <div className="w-[16rem] h-5 md:grid grid-cols-3 flex flex-wrap items-center justify-center">
+                {selectedDesignImages?.map((image: any, idx: number) => (
+                  <div key={idx} className="relative h-[5rem] w-[5rem] mb-1">
+                    <div
+                      onClick={() => removeImage(idx)}
+                      className="absolute z-10 h-[1.4rem] w-[1.4rem] rounded-full bg-white cursor-pointer flex items-center justify-center right-1 top-1 "
+                    >
+                      <LiaTimesSolid size={16} />
+                    </div>
+                    <Image src={image} fill alt="" objectFit="cover" />
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -69,7 +244,7 @@ export default function UploadDialogue() {
               <div>
                 <p className="text-sm font-medium mb-2">
                   Tag{" "}
-                  <span className="font-normal text-[#797979]">
+                  <span className="text-xs font-normal text-[#797979]">
                     separate each tag with a comma &quot;,&quot; (maximum 20)
                   </span>
                 </p>
@@ -78,10 +253,18 @@ export default function UploadDialogue() {
                   label="Add tags..."
                   variant="outlined"
                   className="w-full"
+                  error={designUploadDataEmptyState.tags}
+                  value={designUploadData.tags}
+                  onChange={(e) =>
+                    setDesignUploadData({
+                      ...designUploadData,
+                      tags: e.target.value,
+                    })
+                  }
                 />
                 <p className="text-sm font-medium my-1">
                   Suggested:{" "}
-                  <span className="font-normal text-[#797979]">
+                  <span className="text-xs font-normal text-[#797979]">
                     design, illustration, ui, branding, logo, graphic, vector ,
                     ux, typography, app, art
                   </span>
@@ -95,19 +278,115 @@ export default function UploadDialogue() {
                   label="This is an E-commerce website"
                   variant="outlined"
                   className="w-full"
+                  error={designUploadDataEmptyState.description}
+                  value={designUploadData.description}
+                  onChange={(e) =>
+                    setDesignUploadData({
+                      ...designUploadData,
+                      description: e.target.value,
+                    })
+                  }
                 />
               </div>
 
-            <div className="flex items-center justify-between" >
-                <ButtonOutlined className="w-[8rem] h-[3rem]" title="Cancel" />
+              <div>
+                <FormControl fullWidth>
+                  <p className="text-sm font-medium mb-2"> Category </p>
+                  <RadioGroup
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    defaultValue="female"
+                    name="radio-buttons-group"
+                    className="flex flex-row justify-between"
+                    value={designUploadData.category}
+                    onChange={(e) =>
+                      setDesignUploadData({
+                        ...designUploadData,
+                        category: e.target.value,
+                      })
+                    }
+                  >
+                    <div className="flex flex-col">
+                      <FormControlLabel
+                        value="UI/UX"
+                        control={<Radio />}
+                        label="UI/UX"
+                      />
+                      <FormControlLabel
+                        value="Web"
+                        control={<Radio />}
+                        label="Web"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <FormControlLabel
+                        value="Typography"
+                        control={<Radio />}
+                        label="Typography"
+                      />
+                      <FormControlLabel
+                        value="Photography"
+                        control={<Radio />}
+                        label="Photography"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <FormControlLabel
+                        value="Illustration"
+                        control={<Radio />}
+                        label="Illustration"
+                      />
+                      <FormControlLabel
+                        value="Animation"
+                        control={<Radio />}
+                        label="Animation"
+                      />
+                    </div>
+                  </RadioGroup>
+                </FormControl>
+              </div>
 
-                <div className="flex items-center space-x-4" >
-                <ButtonOutlined className="w-[8rem] h-[3rem]" title="Save as draft" />
-                <ButtonSolid className="w-[8rem] h-[3rem]" title="Publish now" />
+              <FormControl className="w-[20rem] ">
+                <InputLabel id="demo-simple-select-label">
+                  Design Subscription
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  error={designUploadDataEmptyState.subscription}
+                  value={designUploadData.subscription}
+                  label="Design Subscription"
+                  onChange={(e) =>
+                    setDesignUploadData({
+                      ...designUploadData,
+                      subscription: e.target.value,
+                    })
+                  }
+                >
+                  <MenuItem value={"FREE"}>FREE</MenuItem>
+                  <MenuItem value={"PAID"}>PAID</MenuItem>
+                </Select>
+              </FormControl>
+
+              <div className="flex items-center justify-between pt-12 ">
+                <ButtonOutlined
+                  onClick={cancelUpload}
+                  className="w-[8rem] h-[3rem]"
+                  title="Cancel"
+                />
+
+                <div className="flex items-center space-x-4">
+                  <ButtonOutlined
+                    className="w-[8rem] h-[3rem]"
+                    title="Save as draft"
+                  />
+                  <ButtonSolid
+                    onClick={CREATE_NEW_DESIGN}
+                    className="w-[8rem] h-[3rem]"
+                    title="Publish now"
+                  />
                 </div>
+              </div>
             </div>
-            </div>
-
           </div>
         </DialogContent>
       </Dialog>

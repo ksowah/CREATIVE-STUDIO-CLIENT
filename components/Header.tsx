@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Container from "./Container";
 import { CiSearch } from "react-icons/ci";
@@ -7,10 +7,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ButtonOutlined from "./ButtonOutlined";
 import ButtonSolid from "./ButtonSolid";
+import ProfileImage from "./ProfileImage";
+import { useContext, useState } from "react";
+import { MyContext } from "@/context/Context";
+import SessionAvatar from "./SessionAvatar";
 
 const Header = () => {
+  const router = useRouter();
 
-    const router = useRouter()
+  const { appState, setAppState } = useContext(MyContext);
+
+  const user = appState.session;
 
   return (
     <div className="absolute w-full h-[5rem] bg-white z-50">
@@ -39,11 +46,26 @@ const Header = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <ButtonOutlined onClick={() => router.push("/login")} className="w-[7rem] h-[2.8rem]" title="Log in" />
-           
-            <ButtonSolid onClick={() => router.push("/signup")} title="Join" className="w-[7rem] h-[2.8rem] " />
-          </div>
+          {user ? (
+            <Link href={`/profile/${user?.username}`} >
+              <div className="cursor-pointer">
+                <SessionAvatar image={user?.avatar} size={45} />
+              </div>
+            </Link>
+          ) : (
+            <div className="flex items-center space-x-4">
+              <Link href={"/login"}>
+                <ButtonOutlined
+                  className="w-[7rem] h-[2.8rem]"
+                  title="Log in"
+                />
+              </Link>
+
+              <Link href={"/signup"}>
+                <ButtonSolid title="Join" className="w-[7rem] h-[2.8rem] " />
+              </Link>
+            </div>
+          )}
         </div>
       </Container>
     </div>

@@ -6,15 +6,10 @@ import { useRef } from "react";
 import { IoChevronForward } from "react-icons/io5";
 import { IoChevronBack } from "react-icons/io5";
 
-const SliderComponent = () => {
+const SliderComponent = ({sliderImages}:{sliderImages:[string]}) => {
 
   const ref: any = useRef(null);
 
-  const slideItems = [
-    "/images/slide1.jpg",
-    "/images/slide2.jpg",
-    "/images/slide3.jpg",
-  ];
 
   const NextBtn = () => {
     return (
@@ -61,7 +56,7 @@ const SliderComponent = () => {
     customPaging: function (i: any) {
         return (
           <>
-            <SliderDot image={slideItems[i]} />
+            <SliderDot image={sliderImages[i]} />
           </>
         );
       },
@@ -70,7 +65,7 @@ const SliderComponent = () => {
   return (
     <div className="slider-container">
       <Slider ref={ref} {...settings}>
-        {slideItems.map((image, idx) => (
+        {sliderImages.map((image, idx) => (
           <SlideItem ref={ref} NextBtn={NextBtn} PrevBtn={PrevBtn} image={image} key={idx} />
         ))}
       

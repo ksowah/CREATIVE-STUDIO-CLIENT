@@ -8,49 +8,30 @@ import { Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation"
 import ProfileImage from "./ProfileImage";
+import SessionAvatar from "./SessionAvatar";
 
 
 interface Props {
     workImage: string;
     authourImage: string;
     authourName: string;
+    designId: string;
 }
 
-const CreativeCard = ({authourImage, authourName, workImage}:Props) => {
-
-    const [loading, setLoading] = useState(true);
+const CreativeCard = ({authourImage, authourName, workImage, designId}:Props) => {
 
     const router = useRouter();
 
-    useEffect(() => {
-        // set loading to false after 3 second
-        setTimeout(() => setLoading(false), 3000)
-      }, []);
-
-
-    if (loading)
-    return (
-      <div
-        className={`h-[18rem] w-[20rem] mb-12 ml-auto`}>
-        <Skeleton variant="rectangular" width={"100%"} height={"70%"} />
-        <div className="mt-4">
-          <Skeleton />
-          <Skeleton width="60%" />
-        </div>
-      </div>
-    );
-
-
   return (
-    <div onClick={() => router.push("/design/details")} className="group h-[18rem] cursor-pointer w-[20rem] rounded-md border shadow-md overflow-hidden mb-12">
+    <div onClick={() => router.push(`/design/details/${designId}`)} className="group h-[18rem] cursor-pointer w-[20rem] rounded-md border shadow-md overflow-hidden mb-12">
       <div className="relative overflow-hidden w-full h-[14rem]">
-        <Image className="group-hover:scale-125 duration-500" src={workImage} fill alt="card image" />
+        <Image className="group-hover:scale-125 duration-500" src={workImage} objectFit="cover" fill alt="card image" />
       </div>
 
       <div className="w-full h-[4rem] flex items-center justify-between px-4 ">
         <div className="flex items-center space-x-2">
     
-          <ProfileImage dimension="h-[2.6rem] w-[2.6rem]" image={authourImage} />
+          <SessionAvatar image={authourImage} size={40}  />
 
           <p className="text-sm text-[#595862]">{authourName}</p>
         </div>

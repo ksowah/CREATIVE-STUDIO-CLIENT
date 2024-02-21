@@ -5,17 +5,19 @@ interface Props {
   onClick?: () => void;
   className: string;
   title: string;
+  loading?: boolean;
 }
 
-const ButtonSolid = ({ onClick, className, title }: Props) => {
+const ButtonSolid = ({ onClick, className, title, loading }: Props) => {
   return (
     <Button
       variant="contained"
       style={{ backgroundColor: "#000" }}
       className={`${className}`}
       onClick={onClick}
+      disabled={loading}
     >
-      <p className="normal-case font-medium">{title}</p>
+      <p className="normal-case font-medium">{loading ? "Loading..." : title }</p>
     </Button>
   );
 };

@@ -1,24 +1,15 @@
 "use client";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { HiMiniPhoto } from "react-icons/hi2";
 
-const Uploader = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
+interface Props {
+    selectImage: (e: any) => void;
+    selectedImage: any;
+}
+
+const Uploader = ({selectImage, selectedImage}:Props) => {
   const filePickerRef = useRef<any>(null);
-
-  console.log("selectedImage >>>", selectedImage);
-  
-
-  const selectImage = (e: any) => {
-    const reader = new FileReader();
-    if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0]);
-    }
-    reader.onload = (readerEvent: any) => {
-      setSelectedImage(readerEvent.target.result);
-    };
-  };
 
   const init = () => {
     if (!selectedImage) {
@@ -26,7 +17,9 @@ const Uploader = () => {
     }
   }
 
+
   return (
+    <>
     <div
       onClick={init}
       className="relative w-full h-[50rem] cursor-pointer border mt-4 flex flex-col items-center justify-center "
@@ -61,6 +54,17 @@ const Uploader = () => {
         </div>
       )}
     </div>
+
+    {/* <button onClick={() => uploadImageToFB(
+        ref,
+        storage,
+        `design_preview_${fileId}`,
+        user._id,
+        selectedImage,
+        uploadString,
+        getDownloadURL,
+    )} className="h-8 px-4 bg-green-400 mt-12 " >Testing upload</button> */}
+    </>
   );
 };
 

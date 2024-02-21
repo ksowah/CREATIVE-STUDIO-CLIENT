@@ -1,3 +1,5 @@
+"use client";
+
 import Container from "@/components/Container";
 import Header from "@/components/Header";
 import Image from "next/image";
@@ -8,8 +10,27 @@ import { FaRegComment } from "react-icons/fa";
 import SliderComponent from "@/components/SliderComponent";
 import UserFooter from "@/components/UserFooter";
 import ProfileImage from "@/components/ProfileImage";
+import { useQuery } from "@apollo/client";
+import { GET_DESIGN_BY_ID } from "@/queries/designs";
+import SessionAvatar from "@/components/SessionAvatar";
 
-const DesignDetails = () => {
+const DesignDetails = ({ params }: { params: any }) => {
+
+  const designId = params?.index;
+
+  const { loading, error, data } = useQuery(GET_DESIGN_BY_ID, {
+    variables: { designId },
+  });
+
+  const designDetails = data?.getDesignById;
+
+  const designImages: any = [
+    ...(designDetails?.preview ? [designDetails.preview] : []),
+    ...(designDetails?.designImages || [])
+  ];
+
+  console.log("designImages >>>", designImages);
+
   return (
     <div className="w-ful">
       <Header />
@@ -17,12 +38,12 @@ const DesignDetails = () => {
       <Container>
         <div className="w-full flex space-x-6 items-center mt-[4rem] py-[6rem] ">
             
-          <ProfileImage dimension="h-[4.5rem] w-[4.5rem]" image={"/images/kev.jpg"} />
+          <SessionAvatar image={designDetails?.designer.avatar} size={70} />
 
           <div className="flex-1">
-            <h3 className="font-medium text-xl">UI for educational website</h3>
+            <h3 className="font-medium text-xl">{designDetails?.title}</h3>
             <p className="text-[#595862] text-xs cursor-pointer ">
-              Paul Dunyo · Follow{" "}
+              {designDetails?.designer.fullName} · Follow{" "}
             </p>
           </div>
 
@@ -41,25 +62,18 @@ const DesignDetails = () => {
           </div>
         </div>
 
-        <SliderComponent />
+        <SliderComponent sliderImages={designImages} />
 
         <div className="my-[8rem] ">
           <h2 className="font-medium text-[2.5rem] mb-[2rem] ">
-            Illustration for educational website
+            {designDetails?.title}
           </h2>
           <p className="text-[#595862] ">
-            Our UI design focuses on intuitive navigation, clean layouts, and
-            user-friendly interactions. Experience seamless browsing with a
-            minimalist design, allowing easy access to a wealth of educational
-            resources. Enjoy a responsive interface that adapts to your device,
-            ensuring a consistent and enjoyable learning experience. Engage
-            effortlessly with interactive elements designed for enhanced
-            comprehension and retention. Elevate your learning journey with our
-            thoughtfully crafted UI.
+            {designDetails?.description}
           </p>
         </div>
 
-        <p className="font-medium text-sm mb-[2rem] ">More by Paul Dunyo</p>
+        <p className="font-medium text-sm mb-[2rem] ">More by {designDetails?.designer.fullName}</p>
 
         <div className="w-full flex items-center space-x-4">
           <div className="relative cursor-pointer overflow-hidden h-[32rem] w-[24rem] rounded-xl ">
@@ -100,7 +114,7 @@ const DesignDetails = () => {
           </div>
         </div>
 
-        <UserFooter />
+        <UserFooter designerUsername={designDetails?.designer.username} image={designDetails?.designer.avatar} name={designDetails?.designer.fullName} />
       </Container>
 
     </div>

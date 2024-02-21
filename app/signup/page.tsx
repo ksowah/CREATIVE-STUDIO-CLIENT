@@ -1,46 +1,117 @@
-"use client"
+"use client";
 
 import ButtonSolid from "@/components/ButtonSolid";
-import { Button, TextField } from "@mui/material";
+import { registerNewUser } from "@/helpers/functions";
+import { REGISTER } from "@/mutations/user";
+import { useMutation } from "@apollo/client";
+import { Alert, Button, TextField } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { IoCheckmark } from "react-icons/io5";
 
 const SignUp = () => {
+  const router = useRouter();
 
-    const router = useRouter()
+  const [registerUser, { loading, error }] = useMutation(REGISTER);
+
+  const [registerData, setRegisterData] = useState<any>({
+    fullName: "",
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const [formEmptyState, setFormEmptyState] = useState({
+    fullName: false,
+    username: false,
+    email: false,
+    password: false,
+  });
+
+  const [success, setSuccess] = useState(false);
+  const [registrationError, setRegistrationError] = useState(false);
+
 
   return (
     <main className="relative min-h-screen w-screen bg-black">
       <Image src={"/images/authbg.jpg"} alt="bg" fill />
       <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
         <div className="h-fit w-[34rem] rounded-2xl bg-white flex flex-col p-[2rem] ">
-          <h2 className="mt-[2rem] font-medium text-[1.5rem] ">
-            Sign up on <span className="text-[#175CF6] cursor-pointer" onClick={() => router.push("/")}  >CreativeStudio</span>{" "}
+          {success && (
+            <Alert
+              className={`mb-2 `}
+              icon={<IoCheckmark size={20} />}
+              severity="success"
+            >
+              A Verification link has been sent to {registerData.email}. Please
+              verify your email to continue.
+            </Alert>
+          )}
+
+          {registrationError && (
+            <Alert className={`mb-2 `} severity="error">
+              Make sure all fields are correctly field
+            </Alert>
+          )}
+
+          <h2 className="font-medium text-[1.5rem] ">
+            Sign up on{" "}
+            <span
+              className="text-[#175CF6] cursor-pointer"
+              onClick={() => router.push("/")}
+            >
+              CreativeStudio
+            </span>{" "}
           </h2>
 
-          <div className="mt-[2rem] w-full space-y-8">
+          <form
+            className="mt-[2rem] w-full space-y-8"
+          >
             <TextField
               id="outlined-basic"
+              error={formEmptyState.fullName}
               label="Full Name"
               type="text"
               variant="outlined"
-              className="w-full"
+              className="w-full h-[2.5rem] "
+              onChange={(e) =>
+                setRegisterData({ ...registerData, fullName: e.target.value })
+              }
             />
             <TextField
               id="outlined-basic"
+              error={formEmptyState.username}
+              label="Username"
+              type="text"
+              variant="outlined"
+              className="w-full h-[2.5rem] "
+              onChange={(e) =>
+                setRegisterData({ ...registerData, username: e.target.value })
+              }
+            />
+            <TextField
+              id="outlined-basic"
+              error={formEmptyState.email}
               label="Email"
               type="email"
               variant="outlined"
-              className="w-full"
+              className="w-full h-[2.5rem] "
+              onChange={(e) =>
+                setRegisterData({ ...registerData, email: e.target.value })
+              }
             />
             <TextField
               id="outlined-basic"
+              error={formEmptyState.password}
               label="Password"
               type="password"
               variant="outlined"
-              className="w-full"
+              className="w-full h-[2.5rem] "
+              onChange={(e) =>
+                setRegisterData({ ...registerData, password: e.target.value })
+              }
             />
 
             <p className="text-sm w-[22rem]">
@@ -55,7 +126,19 @@ const SignUp = () => {
               </span>
             </p>
 
-            <ButtonSolid className="w-full h-[3rem]" title="Creat Account" />
+            <ButtonSolid
+              loading={loading}
+              onClick={() => registerNewUser(
+                registerData,
+                setFormEmptyState,
+                formEmptyState,
+                setSuccess,
+                setRegistrationError,
+                registerUser
+              )}
+              className="w-full h-[3rem]"
+              title={"Create Account"}
+            />
 
             <Button
               variant="outlined"
@@ -67,9 +150,15 @@ const SignUp = () => {
             </Button>
 
             <p className="text-sm text-center">
-              Already a memebr? <span onClick={() => router.push("/login")} className="font-bold cursor-pointer">Sign in</span>{" "}
+              Already a memebr?{" "}
+              <span
+                onClick={() => router.push("/login")}
+                className="font-bold cursor-pointer"
+              >
+                Sign in
+              </span>{" "}
             </p>
-          </div>
+          </form>
         </div>
       </div>
     </main>
