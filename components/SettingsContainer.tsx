@@ -43,7 +43,7 @@ const SettingsContainer = ({ children }: { children: ReactNode }) => {
         <p onClick={signOut} className="mt-4 cursor-pointer text-red-600 ">Sign out</p>
       </div>
 
-      <div className="flex-1 p-[2rem] bg-white">{children}</div>
+      <div className="flex-1 p-[2rem] bg-white rounded-lg border">{children}</div>
     </div>
   );
 };

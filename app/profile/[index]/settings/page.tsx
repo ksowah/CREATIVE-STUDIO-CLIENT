@@ -3,6 +3,7 @@
 import ButtonOutlined from "@/components/ButtonOutlined";
 import ButtonSolid from "@/components/ButtonSolid";
 import Container from "@/components/Container";
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import SessionAvatar from "@/components/SessionAvatar";
 import SettingsContainer from "@/components/SettingsContainer";
@@ -12,8 +13,6 @@ import { useRouter } from "next/navigation";
 import React, { useContext } from "react";
 
 const Settings = () => {
-  
-
   return (
     <div className="bg-[#F3F3F3] ">
       <Header />
@@ -39,30 +38,77 @@ const Settings = () => {
                   id="outlined-basic"
                   variant="outlined"
                   className="w-full"
+                  placeholder="Kelvin Sowah"
                 />
               </div>
               <div>
-                <p className="text-md font-medium mb-2"> Full Name </p>
+                <p className="text-md font-medium mb-2">Specialization</p>
                 <TextField
                   id="outlined-basic"
                   variant="outlined"
                   className="w-full"
+                  placeholder="Product Designer"
                 />
               </div>
               <div>
-                <p className="text-md font-medium mb-2"> Full Name </p>
+                <p className="text-md font-medium mb-2">Bio</p>
                 <TextField
                   id="outlined-basic"
+                  multiline
+                  rows={5}
                   variant="outlined"
                   className="w-full"
                 />
               </div>
+
+              <div className="pt-10 space-y-6">
+                <h3 className="font-medium text-[1.2rem] ">Contact Info</h3>
+
+                <div>
+                  <p className="text-md font-medium mb-2">Phone Number</p>
+                  <TextField
+                    id="outlined-basic"
+                    variant="outlined"
+                    className="w-full"
+                    type="tel"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-md font-medium mb-2">Email</p>
+                  <TextField
+                    id="outlined-basic"
+                    variant="outlined"
+                    className="w-full"
+                    type="email"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-10 space-y-6">
+                <h3 className="font-medium text-[1.2rem] ">Links</h3>
+
+                <div>
+                  <p className="text-md font-medium mb-2">Portfolio Website</p>
+                  <TextField
+                    id="outlined-basic"
+                    variant="outlined"
+                    className="w-full"
+                    type="url"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col items-end pb-6 " >
+                <ButtonSolid title="Save Changes" />
             </div>
           </div>
         </SettingsContainer>
+
+        <Footer />
       </Container>
 
-      <div className="h-[22rem] "></div>
     </div>
   );
 };
