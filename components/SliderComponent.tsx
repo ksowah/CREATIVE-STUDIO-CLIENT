@@ -41,7 +41,7 @@ const SliderComponent = ({ sliderImages }: { sliderImages: [string] }) => {
 
   const settings = {
     dots: true,
-    infinite: true,
+    infinite: false,
     swipeToSlide: true,
     speed: 500,
     slidesToShow: 1,

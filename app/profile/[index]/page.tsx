@@ -8,35 +8,22 @@ import Header from "@/components/Header";
 import ProfileImage from "@/components/ProfileImage";
 import ProfileWork from "@/components/ProfileWork";
 import SessionAvatar from "@/components/SessionAvatar";
+import SkeletonLoader from "@/components/SkeletonLoader";
 import UploadButton from "@/components/UploadButton";
 import { MyContext } from "@/context/Context";
+import { GET_USER_DESIGNS } from "@/queries/designs";
 import { GET_USER_BY_USERNAME } from "@/queries/user";
 import { useQuery } from "@apollo/client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useContext } from "react";
 
 const Profile = ({ params }: { params: any }) => {
-  const imageData = [
-    "/images/work1.jpg",
-    "/images/work2.jpg",
-    "/images/work3.jpg",
-    "/images/card1.png",
-    "/images/card2.png",
-    "/images/card3.png",
-    "/images/card4.png",
-    "/images/slide1.jpg",
-    "/images/slide2.jpg",
-  ];
-
   const { appState, setAppState } = useContext(MyContext);
 
   const username = params?.index;
 
-  const {
-    loading,
-    error,
-    data: userData,
-  } = useQuery(GET_USER_BY_USERNAME, {
+  const { data: userData } = useQuery(GET_USER_BY_USERNAME, {
     variables: { username },
   });
 
@@ -44,11 +31,15 @@ const Profile = ({ params }: { params: any }) => {
 
   const router = useRouter();
 
-  const signOut = () => {
-    setAppState((prev:any) => ({ ...prev, session: null}));
-    localStorage.removeItem("cstoken");
-    router.push("/");
-  }
+  const { loading, error, data } = useQuery(GET_USER_DESIGNS, {
+    variables: { userId: user?._id },
+  });
+
+  const userDesigns = data?.getUserDesigns;
+
+  console.log("userDesigns >>>", userDesigns);
+
+
 
   return (
     <main>
@@ -70,16 +61,17 @@ const Profile = ({ params }: { params: any }) => {
 
               {appState?.session?.username === username ? (
                 <div className="flex items-center space-x-4">
-                  <ButtonSolid
-                    className="h-[3rem] w-[8rem] "
-                    title="Edit Profile"
-                  />
+                  <Link href={`${appState?.session?.username}/settings`} >
+                    <ButtonSolid
+                      className="h-[3rem] w-[8rem] "
+                      title="Settings"
+                    />
+                  </Link>
                   <ButtonOutlined
                     className="h-[3rem] w-[8rem] "
                     title="Go Premium"
                   />
 
-                  <button onClick={signOut} >sign out</button>
                 </div>
               ) : (
                 <div className="flex items-center space-x-4">
@@ -114,14 +106,27 @@ const Profile = ({ params }: { params: any }) => {
         </Container>
         <div className="w-full border-t">
           <Container>
-            <div className="pt-[4rem] grid grid-cols-4 ">
-              {appState?.session?.username === user?.username && (
-                <UploadButton />
-              )}
-              {imageData.map((image, idx) => (
-                <ProfileWork image={image} key={idx} />
-              ))}
-            </div>
+            {loading ? (
+              <div className="pt-[4rem]">
+                <SkeletonLoader dontShowSubtitles />
+              </div>
+            ) : (
+              <div className="pt-[4rem] grid grid-cols-4 ">
+                <>
+                  {appState?.session?.username === user?.username && (
+                    <UploadButton />
+                  )}
+                  {userDesigns?.map((design: any, idx: number) => (
+                    <ProfileWork
+                      id={design._id}
+                      title={design.title}
+                      image={design.preview}
+                      key={idx}
+                    />
+                  ))}
+                </>
+              </div>
+            )}
 
             <Footer />
           </Container>
