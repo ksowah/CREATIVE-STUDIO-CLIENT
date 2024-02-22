@@ -2,38 +2,11 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 export const registerNewUser = async (
   registerData: any,
-  setFormEmptyState: any,
-  formEmptyState: any,
   setSuccess: any,
   setRegistrationError: any,
-  registerUser: any
+  registerUser: any,
+  setErrorMessage: any,
 ) => {
-  if (registerData.fullName.length === 0) {
-    setFormEmptyState({ ...formEmptyState, fullName: true });
-  }
-
-  if (registerData.username.length === 0) {
-    setFormEmptyState({ ...formEmptyState, username: true });
-  }
-
-  if (registerData.email.length === 0) {
-    setFormEmptyState({ ...formEmptyState, email: true });
-  }
-
-  if (registerData.password.length === 0) {
-    setFormEmptyState({ ...formEmptyState, password: true });
-  }
-
-  if (
-    registerData.fullName === null ||
-    registerData.username === null ||
-    registerData.email === null ||
-    registerData.password === null
-  ) {
-    setSuccess(false);
-    setRegistrationError(true);
-    return;
-  }
 
   try {
     const { data } = await registerUser({
@@ -47,39 +20,23 @@ export const registerNewUser = async (
       setSuccess(true);
     }
     console.log(data);
-  } catch (error) {
+  } catch (error:any) {
     setSuccess(false);
     setRegistrationError(true);
-    console.log("This the error >>", error);
+    setErrorMessage(error?.message);
   }
 };
 
 export const handleLogin = async (
   loginData: any,
-  setFormEmptyState: any,
-  formEmptyState: any,
   setSuccess: any,
   setRegistrationError: any,
-  setLoading: any,
   login: any,
   router: any,
   setAppState: any,
+  setErrorMessage: any,
 ) => {
-  setLoading(true);
 
-  if (loginData.email.length === 0) {
-    setFormEmptyState({ ...formEmptyState, email: true });
-  }
-
-  if (loginData.password.length === 0) {
-    setFormEmptyState({ ...formEmptyState, password: true });
-  }
-
-  if (loginData.email === null || loginData.password === null) {
-    setSuccess(false);
-    setRegistrationError(true);
-    return;
-  }
 
   try {
     const { data } = await login({
@@ -97,12 +54,12 @@ export const handleLogin = async (
       
       router.push("/");
     }
-  } catch (error) {
+  } catch (error:any) {
     setSuccess(false);
     setRegistrationError(true);
-    console.log("This the error >>", error);
+    setErrorMessage(error?.message);
+    console.log("This the error >>", error?.message);
   }
-  setLoading(false);
 };
 
 export const uploadImageToFB = async (

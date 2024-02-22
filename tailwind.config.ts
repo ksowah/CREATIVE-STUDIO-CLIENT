@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         'overlay': 'rgba(0, 0, 0, 0.1)',
+        'midDrakRgba': 'rgba(0, 0, 0, 0.3)',
         'blackRgba': 'rgba(0, 0, 0, 0.9)',
         'blueRgba': 'rgba(205, 209, 228, 0.15)',
       }

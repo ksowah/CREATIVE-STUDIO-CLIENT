@@ -2,47 +2,45 @@
 
 import ButtonOutlined from "@/components/ButtonOutlined";
 import ButtonSolid from "@/components/ButtonSolid";
+import CoverLoader from "@/components/CoverLoader";
 import { MyContext } from "@/context/Context";
 import { handleLogin } from "@/helpers/functions";
 import { LOGIN_USER } from "@/mutations/user";
 import { GET_ME } from "@/queries/user";
 import { useMutation, useQuery } from "@apollo/client";
-import { Alert, Button, TextField } from "@mui/material";
+import { Alert, Button, LinearProgress, TextField } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
-  const [login, { error }] = useMutation(LOGIN_USER);
+  const [login, { error, loading }] = useMutation(LOGIN_USER);
 
   const [loginData, setLoginData] = useState<any>({
     email: "",
     password: "",
   });
 
-  const [formEmptyState, setFormEmptyState] = useState({
-    email: false,
-    password: false,
-  });
-  
 
   const { appState, setAppState } = useContext(MyContext);
 
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [registrationError, setRegistrationError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const router = useRouter();
 
   return (
     <main className="relative min-h-screen w-screen bg-black">
       <Image src={"/images/authbg.jpg"} alt="bg" fill />
-      <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
-        <div className="h-fit w-[34rem] rounded-2xl bg-white flex flex-col p-[2rem] ">
+      <div className="absolute top-0 bottom-0 left-0 right-0 flex flex-col items-center justify-center">
+        <div className="relative h-fit w-[34rem] rounded-2xl bg-white flex flex-col p-[2rem] ">
+          {loading && <CoverLoader />}
+
           {registrationError && (
             <Alert className={`mb-2 `} severity="error">
-              Make sure all fields are correctly field
+              {errorMessage}
             </Alert>
           )}
           <h2 className="mt-[2rem] font-medium text-[1.5rem] ">
@@ -57,7 +55,7 @@ const Login = () => {
 
           <div className="mt-[2rem] w-full space-y-8">
             <TextField
-              error={formEmptyState.email}
+              error={registrationError}
               id="outlined-basic"
               label="Email"
               type="email"
@@ -68,7 +66,7 @@ const Login = () => {
               }
             />
             <TextField
-              error={formEmptyState.password}
+              error={registrationError}
               id="outlined-basic"
               label="Password"
               type="password"
@@ -95,19 +93,16 @@ const Login = () => {
               onClick={() =>
                 handleLogin(
                   loginData,
-                  setFormEmptyState,
-                  formEmptyState,
                   setSuccess,
                   setRegistrationError,
-                  setLoading,
                   login,
                   router,
                   setAppState,
+                  setErrorMessage
                 )
               }
               className="w-full h-[3rem]"
               title="Sign in"
-              loading={loading}
             />
 
             <Button

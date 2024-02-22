@@ -22,10 +22,15 @@ const CreativeCard = ({authourImage, authourName, workImage, designId}:Props) =>
 
     const router = useRouter();
 
+    const [imageLoading, setImageLoading] = useState(true)
+
   return (
     <div onClick={() => router.push(`/design/details/${designId}`)} className="group h-[18rem] cursor-pointer w-[20rem] rounded-md border shadow-md overflow-hidden mb-12">
       <div className="relative overflow-hidden w-full h-[14rem]">
-        <Image className="group-hover:scale-125 duration-500" src={workImage} objectFit="cover" fill alt="card image" />
+        {
+            imageLoading && <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
+        }
+        <Image onLoad={() => setImageLoading(false)} className="group-hover:scale-125 duration-500" src={workImage} objectFit="cover" fill alt="card image" />
       </div>
 
       <div className="w-full h-[4rem] flex items-center justify-between px-4 ">

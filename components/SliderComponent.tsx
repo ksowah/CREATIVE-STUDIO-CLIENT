@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Slider from "react-slick";
 import SlideItem from "./SlideItem";
@@ -6,10 +6,8 @@ import { useRef } from "react";
 import { IoChevronForward } from "react-icons/io5";
 import { IoChevronBack } from "react-icons/io5";
 
-const SliderComponent = ({sliderImages}:{sliderImages:[string]}) => {
-
+const SliderComponent = ({ sliderImages }: { sliderImages: [string] }) => {
   const ref: any = useRef(null);
-
 
   const NextBtn = () => {
     return (
@@ -23,7 +21,6 @@ const SliderComponent = ({sliderImages}:{sliderImages:[string]}) => {
   };
 
   const PrevBtn = () => {
-
     return (
       <div
         className={` text-xl bg-white h-[3.1rem] w-[3.1rem] rounded-full cursor-pointer shadow-2xl flex items-center justify-center`}
@@ -34,15 +31,13 @@ const SliderComponent = ({sliderImages}:{sliderImages:[string]}) => {
     );
   };
 
-
-  const SliderDot = ({image}:{image:string}) => {
+  const SliderDot = ({ image }: { image: string }) => {
     return (
       <div className="relative top-7 cursor-pointer h-[2.2rem] mt-4 w-[1.7rem] border-2 border-[#949494] mr-8 rounded-md overflow-hidden">
         <Image src={image} fill objectFit="cover" alt="slider dot" />
       </div>
     );
-  }
-
+  };
 
   const settings = {
     dots: true,
@@ -54,21 +49,26 @@ const SliderComponent = ({sliderImages}:{sliderImages:[string]}) => {
     arrows: false,
     dotsClass: "slick-dots slick-thumb",
     customPaging: function (i: any) {
-        return (
-          <>
-            <SliderDot image={sliderImages[i]} />
-          </>
-        );
-      },
+      return (
+        <>
+          <SliderDot image={sliderImages[i]} />
+        </>
+      );
+    },
   };
 
   return (
     <div className="slider-container">
       <Slider ref={ref} {...settings}>
         {sliderImages.map((image, idx) => (
-          <SlideItem ref={ref} NextBtn={NextBtn} PrevBtn={PrevBtn} image={image} key={idx} />
+          <SlideItem
+            ref={ref}
+            NextBtn={NextBtn}
+            PrevBtn={PrevBtn}
+            image={image}
+            key={idx}
+          />
         ))}
-      
       </Slider>
     </div>
   );

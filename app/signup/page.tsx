@@ -1,10 +1,11 @@
 "use client";
 
 import ButtonSolid from "@/components/ButtonSolid";
+import CoverLoader from "@/components/CoverLoader";
 import { registerNewUser } from "@/helpers/functions";
 import { REGISTER } from "@/mutations/user";
 import { useMutation } from "@apollo/client";
-import { Alert, Button, TextField } from "@mui/material";
+import { Alert, Button, LinearProgress, TextField } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -16,6 +17,7 @@ const SignUp = () => {
 
   const [registerUser, { loading, error }] = useMutation(REGISTER);
 
+
   const [registerData, setRegisterData] = useState<any>({
     fullName: "",
     username: "",
@@ -23,22 +25,16 @@ const SignUp = () => {
     password: "",
   });
 
-  const [formEmptyState, setFormEmptyState] = useState({
-    fullName: false,
-    username: false,
-    email: false,
-    password: false,
-  });
-
   const [success, setSuccess] = useState(false);
   const [registrationError, setRegistrationError] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState("");
 
   return (
     <main className="relative min-h-screen w-screen bg-black">
       <Image src={"/images/authbg.jpg"} alt="bg" fill />
       <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
-        <div className="h-fit w-[34rem] rounded-2xl bg-white flex flex-col p-[2rem] ">
+        <div className="relative h-fit w-[34rem] overflow-hidden rounded-2xl bg-white flex flex-col p-[2rem] ">
+          {loading && <CoverLoader />}
           {success && (
             <Alert
               className={`mb-2 `}
@@ -52,7 +48,7 @@ const SignUp = () => {
 
           {registrationError && (
             <Alert className={`mb-2 `} severity="error">
-              Make sure all fields are correctly field
+              {errorMessage}
             </Alert>
           )}
 
@@ -66,12 +62,10 @@ const SignUp = () => {
             </span>{" "}
           </h2>
 
-          <form
-            className="mt-[2rem] w-full space-y-8"
-          >
+          <form className="mt-[2rem] w-full space-y-8">
             <TextField
               id="outlined-basic"
-              error={formEmptyState.fullName}
+              error={registrationError}
               label="Full Name"
               type="text"
               variant="outlined"
@@ -82,7 +76,7 @@ const SignUp = () => {
             />
             <TextField
               id="outlined-basic"
-              error={formEmptyState.username}
+              error={registrationError}
               label="Username"
               type="text"
               variant="outlined"
@@ -93,7 +87,7 @@ const SignUp = () => {
             />
             <TextField
               id="outlined-basic"
-              error={formEmptyState.email}
+              error={registrationError}
               label="Email"
               type="email"
               variant="outlined"
@@ -104,7 +98,7 @@ const SignUp = () => {
             />
             <TextField
               id="outlined-basic"
-              error={formEmptyState.password}
+              error={registrationError}
               label="Password"
               type="password"
               variant="outlined"
@@ -127,15 +121,15 @@ const SignUp = () => {
             </p>
 
             <ButtonSolid
-              loading={loading}
-              onClick={() => registerNewUser(
-                registerData,
-                setFormEmptyState,
-                formEmptyState,
-                setSuccess,
-                setRegistrationError,
-                registerUser
-              )}
+              onClick={() =>
+                registerNewUser(
+                    registerData,
+                    setSuccess,
+                    setRegistrationError,
+                    registerUser,
+                  setErrorMessage,
+                )
+              }
               className="w-full h-[3rem]"
               title={"Create Account"}
             />

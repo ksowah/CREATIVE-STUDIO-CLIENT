@@ -13,9 +13,9 @@ import ProfileImage from "@/components/ProfileImage";
 import { useQuery } from "@apollo/client";
 import { GET_DESIGN_BY_ID } from "@/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
+import { Skeleton } from "@mui/material";
 
 const DesignDetails = ({ params }: { params: any }) => {
-
   const designId = params?.index;
 
   const { loading, error, data } = useQuery(GET_DESIGN_BY_ID, {
@@ -26,7 +26,7 @@ const DesignDetails = ({ params }: { params: any }) => {
 
   const designImages: any = [
     ...(designDetails?.preview ? [designDetails.preview] : []),
-    ...(designDetails?.designImages || [])
+    ...(designDetails?.designImages || []),
   ];
 
   console.log("designImages >>>", designImages);
@@ -37,7 +37,6 @@ const DesignDetails = ({ params }: { params: any }) => {
 
       <Container>
         <div className="w-full flex space-x-6 items-center mt-[4rem] py-[6rem] ">
-            
           <SessionAvatar image={designDetails?.designer.avatar} size={70} />
 
           <div className="flex-1">
@@ -61,19 +60,31 @@ const DesignDetails = ({ params }: { params: any }) => {
             </button>
           </div>
         </div>
-
-        <SliderComponent sliderImages={designImages} />
+        {loading ? (
+          <>
+          <div className="relative w-full h-[50rem] rounded-xl overflow-hidden">
+            <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
+          </div>
+          <div className="w-full h-[2.2rem] mt-4 flex items-center justify-center space-x-4 " >
+          <Skeleton variant="rectangular" width={30} height={"100%"} />
+          <Skeleton variant="rectangular" width={30} height={"100%"} />
+          <Skeleton variant="rectangular" width={30} height={"100%"} />
+          </div>
+          </>
+        ) : (
+          <SliderComponent sliderImages={designImages} />
+        )}
 
         <div className="my-[8rem] ">
           <h2 className="font-medium text-[2.5rem] mb-[2rem] ">
             {designDetails?.title}
           </h2>
-          <p className="text-[#595862] ">
-            {designDetails?.description}
-          </p>
+          <p className="text-[#595862] ">{designDetails?.description}</p>
         </div>
 
-        <p className="font-medium text-sm mb-[2rem] ">More by {designDetails?.designer.fullName}</p>
+        <p className="font-medium text-sm mb-[2rem] ">
+          More by {designDetails?.designer.fullName}
+        </p>
 
         <div className="w-full flex items-center space-x-4">
           <div className="relative cursor-pointer overflow-hidden h-[32rem] w-[24rem] rounded-xl ">
@@ -114,9 +125,12 @@ const DesignDetails = ({ params }: { params: any }) => {
           </div>
         </div>
 
-        <UserFooter designerUsername={designDetails?.designer.username} image={designDetails?.designer.avatar} name={designDetails?.designer.fullName} />
+        <UserFooter
+          designerUsername={designDetails?.designer.username}
+          image={designDetails?.designer.avatar}
+          name={designDetails?.designer.fullName}
+        />
       </Container>
-
     </div>
   );
 };
