@@ -12,10 +12,7 @@ import { MyContext } from "@/context/Context";
 import { appInitializer } from "@/firebase";
 import { uploadImageToFB, uploadMultipleImagesToFB } from "@/helpers/functions";
 import {
-  getDownloadURL,
   getStorage,
-  ref,
-  uploadString,
 } from "firebase/storage";
 import React, { useContext, useState } from "react";
 import { FaPlus } from "react-icons/fa6";

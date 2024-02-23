@@ -62,6 +62,16 @@ export const handleLogin = async (
   }
 };
 
+export const selectImage = (e: any, setPickedImage:any) => {
+  const reader = new FileReader();
+  if (e.target.files[0]) {
+    reader.readAsDataURL(e.target.files[0]);
+  }
+  reader.onload = (readerEvent: any) => {
+    setPickedImage(readerEvent.target.result);
+  };
+};
+
 export const uploadImageToFB = async (
   storage: any,
   refId: string,
@@ -103,3 +113,5 @@ export const uploadMultipleImagesToFB = async (
     return [];
   }
 };
+
+

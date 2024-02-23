@@ -10,18 +10,14 @@ import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
 import {
   Alert,
-  Checkbox,
   FormControl,
   FormControlLabel,
-  FormGroup,
-  FormLabel,
   InputLabel,
   LinearProgress,
   MenuItem,
   Radio,
   RadioGroup,
   Select,
-  Stack,
   TextField,
 } from "@mui/material";
 import ButtonOutlined from "./ButtonOutlined";
