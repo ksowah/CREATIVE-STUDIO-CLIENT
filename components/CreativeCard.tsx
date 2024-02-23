@@ -38,7 +38,7 @@ const CreativeCard = ({authourImage, authourName, workImage, designId}:Props) =>
     
           <SessionAvatar image={authourImage} size={40}  />
 
-          <p className="text-sm text-[#595862]">{authourName}</p>
+          <p className="text-sm text-[#595862] line-clamp-1 ">{authourName}</p>
         </div>
 
         <div className="flex items-center space-x-2">

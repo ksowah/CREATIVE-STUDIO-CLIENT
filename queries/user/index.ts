@@ -1,18 +1,24 @@
 import { gql } from "@apollo/client";
 
 export const GET_ME = gql`
-  query GetMe {
+  query Query {
     getMe {
       user {
-        email
         _id
-        authType
-        avatar
         fullName
-        username
+        email
+        avatar
+        password
+        authType
         userType
-        verified
+        available
         subscription
+        verified
+        bio
+        username
+        specialization
+        phoneNumber
+        website
       }
     }
   }
@@ -31,4 +37,29 @@ export const GET_USER_BY_USERNAME = gql`
       verified
     }
   }
+`;
+
+export const EDIT_PROFILE = gql`
+mutation EditProfile($editProfileInput: EditProfileInput) {
+  editProfile(editProfileInput: $editProfileInput) {
+    user {
+      _id
+      fullName
+      email
+      avatar
+      password
+      authType
+      userType
+      available
+      subscription
+      verified
+      bio
+      username
+      specialization
+      phoneNumber
+      website
+    }
+    token
+  }
+}
 `;
