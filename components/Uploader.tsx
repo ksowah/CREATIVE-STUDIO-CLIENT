@@ -55,15 +55,7 @@ const Uploader = ({selectImage, selectedImage}:Props) => {
       )}
     </div>
 
-    {/* <button onClick={() => uploadImageToFB(
-        ref,
-        storage,
-        `design_preview_${fileId}`,
-        user._id,
-        selectedImage,
-        uploadString,
-        getDownloadURL,
-    )} className="h-8 px-4 bg-green-400 mt-12 " >Testing upload</button> */}
+    
     </>
   );
 };

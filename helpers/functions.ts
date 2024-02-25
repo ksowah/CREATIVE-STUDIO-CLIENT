@@ -1,13 +1,17 @@
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { appInitializer } from "@/firebase";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
+
+
+const storage = getStorage(appInitializer);
+
 
 export const registerNewUser = async (
   registerData: any,
   setSuccess: any,
   setRegistrationError: any,
   registerUser: any,
-  setErrorMessage: any,
+  setErrorMessage: any
 ) => {
-
   try {
     const { data } = await registerUser({
       variables: {
@@ -20,7 +24,7 @@ export const registerNewUser = async (
       setSuccess(true);
     }
     console.log(data);
-  } catch (error:any) {
+  } catch (error: any) {
     setSuccess(false);
     setRegistrationError(true);
     setErrorMessage(error?.message);
@@ -34,10 +38,8 @@ export const handleLogin = async (
   login: any,
   router: any,
   setAppState: any,
-  setErrorMessage: any,
+  setErrorMessage: any
 ) => {
-
-
   try {
     const { data } = await login({
       variables: {
@@ -49,12 +51,12 @@ export const handleLogin = async (
       localStorage.setItem("cstoken", data?.login?.token);
       setRegistrationError(false);
       setSuccess(true);
-      setAppState((prev:any) => ({ ...prev, session: data?.login.user}))
+      setAppState((prev: any) => ({ ...prev, session: data?.login.user }));
       console.log(" session data >>", data);
-      
+
       router.push("/");
     }
-  } catch (error:any) {
+  } catch (error: any) {
     setSuccess(false);
     setRegistrationError(true);
     setErrorMessage(error?.message);
@@ -62,7 +64,7 @@ export const handleLogin = async (
   }
 };
 
-export const selectImage = (e: any, setPickedImage:any) => {
+export const selectImage = (e: any, setPickedImage: any) => {
   const reader = new FileReader();
   if (e.target.files[0]) {
     reader.readAsDataURL(e.target.files[0]);
@@ -74,18 +76,22 @@ export const selectImage = (e: any, setPickedImage:any) => {
 
 export const uploadImageToFB = async (
   storage: any,
-  refId: string,
-  userId: string,
   selectedImage: any,
+  imageReference: any
 ) => {
 
   try {
-    const imageRef = ref(storage, `images/${refId}/user_${userId}`);
+    const imageRef = ref(storage, imageReference);
     if (selectedImage) {
       await uploadString(imageRef, selectedImage, "data_url");
       const url = await getDownloadURL(imageRef);
       console.log("downloadable url", url);
-      return url;
+
+      const data:SingleImageUpload = {
+        reference: imageReference,
+        image: url
+      }
+      return data;
     }
   } catch (error) {
     console.log("Error uploading image:", error);
@@ -94,20 +100,27 @@ export const uploadImageToFB = async (
 
 export const uploadMultipleImagesToFB = async (
   storage: any,
-  refId:string,
-  userId: string,
   selectedImages: any,
+  imageReference: string
 ) => {
-  const uploadedImageUrls:any = [];
+  const uploadedImageUrls: any = [];
+  const imageReferences: any = [];
 
   try {
     for (let i = 0; i < selectedImages.length; i++) {
       const selectedImage = selectedImages[i];
-      const url = await uploadImageToFB(storage, `${refId}__${i}`, userId, selectedImage);
-      uploadedImageUrls.push(url);
+      const storedImageReference = `${imageReference}__${i}`;
+      const url = await uploadImageToFB(storage, selectedImage, storedImageReference);
+      uploadedImageUrls.push(url?.image);
+      imageReferences.push(storedImageReference);
     }
     console.log("uploadedImageUrls >>", uploadedImageUrls);
-    return uploadedImageUrls;
+
+    const data:MultipleImageUpload = {
+      references: imageReferences,
+      images: uploadedImageUrls,
+    }
+    return data
   } catch (error) {
     console.log("Error uploading images:", error);
     return [];
@@ -115,3 +128,17 @@ export const uploadMultipleImagesToFB = async (
 };
 
 
+export const deleteImageFromFB = async (imgReferences:[string]) => {
+  try {
+    console.log('deleting file');
+
+    for (let i = 0; i < imgReferences.length; i++) {
+      let imageRef = ref(storage, imgReferences[i]);
+      await deleteObject(imageRef);
+      console.log('File deleted successfully', i);
+    }
+    
+  } catch (e) {
+    console.log('Error deleting file', e);
+  }
+}

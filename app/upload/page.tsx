@@ -11,6 +11,7 @@ import Uploader from "@/components/Uploader";
 import { MyContext } from "@/context/Context";
 import { appInitializer } from "@/firebase";
 import { uploadImageToFB, uploadMultipleImagesToFB } from "@/helpers/functions";
+import { getDesignMultipleImagesReference, getDesignPreviewImageReference, getProfileImageReference } from "@/helpers/imageReferences";
 import {
   getStorage,
 } from "firebase/storage";
@@ -23,7 +24,7 @@ const UploadDesign = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [projectTitle, setProjectTitle] = useState("");
 
-  const user = appState.session;
+  const user = appState?.session;
 
   const storage = getStorage(appInitializer);
 
@@ -44,6 +45,8 @@ const UploadDesign = () => {
     setSelectedImages([]);
     setProjectTitle("");
   };
+
+  console.log("chgfghnbbjkm>>>", getProfileImageReference(user?._id, fileId.toString()));
 
   return (
     <main className="w-full">
@@ -90,19 +93,18 @@ const UploadDesign = () => {
                 />
                 <UploadDialogue
                   getDesignImagesURLs={() =>
+                    // @ts-ignore
                     uploadMultipleImagesToFB(
                       storage,
-                      `design_image_${fileId}`,
-                      user?._id,
-                      selectedImages
+                      selectedImages,
+                      getDesignMultipleImagesReference(user?._id, fileId.toString())
                     )
                   }
                   getPreviewImage={() =>
                     uploadImageToFB(
                       storage,
-                      `design_preview_${fileId}`,
-                      user?._id,
-                      selectedImage
+                      selectedImage,
+                      getDesignPreviewImageReference(user?._id, fileId.toString())
                     )
                   }
                   projectTitle={projectTitle}

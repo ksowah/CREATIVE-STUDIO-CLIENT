@@ -9,11 +9,11 @@ import { TfiSave } from "react-icons/tfi";
 import { FaRegComment } from "react-icons/fa";
 import SliderComponent from "@/components/SliderComponent";
 import UserFooter from "@/components/UserFooter";
-import ProfileImage from "@/components/ProfileImage";
 import { useQuery } from "@apollo/client";
 import { GET_DESIGN_BY_ID } from "@/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
 import { Skeleton } from "@mui/material";
+
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
@@ -29,7 +29,7 @@ const DesignDetails = ({ params }: { params: any }) => {
     ...(designDetails?.designImages || []),
   ];
 
-  console.log("designImages >>>", designImages);
+  console.log("designImages >>>", designDetails?.designer);
 
   return (
     <div className="w-ful">
@@ -129,6 +129,7 @@ const DesignDetails = ({ params }: { params: any }) => {
           designerUsername={designDetails?.designer.username}
           image={designDetails?.designer.avatar}
           name={designDetails?.designer.fullName}
+          specialization={designDetails?.designer.specialization}
         />
       </Container>
     </div>

@@ -11,11 +11,31 @@ import { GET_ALL_DESIGNS } from "@/queries/designs";
 import { creativeWorkdata } from "@/utils/fake-db";
 import { useQuery } from "@apollo/client";
 import Image from "next/image";
+import { getStorage, ref, deleteObject } from "firebase/storage";
+import { appInitializer } from "@/firebase";
+
 
 export default function Home() {
   const { loading, error, data } = useQuery(GET_ALL_DESIGNS);
 
     console.log("dsata", data?.getAllDesigns, loading);
+
+    const storage = getStorage(appInitializer);
+
+    
+    const deleteImage = async () => {
+      try {
+        console.log('deleting file');
+        
+        const desertRef = ref(storage, 'images/design_preview_1708688104016/user_65d71c0d88bd25c3a78a77b5');
+        const deletedImg = await deleteObject(desertRef);
+        console.log('File deleted successfully');
+        console.log('deletedImg', deletedImg);
+      } catch (e) {
+        console.log('Error deleting file', e);
+      }
+    }
+
     
   return (
     <main className="flex-1">
@@ -35,6 +55,7 @@ export default function Home() {
           <ButtonSolid
             className="w-[12.6rem] h-[4rem]"
             title="Become a Designer"
+            onClick={deleteImage}
           />
         </div>
       </div>

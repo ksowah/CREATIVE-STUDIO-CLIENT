@@ -25,7 +25,7 @@ import ButtonSolid from "./ButtonSolid";
 import { useMutation } from "@apollo/client";
 import { CREATE_DESIGN } from "@/mutations/designs";
 import { LiaTimesSolid } from "react-icons/lia";
-import { GET_ALL_DESIGNS } from "@/queries/designs";
+import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/queries/designs";
 import { useRouter } from "next/navigation";
 import { MyContext } from "@/context/Context";
 
@@ -43,8 +43,8 @@ interface Props {
   selectedDesignImages: any;
   setSelectedImages: any;
   setSelectedImage: any;
-  getPreviewImage: any;
-  getDesignImagesURLs: any;
+  getPreviewImage: () => Promise<SingleImageUpload | undefined>;
+  getDesignImagesURLs: ()=> Promise<MultipleImageUpload>;
   projectTitle: string;
   setProjectTitle: any;
 }
@@ -115,8 +115,10 @@ export default function UploadDialogue({
 
   const [createDesign, { error }] = useMutation(CREATE_DESIGN);
 
-  const filloutDesignData = async (designImages: any, preview: string) => {
+  const filloutDesignData = async (designImages: MultipleImageUpload, preview: SingleImageUpload | undefined) => {
     let designTags = designUploadData.tags.split(",");
+
+    console.log("Lets the preeview >>>", designImages);
 
     try {
       console.log("started publishing...");
@@ -129,8 +131,10 @@ export default function UploadDialogue({
             category: designUploadData.category,
             designSubscription: designUploadData.subscription,
             designFiles: ["file1", "file2", "file3"],
-            designImages,
-            preview,
+            designImages: designImages?.images,
+            designImagesRef: designImages?.references,
+            preview: preview?.image,
+            previewImageRef: preview?.reference,
             title: projectTitle,
           },
         },
@@ -147,6 +151,21 @@ export default function UploadDialogue({
               getAllDesigns: [
                 createDesign,
                 ...(existingDesigns?.getAllDesigns || []),
+              ],
+            },
+          });
+
+          const existingUserDesigns = cache.readQuery<any>({
+            query: GET_USER_DESIGNS,
+            variables: { userId: user._id },
+          });
+
+          cache.writeQuery({
+            query: GET_USER_DESIGNS,
+            data: {
+              getUserDesigns: [
+                createDesign,
+                ...(existingUserDesigns?.getUserDesigns || []),
               ],
             },
           });
@@ -206,8 +225,7 @@ export default function UploadDialogue({
     try {
       const designImages = await getDesignImagesURLs();
       const preview = await getPreviewImage();
-      console.log("Design Images >>>>", designImages);
-      console.log("Preview >>>", preview);
+      console.log("geetb single previeew >>>>", preview);
 
       await filloutDesignData(designImages, preview);
       cancelUpload();
