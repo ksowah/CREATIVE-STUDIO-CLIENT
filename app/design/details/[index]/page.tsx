@@ -3,7 +3,7 @@
 import Container from "@/components/Container";
 import Header from "@/components/Header";
 import Image from "next/image";
-import React from "react";
+import React, { useContext } from "react";
 import { GoThumbsup } from "react-icons/go";
 import { TfiSave } from "react-icons/tfi";
 import { FaRegComment } from "react-icons/fa";
@@ -13,7 +13,9 @@ import { useQuery } from "@apollo/client";
 import { GET_DESIGN_BY_ID } from "@/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
 import { Skeleton } from "@mui/material";
-
+import { MyContext } from "@/context/Context";
+import { IoTrashOutline } from "react-icons/io5";
+import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
@@ -22,14 +24,26 @@ const DesignDetails = ({ params }: { params: any }) => {
     variables: { designId },
   });
 
-  const designDetails = data?.getDesignById;
+  const designDetails: Design = data?.getDesignById;
+
+  const { appState, setAppState } = useContext(MyContext);
+
+  const { session } = appState;
+
+  console.log("session", session);
 
   const designImages: any = [
     ...(designDetails?.preview ? [designDetails.preview] : []),
     ...(designDetails?.designImages || []),
   ];
 
-  console.log("designImages >>>", designDetails?.designer);
+  const OpenDialogueButton = () => {
+    return (
+      <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+        <IoTrashOutline size={18} color="#595862" />
+      </button>
+    );
+  };
 
   return (
     <div className="w-ful">
@@ -52,24 +66,33 @@ const DesignDetails = ({ params }: { params: any }) => {
             </button>
 
             <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
-              <TfiSave size={18} color="#595862" />
-            </button>
-
-            <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
               <FaRegComment size={22} color="#595862" />
             </button>
+            {designDetails?.designer._id === session?._id ? (
+              <ActionConfirmationDialogue
+                action={() => console.log("deleting")}
+                actionBodyText="Are you sure you want to delete this design? This action cannot be undone."
+                actionButtonTitle="Delete"
+                actionHeaderTitle="Delete Design"
+                OpenDialogueButton={OpenDialogueButton}
+              />
+            ) : (
+              <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+                <TfiSave size={18} color="#595862" />
+              </button>
+            )}
           </div>
         </div>
         {loading ? (
           <>
-          <div className="relative w-full h-[50rem] rounded-xl overflow-hidden">
-            <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
-          </div>
-          <div className="w-full h-[2.2rem] mt-4 flex items-center justify-center space-x-4 " >
-          <Skeleton variant="rectangular" width={30} height={"100%"} />
-          <Skeleton variant="rectangular" width={30} height={"100%"} />
-          <Skeleton variant="rectangular" width={30} height={"100%"} />
-          </div>
+            <div className="relative w-full h-[50rem] rounded-xl overflow-hidden">
+              <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
+            </div>
+            <div className="w-full h-[2.2rem] mt-4 flex items-center justify-center space-x-4 ">
+              <Skeleton variant="rectangular" width={30} height={"100%"} />
+              <Skeleton variant="rectangular" width={30} height={"100%"} />
+              <Skeleton variant="rectangular" width={30} height={"100%"} />
+            </div>
           </>
         ) : (
           <SliderComponent sliderImages={designImages} />

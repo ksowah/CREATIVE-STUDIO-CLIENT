@@ -8,15 +8,21 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { IoTrashOutline } from "react-icons/io5";
 import ButtonSolid from "./ButtonSolid";
 
-
 interface Props {
-    action: any
-    actionButtonTitle: string
-    actionHeaderTitle: string
-    actionBodyText: string
+  action: any;
+  actionButtonTitle: string;
+  actionHeaderTitle: string;
+  actionBodyText: string;
+  OpenDialogueButton: React.FC;
 }
 
-export default function ActionConfirmationDialogue({action, actionButtonTitle, actionHeaderTitle, actionBodyText}:Props) {
+export default function ActionConfirmationDialogue({
+  action,
+  actionButtonTitle,
+  actionHeaderTitle,
+  actionBodyText,
+  OpenDialogueButton,
+}: Props) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -30,33 +36,31 @@ export default function ActionConfirmationDialogue({action, actionButtonTitle, a
   const handleAction = () => {
     action();
     setOpen(false);
-  }
+  };
 
   return (
     <React.Fragment>
-      <div
-        onClick={handleClickOpen}
-        className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md "
-      >
-        <IoTrashOutline size={16} color="#fff" />
+      <div onClick={handleClickOpen} >
+        <OpenDialogueButton />
       </div>
+
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {actionHeaderTitle}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">{actionHeaderTitle}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             {actionBodyText}
           </DialogContentText>
         </DialogContent>
-        <DialogActions className="space-x-4 p-4" >
+        <DialogActions className="space-x-4 p-4">
           <ButtonSolid title="Cancel" onClick={handleClose} />
-          <button onClick={handleAction} className="text-red-500" >{actionButtonTitle}</button>
+          <button onClick={handleAction} className="text-red-500">
+            {actionButtonTitle}
+          </button>
         </DialogActions>
       </Dialog>
     </React.Fragment>

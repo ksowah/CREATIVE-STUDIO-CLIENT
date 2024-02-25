@@ -15,9 +15,7 @@ const ContextProvider = ({children}:{children:ReactNode}) => {
     const {data} = useQuery(GET_ME);
 
     useEffect(() => {
-      
       setAppState((prev:any) => ({ ...prev, session: data?.getMe.user}))
-      console.log("app state updated");
     }, [data])
 
   return (

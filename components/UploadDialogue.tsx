@@ -80,7 +80,6 @@ export default function UploadDialogue({
 
   const { appState, setAppState } = React.useContext(MyContext);
   const user = appState.session;
-  console.log("sesiom >>", appState.session);
 
   const router = useRouter();
 
@@ -118,10 +117,7 @@ export default function UploadDialogue({
   const filloutDesignData = async (designImages: MultipleImageUpload, preview: SingleImageUpload | undefined) => {
     let designTags = designUploadData.tags.split(",");
 
-    console.log("Lets the preeview >>>", designImages);
-
     try {
-      console.log("started publishing...");
 
       const { data } = await createDesign({
         variables: {
@@ -171,7 +167,6 @@ export default function UploadDialogue({
           });
         },
       });
-      console.log("Design publish Data >>>", data);
     } catch (error) {
       console.log(error);
     }
@@ -225,7 +220,6 @@ export default function UploadDialogue({
     try {
       const designImages = await getDesignImagesURLs();
       const preview = await getPreviewImage();
-      console.log("geetb single previeew >>>>", preview);
 
       await filloutDesignData(designImages, preview);
       cancelUpload();

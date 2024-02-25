@@ -46,8 +46,7 @@ const UploadDesign = () => {
     setProjectTitle("");
   };
 
-  console.log("chgfghnbbjkm>>>", getProfileImageReference(user?._id, fileId.toString()));
-
+  
   return (
     <main className="w-full">
       <Header />

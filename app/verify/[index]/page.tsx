@@ -18,7 +18,6 @@ const VerifyUser = ({ params }: { params: any }) => {
           userId,
         },
       });
-      console.log("Verified user:", data.verifyUser);
     } catch (error) {
       console.error("Verification error:", error);
     }

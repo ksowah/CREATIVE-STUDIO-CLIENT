@@ -74,8 +74,6 @@ const Settings = () => {
         getProfileImageReference(currentUserData?._id, imageId.toString())
       ); 
 
-      console.log("uploaded url >>", imageURL)
-
       if(imageURL) profileImageURL = imageURL?.image
     }
 
@@ -110,7 +108,6 @@ const Settings = () => {
       setIsSuccessful(true);
       setIsErrorOccured(false);
       setPickedImage(null)
-      console.log("Edited profile: >>>", data);
     } catch (error: any) {
       setErrorMessage(error?.message);
       setIsErrorOccured(true);

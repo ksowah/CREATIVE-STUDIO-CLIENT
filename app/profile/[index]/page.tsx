@@ -38,9 +38,6 @@ const Profile = ({ params }: { params: any }) => {
 
   const userDesigns = data?.getUserDesigns;
 
-  console.log("userDesigns >>>", userDesigns);
-
-
 
   return (
     <main>

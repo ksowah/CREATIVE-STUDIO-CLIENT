@@ -23,7 +23,6 @@ export const registerNewUser = async (
       setRegistrationError(false);
       setSuccess(true);
     }
-    console.log(data);
   } catch (error: any) {
     setSuccess(false);
     setRegistrationError(true);
@@ -52,7 +51,6 @@ export const handleLogin = async (
       setRegistrationError(false);
       setSuccess(true);
       setAppState((prev: any) => ({ ...prev, session: data?.login.user }));
-      console.log(" session data >>", data);
 
       router.push("/");
     }
@@ -85,7 +83,6 @@ export const uploadImageToFB = async (
     if (selectedImage) {
       await uploadString(imageRef, selectedImage, "data_url");
       const url = await getDownloadURL(imageRef);
-      console.log("downloadable url", url);
 
       const data:SingleImageUpload = {
         reference: imageReference,
@@ -114,7 +111,6 @@ export const uploadMultipleImagesToFB = async (
       uploadedImageUrls.push(url?.image);
       imageReferences.push(storedImageReference);
     }
-    console.log("uploadedImageUrls >>", uploadedImageUrls);
 
     const data:MultipleImageUpload = {
       references: imageReferences,
@@ -130,7 +126,6 @@ export const uploadMultipleImagesToFB = async (
 
 export const deleteImageFromFB = async (imgReferences:[string]) => {
   try {
-    console.log('deleting file');
 
     for (let i = 0; i < imgReferences.length; i++) {
       let imageRef = ref(storage, imgReferences[i]);

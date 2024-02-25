@@ -12,12 +12,16 @@ import { useRouter } from "next/navigation";
 import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
 import { deleteImageFromFB } from "@/helpers/functions";
 
-
-
-const ProfileWork = ({ design, isUsersProfile }: {design:Design, isUsersProfile:boolean}) => {
+const ProfileWork = ({
+  design,
+  isUsersProfile,
+}: {
+  design: Design;
+  isUsersProfile: boolean;
+}) => {
   const [deleteDesign, { loading, error }] = useMutation(DELETE_DESIGN);
 
-  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const { appState, setAppState } = useContext(MyContext);
 
@@ -26,14 +30,15 @@ const ProfileWork = ({ design, isUsersProfile }: {design:Design, isUsersProfile:
   const router = useRouter();
 
   // GET_USER_DESIGNS
-  
-  
-  const handleDeleteDesign = async () => {
-    setDeleteLoading(true)
-    let designImagesRefs:any = [design?.previewImageRef, ...design?.designImagesRef]
-    
-    try {
 
+  const handleDeleteDesign = async () => {
+    setDeleteLoading(true);
+    let designImagesRefs: any = [
+      design?.previewImageRef,
+      ...design?.designImagesRef,
+    ];
+
+    try {
       await deleteImageFromFB(designImagesRefs);
 
       await deleteDesign({
@@ -76,19 +81,32 @@ const ProfileWork = ({ design, isUsersProfile }: {design:Design, isUsersProfile:
           }
         },
       });
-      console.log("Design deleted successfully");
-      // Perform any additional actions after deletion if needed
     } catch (error) {
       console.error("Error deleting design:", error);
-      // Handle error accordingly
     }
-    setDeleteLoading(false)
+    setDeleteLoading(false);
+  };
+
+  const OpenDialogueButton = () => {
+    return (
+      <div
+        className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md "
+      >
+        <IoTrashOutline size={16} color="#fff" />
+      </div>
+    );
   };
 
   return (
-    <div className={`group ${deleteLoading && "opacity-60"} relative h-[16rem] w-[18rem]`}>
-      {deleteLoading && <div className="absolute top-0 left-0 right-0 bottom-0 z-30" ></div>}
-      
+    <div
+      className={`group ${
+        deleteLoading && "opacity-60"
+      } relative h-[16rem] w-[18rem]`}
+    >
+      {deleteLoading && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 z-30"></div>
+      )}
+
       <div
         onClick={() => router.push(`/design/details/${design?._id}`)}
         className="relative cursor-pointer h-[16rem] w-[18rem] mb-8 rounded-lg overflow-hidden "
@@ -115,6 +133,7 @@ const ProfileWork = ({ design, isUsersProfile }: {design:Design, isUsersProfile:
               actionButtonTitle="Delete"
               actionHeaderTitle="Delete Design"
               actionBodyText="Are you sure you want to delete this design? This action cannot be undone."
+              OpenDialogueButton={OpenDialogueButton}
             />
           ) : (
             <div className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md ">
