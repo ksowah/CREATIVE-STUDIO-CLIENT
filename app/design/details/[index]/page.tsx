@@ -3,39 +3,61 @@
 import Container from "@/components/Container";
 import Header from "@/components/Header";
 import Image from "next/image";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { GoThumbsup } from "react-icons/go";
 import { TfiSave } from "react-icons/tfi";
 import { FaRegComment } from "react-icons/fa";
 import SliderComponent from "@/components/SliderComponent";
 import UserFooter from "@/components/UserFooter";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_DESIGN_BY_ID } from "@/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
 import { Skeleton } from "@mui/material";
 import { MyContext } from "@/context/Context";
 import { IoTrashOutline } from "react-icons/io5";
 import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
+import { deleteDesignData } from "@/helpers/functions";
+import { DELETE_DESIGN } from "@/mutations/designs";
+import { useRouter } from "next/navigation";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
 
-  const { loading, error, data } = useQuery(GET_DESIGN_BY_ID, {
+  const { loading, data } = useQuery(GET_DESIGN_BY_ID, {
     variables: { designId },
   });
 
+  const [deleteDesign] = useMutation(DELETE_DESIGN);
+
   const designDetails: Design = data?.getDesignById;
+
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const { appState, setAppState } = useContext(MyContext);
 
   const { session } = appState;
 
-  console.log("session", session);
+  console.log("design details", designDetails);
 
   const designImages: any = [
     ...(designDetails?.preview ? [designDetails.preview] : []),
     ...(designDetails?.designImages || []),
   ];
+
+  const router = useRouter();
+
+  const handleDeleteDesign = async () => {
+    setDeleteLoading(true)
+    await deleteDesignData(
+      [designDetails?.previewImageRef, ...designDetails?.designImagesRef],
+      deleteDesign,
+      designDetails?._id,
+      session?._id
+    )
+    setDeleteLoading(false)
+    router.push("/")
+  }
+
 
   const OpenDialogueButton = () => {
     return (
@@ -70,7 +92,7 @@ const DesignDetails = ({ params }: { params: any }) => {
             </button>
             {designDetails?.designer._id === session?._id ? (
               <ActionConfirmationDialogue
-                action={() => console.log("deleting")}
+                action={handleDeleteDesign}
                 actionBodyText="Are you sure you want to delete this design? This action cannot be undone."
                 actionButtonTitle="Delete"
                 actionHeaderTitle="Delete Design"

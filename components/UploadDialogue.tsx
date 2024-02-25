@@ -153,11 +153,12 @@ export default function UploadDialogue({
 
           const existingUserDesigns = cache.readQuery<any>({
             query: GET_USER_DESIGNS,
-            variables: { userId: user._id },
+            variables: { userId: user?._id },
           });
 
           cache.writeQuery({
             query: GET_USER_DESIGNS,
+            variables: { userId: user?._id },
             data: {
               getUserDesigns: [
                 createDesign,

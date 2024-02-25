@@ -10,7 +10,7 @@ import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/queries/designs";
 import { MyContext } from "@/context/Context";
 import { useRouter } from "next/navigation";
 import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
-import { deleteImageFromFB } from "@/helpers/functions";
+import { deleteDesignData, deleteImageFromFB } from "@/helpers/functions";
 
 const ProfileWork = ({
   design,
@@ -28,64 +28,18 @@ const ProfileWork = ({
   const { session } = appState;
 
   const router = useRouter();
-
-  // GET_USER_DESIGNS
+  
 
   const handleDeleteDesign = async () => {
-    setDeleteLoading(true);
-    let designImagesRefs: any = [
-      design?.previewImageRef,
-      ...design?.designImagesRef,
-    ];
-
-    try {
-      await deleteImageFromFB(designImagesRefs);
-
-      await deleteDesign({
-        variables: { designId: design?._id },
-        update: (cache) => {
-          // update the cache to remove the deleted design from the list of all designs
-          const existingDesigns: any = cache.readQuery({
-            query: GET_ALL_DESIGNS,
-          });
-
-          const updatedDesigns = existingDesigns?.getAllDesigns.filter(
-            (design: Design) => design._id !== design?._id
-          );
-
-          cache.writeQuery({
-            query: GET_ALL_DESIGNS,
-            data: {
-              getAllDesigns: updatedDesigns,
-            },
-          });
-
-          // update the cache to remove the deleted design from the list of user designs
-          const existingUserDesigns: any = cache.readQuery({
-            query: GET_USER_DESIGNS,
-            variables: { userId: session?._id },
-          });
-
-          if (existingUserDesigns) {
-            const updatedUserDesigns =
-              existingUserDesigns.getUserDesigns.filter(
-                (designItem: Design) => designItem._id !== design?._id
-              );
-            cache.writeQuery({
-              query: GET_USER_DESIGNS,
-              variables: { userId: session?._id },
-              data: {
-                getUserDesigns: updatedUserDesigns,
-              },
-            });
-          }
-        },
-      });
-    } catch (error) {
-      console.error("Error deleting design:", error);
-    }
-    setDeleteLoading(false);
-  };
+    setDeleteLoading(true)
+    await deleteDesignData(
+      [design?.previewImageRef, ...design?.designImagesRef],
+      deleteDesign,
+      design?._id,
+      session?._id
+    )
+    setDeleteLoading(false)
+  }
 
   const OpenDialogueButton = () => {
     return (

@@ -203,7 +203,7 @@ const Settings = () => {
                     id="outlined-basic"
                     variant="outlined"
                     className="w-full"
-                    placeholder="Product Designer"
+                    placeholder="Ksowah"
                     value={currentUserData?.username || ""}
                     disabled
                   />
