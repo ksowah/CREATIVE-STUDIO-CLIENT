@@ -28,12 +28,12 @@ const ProfileWork = ({
   const { session } = appState;
 
   const router = useRouter();
-  
+
 
   const handleDeleteDesign = async () => {
     setDeleteLoading(true)
     await deleteDesignData(
-      [design?.previewImageRef, ...design?.designImagesRef],
+      [design?.previewImageRef, ...design?.designImagesRef, design?.designFileRef],
       deleteDesign,
       design?._id,
       session?._id

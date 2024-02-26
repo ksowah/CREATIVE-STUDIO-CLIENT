@@ -25,7 +25,8 @@ type Design = {
     saves: Number
     description: string
     designSubscription: string
-    designFiles: [string]
+    designFile: string
+    designFileRef: string
     designImages: [string]
     createdAt: string
     tags: [string]
@@ -41,7 +42,7 @@ type MultipleImageUpload = {
     images: any;
   }
 
-type SingleImageUpload = {
+type SingleFileUpload = {
     reference: any;
-    image: any;
+    file: any;
   }

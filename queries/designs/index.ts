@@ -1,23 +1,24 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_DESIGNS = gql`
-  query Query {
+  query GetAllDesigns {
     getAllDesigns {
       _id
       designer {
         _id
-        authType
-        available
-        avatar
-        bio
         fullName
         email
+        avatar
         password
-        phoneNumber
-        specialization
-        subscription
+        authType
         userType
+        available
+        subscription
+        verified
+        bio
         username
+        specialization
+        phoneNumber
         website
       }
       preview
@@ -25,7 +26,8 @@ export const GET_ALL_DESIGNS = gql`
       saves
       description
       designSubscription
-      designFiles
+      designFile
+      designFileRef
       designImages
       createdAt
       tags
@@ -63,7 +65,8 @@ export const GET_DESIGN_BY_ID = gql`
       saves
       description
       designSubscription
-      designFiles
+      designFile
+      designFileRef
       designImages
       createdAt
       tags
@@ -101,7 +104,8 @@ export const GET_USER_DESIGNS = gql`
       saves
       description
       designSubscription
-      designFiles
+      designFile
+      designFileRef
       designImages
       createdAt
       tags

@@ -77,20 +77,19 @@ export const selectImage = (e: any, setPickedImage: any) => {
   };
 }
 
-export const uploadImageToFB = async (
-  storage: any,
-  selectedImage: any,
+export const uploadFileToFB = async (
+  selectedFile: any,
   imageReference: any
 ) => {
   try {
-    const imageRef = ref(storage, imageReference);
-    if (selectedImage) {
-      await uploadString(imageRef, selectedImage, "data_url");
-      const url = await getDownloadURL(imageRef);
+    const fileRef = ref(storage, imageReference);
+    if (selectedFile) {
+      await uploadString(fileRef, selectedFile, "data_url");
+      const url = await getDownloadURL(fileRef);
 
-      const data: SingleImageUpload = {
+      const data: SingleFileUpload = {
         reference: imageReference,
-        image: url,
+        file: url,
       };
       return data;
     }
@@ -111,12 +110,11 @@ export const uploadMultipleImagesToFB = async (
     for (let i = 0; i < selectedImages.length; i++) {
       const selectedImage = selectedImages[i];
       const storedImageReference = `${imageReference}__${i}`;
-      const url = await uploadImageToFB(
-        storage,
+      const url = await uploadFileToFB(
         selectedImage,
         storedImageReference
       );
-      uploadedImageUrls.push(url?.image);
+      uploadedImageUrls.push(url?.file);
       imageReferences.push(storedImageReference);
     }
 

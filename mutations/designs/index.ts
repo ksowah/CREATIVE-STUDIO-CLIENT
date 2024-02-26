@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_DESIGN = gql`
-  mutation Mutation($createDesignInput: CreateDesignInput) {
+mutation CreateDesign($createDesignInput: CreateDesignInput) {
   createDesign(createDesignInput: $createDesignInput) {
     _id
     designer
@@ -10,7 +10,8 @@ export const CREATE_DESIGN = gql`
     saves
     description
     designSubscription
-    designFiles
+    designFile
+    designFileRef
     designImages
     createdAt
     tags

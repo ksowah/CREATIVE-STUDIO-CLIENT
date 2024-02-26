@@ -12,13 +12,17 @@ import UserFooter from "@/components/UserFooter";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_DESIGN_BY_ID } from "@/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
-import { Skeleton } from "@mui/material";
+import { Button, Skeleton } from "@mui/material";
 import { MyContext } from "@/context/Context";
 import { IoTrashOutline } from "react-icons/io5";
 import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
 import { deleteDesignData } from "@/helpers/functions";
 import { DELETE_DESIGN } from "@/mutations/designs";
 import { useRouter } from "next/navigation";
+import { GoDownload } from "react-icons/go";
+import { GoShieldCheck } from "react-icons/go";
+import { FaRegFile } from "react-icons/fa";
+import Link from "next/link";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
@@ -31,7 +35,7 @@ const DesignDetails = ({ params }: { params: any }) => {
 
   const designDetails: Design = data?.getDesignById;
 
-  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const { appState, setAppState } = useContext(MyContext);
 
@@ -47,17 +51,20 @@ const DesignDetails = ({ params }: { params: any }) => {
   const router = useRouter();
 
   const handleDeleteDesign = async () => {
-    setDeleteLoading(true)
+    setDeleteLoading(true);
     await deleteDesignData(
-      [designDetails?.previewImageRef, ...designDetails?.designImagesRef],
+      [
+        designDetails?.previewImageRef,
+        ...designDetails?.designImagesRef,
+        designDetails?.designFileRef,
+      ],
       deleteDesign,
       designDetails?._id,
       session?._id
-    )
-    setDeleteLoading(false)
-    router.push("/")
-  }
-
+    );
+    setDeleteLoading(false);
+    router.push("/");
+  };
 
   const OpenDialogueButton = () => {
     return (
@@ -117,7 +124,36 @@ const DesignDetails = ({ params }: { params: any }) => {
             </div>
           </>
         ) : (
-          <SliderComponent sliderImages={designImages} />
+          <>
+            <SliderComponent sliderImages={designImages} />
+
+            <div className="w-full flex items-center justify-center mt-[6rem] space-x-4 ">
+              <Link href={designDetails?.designFile}>
+                <Button
+                  variant="contained"
+                  style={{ backgroundColor: "#000" }}
+                  className="h-[3.5rem] w-[12rem] rounded-lg"
+                  startIcon={<GoDownload color="#fff" />}
+                >
+                  <p className="normal-case font-bold text-[#fff] ">Download</p>
+                </Button>
+              </Link>
+
+              <div className="text-[#8a8a8d] ">
+                <div className="flex items-center space-x-2">
+                  <GoShieldCheck className="font-medium" />
+                  <p className="text-sm font-medium">Free License</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FaRegFile className="font-medium" />
+                  <p className="text-sm font-medium">
+                    File type:{" "}
+                    <span className="font-normal text-black ">FIG</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         <div className="my-[8rem] ">

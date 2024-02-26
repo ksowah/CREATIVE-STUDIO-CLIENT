@@ -10,8 +10,8 @@ import SessionAvatar from "@/components/SessionAvatar";
 import SettingsContainer from "@/components/SettingsContainer";
 import { MyContext } from "@/context/Context";
 import { appInitializer } from "@/firebase";
-import { selectImage, uploadImageToFB } from "@/helpers/functions";
-import { getProfileImageReference } from "@/helpers/imageReferences";
+import { selectImage, uploadFileToFB } from "@/helpers/functions";
+import { getProfileImageReference } from "@/helpers/firebaseFileReferences";
 import { EDIT_PROFILE, GET_ME, GET_USER_BY_USERNAME } from "@/queries/user";
 import { useMutation, useQuery } from "@apollo/client";
 import { Alert, TextField } from "@mui/material";
@@ -68,13 +68,12 @@ const Settings = () => {
     let profileImageURL = currentUserData?.avatar
 
     if (pickedImage) {
-      const imageURL = await uploadImageToFB(
-        storage,
+      const imageURL = await uploadFileToFB(
         pickedImage,
         getProfileImageReference(currentUserData?._id, imageId.toString())
       ); 
 
-      if(imageURL) profileImageURL = imageURL?.image
+      if(imageURL) profileImageURL = imageURL?.file
     }
 
     try {

@@ -10,3 +10,7 @@ export const getDesignPreviewImageReference = (userId: string, refId:string) => 
 export const getDesignMultipleImagesReference = (userId: string, refId:string) => {
     return `images/user_${userId}/design_image_${refId}`;
 }
+
+export const getDesignFileReference = (userId: string, refId:string, fileName:string, fileExtension:string) => {
+    return `design/user_${userId}/${fileName}_${refId}.${fileExtension}`;
+}
