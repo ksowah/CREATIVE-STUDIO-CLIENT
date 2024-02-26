@@ -5,7 +5,6 @@ import ButtonSolid from "@/components/ButtonSolid";
 import Container from "@/components/Container";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import ProfileImage from "@/components/ProfileImage";
 import ProfileWork from "@/components/ProfileWork";
 import SessionAvatar from "@/components/SessionAvatar";
 import SkeletonLoader from "@/components/SkeletonLoader";
@@ -17,6 +16,8 @@ import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useContext } from "react";
+import { IoCogSharp } from "react-icons/io5";
+
 
 const Profile = ({ params }: { params: any }) => {
   const { appState, setAppState } = useContext(MyContext);
@@ -36,9 +37,6 @@ const Profile = ({ params }: { params: any }) => {
   });
 
   const userDesigns = data?.getUserDesigns;
-
-  console.log("userDesigns >>>", userDesigns);
-
 
 
   return (
@@ -65,6 +63,7 @@ const Profile = ({ params }: { params: any }) => {
                     <ButtonSolid
                       className="h-[3rem] w-[8rem] "
                       title="Settings"
+                      Icon={<IoCogSharp/>}
                     />
                   </Link>
                   <ButtonOutlined
@@ -116,12 +115,11 @@ const Profile = ({ params }: { params: any }) => {
                   {appState?.session?.username === user?.username && (
                     <UploadButton />
                   )}
-                  {userDesigns?.map((design: any, idx: number) => (
+                  {userDesigns?.map((design: Design, idx: number) => (
                     <ProfileWork
-                      id={design._id}
-                      title={design.title}
-                      image={design.preview}
-                      key={idx}
+                      design={design}
+                      key={design._id}
+                      isUsersProfile={appState?.session?.username === user?.username}
                     />
                   ))}
                 </>

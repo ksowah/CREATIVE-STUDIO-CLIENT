@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Skeleton } from "@mui/material";
+import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -34,14 +34,6 @@ const SlideItem = ({ image, ref, NextBtn, PrevBtn }: Props) => {
             <NextBtn />
           </div>
         </div>
-
-        <Button
-          variant="contained"
-          style={{ backgroundColor: "#fff" }}
-          className="h-[4rem] w-[12rem] mb-[4rem] rounded-full"
-        >
-          <p className="normal-case font-bold text-[#000] ">Download</p>
-        </Button>
       </div>
     </div>
   );

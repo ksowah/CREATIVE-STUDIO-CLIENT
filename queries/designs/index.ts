@@ -1,26 +1,40 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_DESIGNS = gql`
-  query Query {
+  query GetAllDesigns {
     getAllDesigns {
       _id
       designer {
-        avatar
-        email
+        _id
         fullName
+        email
+        avatar
+        password
+        authType
+        userType
+        available
+        subscription
+        verified
+        bio
         username
+        specialization
+        phoneNumber
+        website
       }
       preview
       views
       saves
       description
       designSubscription
-      designFiles
+      designFile
+      designFileRef
       designImages
       createdAt
       tags
       category
       title
+      previewImageRef
+      designImagesRef
     }
   }
 `;
@@ -30,46 +44,75 @@ export const GET_DESIGN_BY_ID = gql`
     getDesignById(designId: $designId) {
       _id
       designer {
+        _id
         fullName
+        email
         avatar
+        password
+        authType
+        userType
+        available
+        subscription
+        verified
+        bio
         username
+        specialization
+        phoneNumber
+        website
       }
       preview
       views
       saves
       description
       designSubscription
-      designFiles
+      designFile
+      designFileRef
       designImages
       createdAt
       tags
       category
       title
+      previewImageRef
+      designImagesRef
     }
   }
 `;
 
 export const GET_USER_DESIGNS = gql`
-  query Query($userId: String!) {
+  query GetUserDesigns($userId: String!) {
     getUserDesigns(userId: $userId) {
       _id
       designer {
         _id
-        avatar
         fullName
+        email
+        avatar
+        password
+        authType
+        userType
+        available
+        subscription
+        verified
+        bio
         username
+        specialization
+        phoneNumber
+        website
       }
       preview
       views
       saves
       description
       designSubscription
-      designFiles
+      designFile
+      designFileRef
       designImages
       createdAt
       tags
       category
       title
+      previewImageRef
+      designImagesRef
     }
   }
 `;

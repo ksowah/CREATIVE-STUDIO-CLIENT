@@ -10,7 +10,8 @@ import SessionAvatar from "@/components/SessionAvatar";
 import SettingsContainer from "@/components/SettingsContainer";
 import { MyContext } from "@/context/Context";
 import { appInitializer } from "@/firebase";
-import { selectImage, uploadImageToFB } from "@/helpers/functions";
+import { selectImage, uploadFileToFB } from "@/helpers/functions";
+import { getProfileImageReference } from "@/helpers/firebaseFileReferences";
 import { EDIT_PROFILE, GET_ME, GET_USER_BY_USERNAME } from "@/queries/user";
 import { useMutation, useQuery } from "@apollo/client";
 import { Alert, TextField } from "@mui/material";
@@ -20,7 +21,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 
 const Settings = () => {
   const { data: session } = useQuery(GET_ME);
-  const currentUserData = session?.getMe?.user;
+  const currentUserData:User = session?.getMe?.user;
 
   const storage = getStorage(appInitializer);
   const imageId = new Date().getTime();
@@ -64,19 +65,15 @@ const Settings = () => {
     setUpdateLoading(true)
     scroll();
 
-    let profileImageURL = currentUserData?.avatart
+    let profileImageURL = currentUserData?.avatar
 
     if (pickedImage) {
-      const imageURL = await uploadImageToFB(
-        storage,
-        `profile_image_${imageId}`,
-        currentUserData?._id,
-        pickedImage
+      const imageURL = await uploadFileToFB(
+        pickedImage,
+        getProfileImageReference(currentUserData?._id, imageId.toString())
       ); 
 
-      console.log("uploaded url >>", imageURL); 
-
-      if(imageURL) profileImageURL = imageURL
+      if(imageURL) profileImageURL = imageURL?.file
     }
 
     try {
@@ -110,7 +107,6 @@ const Settings = () => {
       setIsSuccessful(true);
       setIsErrorOccured(false);
       setPickedImage(null)
-      console.log("Edited profile: >>>", data);
     } catch (error: any) {
       setErrorMessage(error?.message);
       setIsErrorOccured(true);
@@ -118,7 +114,7 @@ const Settings = () => {
       console.error("Edit profile error:", error);
     }
     setUpdateLoading(false)
-  };
+  }
 
   return (
     <div className="bg-[#F3F3F3] ">
@@ -206,7 +202,7 @@ const Settings = () => {
                     id="outlined-basic"
                     variant="outlined"
                     className="w-full"
-                    placeholder="Product Designer"
+                    placeholder="Ksowah"
                     value={currentUserData?.username || ""}
                     disabled
                   />

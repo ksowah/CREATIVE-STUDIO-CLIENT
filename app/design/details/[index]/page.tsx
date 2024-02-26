@@ -3,33 +3,76 @@
 import Container from "@/components/Container";
 import Header from "@/components/Header";
 import Image from "next/image";
-import React from "react";
+import React, { useContext, useState } from "react";
 import { GoThumbsup } from "react-icons/go";
 import { TfiSave } from "react-icons/tfi";
 import { FaRegComment } from "react-icons/fa";
 import SliderComponent from "@/components/SliderComponent";
 import UserFooter from "@/components/UserFooter";
-import ProfileImage from "@/components/ProfileImage";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_DESIGN_BY_ID } from "@/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
-import { Skeleton } from "@mui/material";
+import { Button, Skeleton } from "@mui/material";
+import { MyContext } from "@/context/Context";
+import { IoTrashOutline } from "react-icons/io5";
+import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
+import { deleteDesignData } from "@/helpers/functions";
+import { DELETE_DESIGN } from "@/mutations/designs";
+import { useRouter } from "next/navigation";
+import { GoDownload } from "react-icons/go";
+import { GoShieldCheck } from "react-icons/go";
+import { FaRegFile } from "react-icons/fa";
+import Link from "next/link";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
 
-  const { loading, error, data } = useQuery(GET_DESIGN_BY_ID, {
+  const { loading, data } = useQuery(GET_DESIGN_BY_ID, {
     variables: { designId },
   });
 
-  const designDetails = data?.getDesignById;
+  const [deleteDesign] = useMutation(DELETE_DESIGN);
+
+  const designDetails: Design = data?.getDesignById;
+
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const { appState, setAppState } = useContext(MyContext);
+
+  const { session } = appState;
+
+  console.log("design details", designDetails);
 
   const designImages: any = [
     ...(designDetails?.preview ? [designDetails.preview] : []),
     ...(designDetails?.designImages || []),
   ];
 
-  console.log("designImages >>>", designImages);
+  const router = useRouter();
+
+  const handleDeleteDesign = async () => {
+    setDeleteLoading(true);
+    await deleteDesignData(
+      [
+        designDetails?.previewImageRef,
+        ...designDetails?.designImagesRef,
+        designDetails?.designFileRef,
+      ],
+      deleteDesign,
+      designDetails?._id,
+      session?._id
+    );
+    setDeleteLoading(false);
+    router.push("/");
+  };
+
+  const OpenDialogueButton = () => {
+    return (
+      <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+        <IoTrashOutline size={18} color="#595862" />
+      </button>
+    );
+  };
 
   return (
     <div className="w-ful">
@@ -52,27 +95,64 @@ const DesignDetails = ({ params }: { params: any }) => {
             </button>
 
             <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
-              <TfiSave size={18} color="#595862" />
-            </button>
-
-            <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
               <FaRegComment size={22} color="#595862" />
             </button>
+            {designDetails?.designer._id === session?._id ? (
+              <ActionConfirmationDialogue
+                action={handleDeleteDesign}
+                actionBodyText="Are you sure you want to delete this design? This action cannot be undone."
+                actionButtonTitle="Delete"
+                actionHeaderTitle="Delete Design"
+                OpenDialogueButton={OpenDialogueButton}
+              />
+            ) : (
+              <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+                <TfiSave size={18} color="#595862" />
+              </button>
+            )}
           </div>
         </div>
         {loading ? (
           <>
-          <div className="relative w-full h-[50rem] rounded-xl overflow-hidden">
-            <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
-          </div>
-          <div className="w-full h-[2.2rem] mt-4 flex items-center justify-center space-x-4 " >
-          <Skeleton variant="rectangular" width={30} height={"100%"} />
-          <Skeleton variant="rectangular" width={30} height={"100%"} />
-          <Skeleton variant="rectangular" width={30} height={"100%"} />
-          </div>
+            <div className="relative w-full h-[50rem] rounded-xl overflow-hidden">
+              <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
+            </div>
+            <div className="w-full h-[2.2rem] mt-4 flex items-center justify-center space-x-4 ">
+              <Skeleton variant="rectangular" width={30} height={"100%"} />
+              <Skeleton variant="rectangular" width={30} height={"100%"} />
+              <Skeleton variant="rectangular" width={30} height={"100%"} />
+            </div>
           </>
         ) : (
-          <SliderComponent sliderImages={designImages} />
+          <>
+            <SliderComponent sliderImages={designImages} />
+
+            <div className="w-full flex items-center justify-center mt-[6rem] space-x-4 ">
+                <Button
+                  variant="contained"
+                  style={{ backgroundColor: "#000" }}
+                  className="h-[3.5rem] w-[12rem] rounded-lg"
+                  startIcon={<GoDownload color="#fff" />}
+                  onClick={() => router.push(designDetails?.designFile)}
+                >
+                  <p className="normal-case font-bold text-[#fff] ">Download</p>
+                </Button>
+
+              <div className="text-[#8a8a8d] ">
+                <div className="flex items-center space-x-2">
+                  <GoShieldCheck className="font-medium" />
+                  <p className="text-sm font-medium">Free License</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FaRegFile className="font-medium" />
+                  <p className="text-sm font-medium">
+                    File type:{" "}
+                    <span className="font-normal text-black ">FIG</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         <div className="my-[8rem] ">
@@ -129,6 +209,7 @@ const DesignDetails = ({ params }: { params: any }) => {
           designerUsername={designDetails?.designer.username}
           image={designDetails?.designer.avatar}
           name={designDetails?.designer.fullName}
+          specialization={designDetails?.designer.specialization}
         />
       </Container>
     </div>

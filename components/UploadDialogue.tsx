@@ -25,9 +25,11 @@ import ButtonSolid from "./ButtonSolid";
 import { useMutation } from "@apollo/client";
 import { CREATE_DESIGN } from "@/mutations/designs";
 import { LiaTimesSolid } from "react-icons/lia";
-import { GET_ALL_DESIGNS } from "@/queries/designs";
+import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/queries/designs";
 import { useRouter } from "next/navigation";
 import { MyContext } from "@/context/Context";
+import { uploadFileToFB } from "@/helpers/functions";
+import { getDesignFileReference } from "@/helpers/firebaseFileReferences";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -43,8 +45,13 @@ interface Props {
   selectedDesignImages: any;
   setSelectedImages: any;
   setSelectedImage: any;
-  getPreviewImage: any;
-  getDesignImagesURLs: any;
+  getPreviewImage: () => Promise<SingleFileUpload | undefined>;
+  getDesignImagesURLs: () => Promise<MultipleImageUpload>;
+  getDesignFile: () => Promise<SingleFileUpload | undefined>;
+  selectDesignFile: (e: any) => void;
+  designFilePickerRef: any;
+  designFileSelected: any;
+  selectedDesignFileName: string;
   projectTitle: string;
   setProjectTitle: any;
 }
@@ -56,6 +63,11 @@ export default function UploadDialogue({
   setSelectedImage,
   getPreviewImage,
   getDesignImagesURLs,
+  getDesignFile,
+  selectDesignFile,
+  designFilePickerRef,
+  designFileSelected,
+  selectedDesignFileName,
   projectTitle,
   setProjectTitle,
 }: Props) {
@@ -64,6 +76,7 @@ export default function UploadDialogue({
   const [isErrorOccured, setIsErrorOccured] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
 
+  
   const [designUploadData, setDesignUploadData] = React.useState({
     tags: "",
     description: "",
@@ -79,8 +92,7 @@ export default function UploadDialogue({
     });
 
   const { appState, setAppState } = React.useContext(MyContext);
-  const user = appState.session;
-  console.log("sesiom >>", appState.session);
+  const user:User = appState.session;
 
   const router = useRouter();
 
@@ -115,12 +127,15 @@ export default function UploadDialogue({
 
   const [createDesign, { error }] = useMutation(CREATE_DESIGN);
 
-  const filloutDesignData = async (designImages: any, preview: string) => {
+
+  const filloutDesignData = async (
+    designImages: MultipleImageUpload,
+    preview: SingleFileUpload | undefined,
+    designFile: SingleFileUpload | undefined
+  ) => {
     let designTags = designUploadData.tags.split(",");
 
     try {
-      console.log("started publishing...");
-
       const { data } = await createDesign({
         variables: {
           createDesignInput: {
@@ -128,9 +143,12 @@ export default function UploadDialogue({
             description: designUploadData.description,
             category: designUploadData.category,
             designSubscription: designUploadData.subscription,
-            designFiles: ["file1", "file2", "file3"],
-            designImages,
-            preview,
+            designFile: designFile?.file,
+            designFileRef: designFile?.reference,
+            designImages: designImages?.images,
+            designImagesRef: designImages?.references,
+            preview: preview?.file,
+            previewImageRef: preview?.reference,
             title: projectTitle,
           },
         },
@@ -150,9 +168,24 @@ export default function UploadDialogue({
               ],
             },
           });
+
+          const existingUserDesigns = cache.readQuery<any>({
+            query: GET_USER_DESIGNS,
+            variables: { userId: user?._id },
+          });
+
+          cache.writeQuery({
+            query: GET_USER_DESIGNS,
+            variables: { userId: user?._id },
+            data: {
+              getUserDesigns: [
+                createDesign,
+                ...(existingUserDesigns?.getUserDesigns || []),
+              ],
+            },
+          });
         },
       });
-      console.log("Design publish Data >>>", data);
     } catch (error) {
       console.log(error);
     }
@@ -196,6 +229,13 @@ export default function UploadDialogue({
       return;
     }
 
+    if (!designFileSelected) {
+      setErrorMessage("Please select a design file");
+      setPublishLoading(false);
+      setIsErrorOccured(true);
+      return;
+    }
+
     if (user?.userType !== "DESIGNER" && user?.userType !== "CREATOR") {
       setErrorMessage("You are not authorized to publish designs");
       setPublishLoading(false);
@@ -206,10 +246,9 @@ export default function UploadDialogue({
     try {
       const designImages = await getDesignImagesURLs();
       const preview = await getPreviewImage();
-      console.log("Design Images >>>>", designImages);
-      console.log("Preview >>>", preview);
+      const designFile = await getDesignFile();
 
-      await filloutDesignData(designImages, preview);
+      await filloutDesignData(designImages, preview, designFile);
       cancelUpload();
       setPublishLoading(false);
       setErrorMessage("");
@@ -256,7 +295,7 @@ export default function UploadDialogue({
             </Alert>
           )}
           <DialogTitle>{"Final Touches"}</DialogTitle>
-          <DialogContent className="w-[60rem] pb-[4rem] ">
+          <DialogContent className="w-[60rem] pb-[2rem] ">
             <p className="font-medium text-sm mb-2">Thumbnail preview</p>
             <div className="w-full flex items-start space-x-4">
               <div className="space-y-6">
@@ -413,7 +452,37 @@ export default function UploadDialogue({
                   </Select>
                 </FormControl>
 
-                <div className="flex items-center justify-between pt-12 ">
+                <div className="pt-4 flex-1 flex items-center justify-between ">
+                  <input
+                    type={"file"}
+                    accept=".fig, .jam, .psd"
+                    hidden
+                    onChange={selectDesignFile}
+                    ref={designFilePickerRef}
+                  />
+                  <ButtonSolid
+                    onClick={() => designFilePickerRef.current.click()}
+                    title="Select design file"
+                  />
+
+                  {designFileSelected && (
+                    <div className="flex items-center space-x-3 ">
+                      <div className="relative h-[3rem] w-[3rem] rounded-lg overflow-hidden">
+                        <Image
+                          src={"/images/figma_logo.png"}
+                          alt="file logo"
+                          fill
+                          objectFit="cover"
+                        />
+                      </div>
+                      <p className="font-medium text-sm ">
+                        {selectedDesignFileName}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-6 ">
                   <ButtonOutlined
                     onClick={cancelUpload}
                     className="w-[8rem] h-[3rem]"
