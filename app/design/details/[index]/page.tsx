@@ -128,16 +128,15 @@ const DesignDetails = ({ params }: { params: any }) => {
             <SliderComponent sliderImages={designImages} />
 
             <div className="w-full flex items-center justify-center mt-[6rem] space-x-4 ">
-              <Link href={designDetails?.designFile}>
                 <Button
                   variant="contained"
                   style={{ backgroundColor: "#000" }}
                   className="h-[3.5rem] w-[12rem] rounded-lg"
                   startIcon={<GoDownload color="#fff" />}
+                  onClick={() => router.push(designDetails?.designFile)}
                 >
                   <p className="normal-case font-bold text-[#fff] ">Download</p>
                 </Button>
-              </Link>
 
               <div className="text-[#8a8a8d] ">
                 <div className="flex items-center space-x-2">
