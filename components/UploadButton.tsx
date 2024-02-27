@@ -11,7 +11,7 @@ const UploadButton = () => {
   const username = appState?.session?.username;
 
   return (
-    <div className="flex flex-col items-center justify-center h-[16rem] w-[18rem] border rounded-lg p-6">
+    <div className="flex flex-col items-center justify-center h-[16rem] w-[18rem] border mb-6 rounded-lg p-6">
       <IoCloudUploadSharp size={50} color="#85B6FF" />
 
       <p className="font-bold text-[.8rem] mt-4 ">
