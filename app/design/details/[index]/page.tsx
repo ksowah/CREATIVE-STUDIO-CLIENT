@@ -182,6 +182,7 @@ const DesignDetails = ({ params }: { params: any }) => {
                 <div
                   onClick={() => router.push(`/design/details/${design?._id}`)}
                   className="relative cursor-pointer overflow-hidden h-[32rem] w-[22rem] rounded-xl "
+                  key={design._id}
                 >
                   <Image
                     src={design.preview}
