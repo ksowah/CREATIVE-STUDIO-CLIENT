@@ -20,16 +20,9 @@ export default function Home() {
 
     const storage = getStorage(appInitializer);
 
-    const deleteImage = async () => {
-      try {
-        const desertRef = ref(storage, 'images/design_preview_1708688104016/user_65d71c0d88bd25c3a78a77b5');
-        await deleteObject(desertRef);
-      } catch (e) {
-        console.log('Error deleting file', e);
-      }
-    }
-
+    console.log("data", data?.getAllDesigns);
     
+
   return (
     <main className="flex-1">
       <Header />
@@ -48,7 +41,6 @@ export default function Home() {
           <ButtonSolid
             className="w-[12.6rem] h-[4rem]"
             title="Become a Designer"
-            onClick={deleteImage}
           />
         </div>
       </div>

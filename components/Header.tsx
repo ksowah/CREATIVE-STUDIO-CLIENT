@@ -4,7 +4,7 @@ import Container from "./Container";
 import { CiSearch } from "react-icons/ci";
 import Button from "@mui/material/Button";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import ButtonOutlined from "./ButtonOutlined";
 import ButtonSolid from "./ButtonSolid";
 import ProfileImage from "./ProfileImage";
@@ -14,6 +14,8 @@ import SessionAvatar from "./SessionAvatar";
 
 const Header = () => {
   const router = useRouter();
+
+  const pathname = usePathname();
 
   const { appState, setAppState } = useContext(MyContext);
 
@@ -31,6 +33,9 @@ const Header = () => {
 
           <div className="flex flex-1 px-[4rem] space-x-6">
             <ul className="flex items-center space-x-6 text-sm ">
+              <Link href={"/art"} >
+                <li className={`cursor-pointer ${pathname === "/art" && "font-bold"} `}>Art</li>
+              </Link>
               <li className="cursor-pointer">Explore</li>
               <li className="cursor-pointer">Free + premium</li>
               <li className="cursor-pointer">Auction</li>
@@ -47,7 +52,7 @@ const Header = () => {
           </div>
 
           {user ? (
-            <Link href={`/profile/${user?.username}`} >
+            <Link href={`/profile/${user?.username}`}>
               <div className="cursor-pointer">
                 <SessionAvatar image={user?.avatar} size={45} />
               </div>

@@ -11,6 +11,7 @@ import { MyContext } from "@/context/Context";
 import { useRouter } from "next/navigation";
 import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
 import { deleteDesignData, deleteImageFromFB } from "@/helpers/functions";
+import { LuEye } from "react-icons/lu";
 
 const ProfileWork = ({
   design,
@@ -29,23 +30,24 @@ const ProfileWork = ({
 
   const router = useRouter();
 
-
   const handleDeleteDesign = async () => {
-    setDeleteLoading(true)
+    setDeleteLoading(true);
     await deleteDesignData(
-      [design?.previewImageRef, ...design?.designImagesRef, design?.designFileRef],
+      [
+        design?.previewImageRef,
+        ...design?.designImagesRef,
+        design?.designFileRef,
+      ],
       deleteDesign,
       design?._id,
       session?._id
-    )
-    setDeleteLoading(false)
-  }
+    );
+    setDeleteLoading(false);
+  };
 
   const OpenDialogueButton = () => {
     return (
-      <div
-        className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md "
-      >
+      <div className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md ">
         <IoTrashOutline size={16} color="#fff" />
       </div>
     );
@@ -55,16 +57,13 @@ const ProfileWork = ({
     <div
       className={`group ${
         deleteLoading && "opacity-60"
-      } relative h-[16rem] w-[18rem]`}
+      } relative h-[16rem] w-[18rem] mb-6`}
     >
       {deleteLoading && (
         <div className="absolute top-0 left-0 right-0 bottom-0 z-30"></div>
       )}
 
-      <div
-        onClick={() => router.push(`/design/details/${design?._id}`)}
-        className="relative cursor-pointer h-[16rem] w-[18rem] mb-8 rounded-lg overflow-hidden "
-      >
+      <div className="relative cursor-pointer h-[16rem] w-[18rem] mb-8 rounded-lg overflow-hidden ">
         <Image
           src={design?.preview}
           className="group-hover:scale-125 duration-500"
@@ -74,10 +73,14 @@ const ProfileWork = ({
         />
       </div>
 
-      <div className="absolute opacity-0 z-10 group-hover:opacity-90 duration-500 bottom-0 w-full h-[4rem] flex items-center justify-between px-2 bg-gradient-to-t from-blackRgba to-transparent ">
-        <p className="text-xs text-white line-clamp-1 ">{design?.title}</p>
-
-        <div className="flex items-center space-x-2">
+      <div className="absolute opacity-0 z-10 group-hover:opacity-90 duration-500 bottom-0 w-full h-full flex flex-col  px-2 bg-gradient-to-t from-blackRgba to-transparent ">
+        <div className="flex flex-1 items-center justify-center space-x-2">
+          <div
+            onClick={() => router.push(`/design/details/${design?._id}`)}
+            className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md "
+          >
+            <LuEye size={20} color="#fff" />
+          </div>
           <div className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md ">
             <CiHeart size={20} color="#fff" />
           </div>
@@ -95,6 +98,7 @@ const ProfileWork = ({
             </div>
           )}
         </div>
+        <p className="text-xs text-white py-2 line-clamp-1 ">{design?.title}</p>
       </div>
     </div>
   );

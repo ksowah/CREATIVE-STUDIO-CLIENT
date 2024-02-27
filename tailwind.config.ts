@@ -11,7 +11,7 @@ const config: Config = {
       colors: {
         'overlay': 'rgba(0, 0, 0, 0.1)',
         'midDrakRgba': 'rgba(0, 0, 0, 0.2)',
-        'blackRgba': 'rgba(0, 0, 0, 0.9)',
+        'blackRgba': 'rgba(0, 0, 0, 0.6)',
         'blueRgba': 'rgba(205, 209, 228, 0.15)',
       }
     },
