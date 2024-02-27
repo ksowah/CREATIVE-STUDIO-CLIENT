@@ -7,7 +7,7 @@ import Image from 'next/image'
 import DropDown from "@/components/Dropdown";
 import Footer from '@/components/Footer';
 import { creativeWorkdata } from '@/utils/fake-db';
-import ArtCard from '@/components/ArtCard';
+import ArtCard from '@/components/art/ArtCard';
 
 
 const Art = () => {

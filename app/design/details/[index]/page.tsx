@@ -10,7 +10,7 @@ import { FaRegComment } from "react-icons/fa";
 import SliderComponent from "@/components/SliderComponent";
 import UserFooter from "@/components/UserFooter";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_DESIGN_BY_ID } from "@/queries/designs";
+import { GET_DESIGN_BY_ID, GET_USER_DESIGNS } from "@/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
 import { Button, Skeleton } from "@mui/material";
 import { MyContext } from "@/context/Context";
@@ -22,24 +22,33 @@ import { useRouter } from "next/navigation";
 import { GoDownload } from "react-icons/go";
 import { GoShieldCheck } from "react-icons/go";
 import { FaRegFile } from "react-icons/fa";
-import Link from "next/link";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
+
+  const { appState, setAppState } = useContext(MyContext);
+
+  const { session } = appState;
 
   const { loading, data } = useQuery(GET_DESIGN_BY_ID, {
     variables: { designId },
   });
 
-  const [deleteDesign] = useMutation(DELETE_DESIGN);
-
   const designDetails: Design = data?.getDesignById;
 
+  const { error, data: userDesigns } = useQuery(GET_USER_DESIGNS, {
+    variables: { userId: designDetails?.designer._id },
+  });
+
+  let filteredDesigns = userDesigns?.getUserDesigns.filter(
+    (design: Design) => design._id !== designDetails?._id
+  );
+
+  const allUserDesigns = filteredDesigns?.slice(0, 4);
+
+  const [deleteDesign] = useMutation(DELETE_DESIGN);
+
   const [deleteLoading, setDeleteLoading] = useState(false);
-
-  const { appState, setAppState } = useContext(MyContext);
-
-  const { session } = appState;
 
   console.log("design details", designDetails);
 
@@ -128,15 +137,15 @@ const DesignDetails = ({ params }: { params: any }) => {
             <SliderComponent sliderImages={designImages} />
 
             <div className="w-full flex items-center justify-center mt-[6rem] space-x-4 ">
-                <Button
-                  variant="contained"
-                  style={{ backgroundColor: "#000" }}
-                  className="h-[3.5rem] w-[12rem] rounded-lg"
-                  startIcon={<GoDownload color="#fff" />}
-                  onClick={() => router.push(designDetails?.designFile)}
-                >
-                  <p className="normal-case font-bold text-[#fff] ">Download</p>
-                </Button>
+              <Button
+                variant="contained"
+                style={{ backgroundColor: "#000" }}
+                className="h-[3.5rem] w-[12rem] rounded-lg"
+                startIcon={<GoDownload color="#fff" />}
+                onClick={() => router.push(designDetails?.designFile)}
+              >
+                <p className="normal-case font-bold text-[#fff] ">Download</p>
+              </Button>
 
               <div className="text-[#8a8a8d] ">
                 <div className="flex items-center space-x-2">
@@ -162,48 +171,30 @@ const DesignDetails = ({ params }: { params: any }) => {
           <p className="text-[#595862] ">{designDetails?.description}</p>
         </div>
 
-        <p className="font-medium text-sm mb-[2rem] ">
-          More by {designDetails?.designer.fullName}
-        </p>
+        {allUserDesigns?.length > 1 && (
+          <>
+            <p className="font-medium text-sm mb-[2rem] ">
+              More by {designDetails?.designer.fullName}
+            </p>
 
-        <div className="w-full flex items-center space-x-4">
-          <div className="relative cursor-pointer overflow-hidden h-[32rem] w-[24rem] rounded-xl ">
-            <Image
-              src={"/images/more1.jpg"}
-              alt="more"
-              fill
-              objectFit="cover"
-              className="hover:scale-125 duration-500"
-            />
-          </div>
-          <div className="relative cursor-pointer overflow-hidden h-[32rem] w-[24rem] rounded-xl ">
-            <Image
-              src={"/images/more2.jpg"}
-              alt="more"
-              fill
-              objectFit="cover"
-              className="hover:scale-125 duration-500"
-            />
-          </div>
-          <div className="relative cursor-pointer overflow-hidden h-[32rem] w-[24rem] rounded-xl ">
-            <Image
-              src={"/images/slide1.jpg"}
-              alt="more"
-              fill
-              objectFit="cover"
-              className="hover:scale-125 duration-500"
-            />
-          </div>
-          <div className="relative cursor-pointer overflow-hidden h-[32rem] w-[24rem] rounded-xl ">
-            <Image
-              src={"/images/slide2.jpg"}
-              alt="more"
-              fill
-              objectFit="cover"
-              className="hover:scale-125 duration-500"
-            />
-          </div>
-        </div>
+            <div className="w-full flex items-center space-x-4">
+              {allUserDesigns?.map((design: Design, idx: number) => (
+                <div
+                  onClick={() => router.push(`/design/details/${design?._id}`)}
+                  className="relative cursor-pointer overflow-hidden h-[32rem] w-[22rem] rounded-xl "
+                >
+                  <Image
+                    src={design.preview}
+                    alt="more"
+                    fill
+                    objectFit="cover"
+                    className="hover:scale-125 duration-500"
+                  />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         <UserFooter
           designerUsername={designDetails?.designer.username}

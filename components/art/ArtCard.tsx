@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import SessionAvatar from "./SessionAvatar";
+import SessionAvatar from "../SessionAvatar";
 import { CiHeart } from "react-icons/ci";
 import { TfiSave } from "react-icons/tfi";
 import { FaRegComment } from "react-icons/fa";
