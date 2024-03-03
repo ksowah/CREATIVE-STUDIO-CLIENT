@@ -3,13 +3,18 @@
 import { ReactNode, useEffect, useState } from "react";
 import { MyContext } from "./Context";
 import { useQuery } from "@apollo/client";
-import { GET_ME } from "@/queries/user";
+import { GET_ME } from "@/apollo/queries/user";
 
 
 const ContextProvider = ({children}:{children:ReactNode}) => {
 
     const [appState, setAppState] = useState({
         session: null,
+        artUpload: {
+          selectedImage: "",
+          selectedImages: [],
+          tile: ""
+        }
     })
 
     const {data} = useQuery(GET_ME);

@@ -35,7 +35,7 @@ const Header = () => {
           <div className="flex flex-1 px-[4rem] space-x-6">
             <ul className="flex items-center space-x-6 text-sm ">
               <Link href={"/art"} >
-                <li className={`cursor-pointer ${pathname.includes("/art") && "font-bold"} `}>Art</li>
+                <li className={`cursor-pointer ${pathname.includes("/art") && "font-bold"} `}>Art Store</li>
               </Link>
               <li className="cursor-pointer">Explore</li>
               <li className="cursor-pointer">Free + premium</li>

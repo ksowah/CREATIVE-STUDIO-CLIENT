@@ -3,7 +3,7 @@
 import ButtonSolid from "@/components/ButtonSolid";
 import CoverLoader from "@/components/CoverLoader";
 import { registerNewUser } from "@/helpers/functions";
-import { REGISTER } from "@/mutations/user";
+import { REGISTER } from "@/apollo/mutations/user";
 import { useMutation } from "@apollo/client";
 import { Alert, Button, LinearProgress, TextField } from "@mui/material";
 import Image from "next/image";

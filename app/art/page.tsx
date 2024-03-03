@@ -6,13 +6,17 @@ import Header from '@/components/Header'
 import Image from 'next/image'
 import DropDown from "@/components/Dropdown";
 import Footer from '@/components/Footer';
-import { creativeWorkdata } from '@/utils/fake-db';
 import ArtCard from '@/components/art/ArtCard';
+import { useQuery } from '@apollo/client'
+import { GET_ALL_ARTS } from '@/apollo/queries/arts'
 
 
 const Art = () => {
 
-    
+  const { loading, error, data } = useQuery(GET_ALL_ARTS);
+
+  console.log("data", data);
+  
     
   return (
     <main className="flex-1">
@@ -61,12 +65,12 @@ const Art = () => {
       </div>
 
         <div className="grid grid-cols-4 ">
-          {creativeWorkdata.map((item, idx) => (
+          {[...data?.getAllArtWorks || []].map((item:ArtPiece, idx) => (
             <ArtCard
               key={idx}
-              authourImage={item.authourImage}
-              authourName={item.authourName}
-              workImage={item.workImage}
+              authourImage={item.artist.avatar}
+              authourName={item.artist.fullName}
+              preview={item.artPreview}
             />
           ))}
         </div>

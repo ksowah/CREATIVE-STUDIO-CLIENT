@@ -4,13 +4,21 @@ export const getProfileImageReference = (userId: string, refId:string) => {
 }
 
 export const getDesignPreviewImageReference = (userId: string, refId:string) => {
-    return `images/design_preview_${refId}/user_${userId}`;
+    return `images/designs/preview_${refId}/user_${userId}`;
+}
+
+export const getArtPreviewImageReference = (userId: string, refId:string) => {
+    return `images/arts/preview_${refId}/user_${userId}`;
 }
 
 export const getDesignMultipleImagesReference = (userId: string, refId:string) => {
-    return `images/user_${userId}/design_image_${refId}`;
+    return `images/designs/user_${userId}/image_${refId}`;
+}
+
+export const getArtMultipleImagesReference = (userId: string, refId:string) => {
+    return `images/arts/user_${userId}/image_${refId}`;
 }
 
 export const getDesignFileReference = (userId: string, refId:string, fileName:string, fileExtension:string) => {
-    return `design/user_${userId}/${fileName}_${refId}.${fileExtension}`;
+    return `file/design/user_${userId}/${fileName}_${refId}.${fileExtension}`;
 }

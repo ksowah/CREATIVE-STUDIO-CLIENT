@@ -37,17 +37,15 @@ const Uploader = ({selectImage, selectedImage}:Props) => {
             ref={filePickerRef}
           />
           <p className="text-[#797979] ">
-            Drag and drop an image here or{" "}
-            <span className="underline cursor-pointer">Browse</span>
+            <span className="underline cursor-pointer">click </span>
+            to selcect a display image
           </p>
           <div className="flex items-center text-[#797979] mt-4 space-x-8">
             <div>
               <p>· High resolution images(png,jpeg,gif)</p>
-              <p>· Animated Gifs</p>
             </div>
 
             <div>
-              <p>· Videos (mp4)</p>
               <p>· Only Upload media you own the right to</p>
             </div>
           </div>

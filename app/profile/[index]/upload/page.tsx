@@ -15,11 +15,10 @@ import {
   getDesignFileReference,
   getDesignMultipleImagesReference,
   getDesignPreviewImageReference,
-  getProfileImageReference,
 } from "@/helpers/firebaseFileReferences";
 import { getStorage } from "firebase/storage";
 import React, { useContext, useRef, useState } from "react";
-import { FaPlus } from "react-icons/fa6";
+
 
 const UploadDesign = () => {
   const { appState, setAppState } = useContext(MyContext);
@@ -116,7 +115,6 @@ const UploadDesign = () => {
                   getDesignImagesURLs={() =>
                     // @ts-ignore
                     uploadMultipleImagesToFB(
-                      storage,
                       selectedImages,
                       getDesignMultipleImagesReference(
                         user?._id,
