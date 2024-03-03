@@ -1,6 +1,6 @@
 "use client";
 
-import { VERIFY_USER } from "@/mutations/user";
+import { VERIFY_USER } from "@/apollo/mutations/user";
 import { useMutation } from "@apollo/client";
 import Link from "next/link";
 import { useEffect } from "react";

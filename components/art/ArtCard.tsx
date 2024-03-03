@@ -7,12 +7,12 @@ import { FaRegComment } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 interface Props {
-  workImage: string;
+  preview: string;
   authourImage: string;
   authourName: string;
 }
 
-const ArtCard = ({ authourImage, authourName, workImage }: Props) => {
+const ArtCard = ({ authourImage, authourName, preview }: Props) => {
   const router = useRouter();
 
   return (
@@ -27,7 +27,7 @@ const ArtCard = ({ authourImage, authourName, workImage }: Props) => {
         <Image
           //   onLoad={() => setImageLoading(false)}
           className="group-hover:scale-125 duration-500"
-          src={workImage}
+          src={preview}
           objectFit="cover"
           fill
           alt="card image"

@@ -36,6 +36,23 @@ type Design = {
     designImagesRef: [string]
 }
 
+type ArtPiece = {
+  _id: string
+    title: string
+    description: string
+    artist: User
+    artPreview: string
+    artImages: [string]
+    previewImageRef: string
+    artImagesRef: [string]
+    category: string
+    dimensions: string
+    price: number
+    artState: string
+    auctionStartPrice: number
+    auctionStartDate: string
+}
+
 
 type MultipleImageUpload = {
     references: any;

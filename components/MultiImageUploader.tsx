@@ -4,15 +4,12 @@ import { useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { LiaTimesSolid } from "react-icons/lia";
 
-
 interface Props {
-    selectedImages: any;
-    setSelectedImages: any;
+  selectedImages: any;
+  setSelectedImages: any;
 }
 
-
-const MultiImageUploader = ({selectedImages, setSelectedImages}:Props) => {
-
+const MultiImageUploader = ({ selectedImages, setSelectedImages }: Props) => {
   const filePickerRef = useRef<any>(null);
 
   const selectImages = (e: any) => {
@@ -45,9 +42,9 @@ const MultiImageUploader = ({selectedImages, setSelectedImages}:Props) => {
     filePickerRef.current.click();
   };
 
-  const removeImage = (idx:number) => {
-    setSelectedImages((prevSelectedImages:any) =>
-      prevSelectedImages.filter((_:any, index:number) => index !== idx)
+  const removeImage = (idx: number) => {
+    setSelectedImages((prevSelectedImages: any) =>
+      prevSelectedImages.filter((_: any, index: number) => index !== idx)
     );
   };
 
@@ -56,7 +53,10 @@ const MultiImageUploader = ({selectedImages, setSelectedImages}:Props) => {
       <div className="w-full my-8 md:grid grid-cols-6 flex items-center justify-center flex-wrap">
         {selectedImages?.map((image: any, idx: any) => (
           <div key={idx} className="relative w-[12rem] h-[12rem] mt-6 mr-4">
-            <div onClick={() => removeImage(idx)} className="absolute z-10 h-[2rem] w-[2rem] rounded-full bg-white cursor-pointer flex items-center justify-center right-2 top-2 ">
+            <div
+              onClick={() => removeImage(idx)}
+              className="absolute z-10 h-[2rem] w-[2rem] rounded-full bg-[#D9D9D9] cursor-pointer flex items-center justify-center -right-4 -top-3 "
+            >
               <LiaTimesSolid />
             </div>
             <Image src={image} alt="" fill objectFit="cover" />

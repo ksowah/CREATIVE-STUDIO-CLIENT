@@ -1,5 +1,5 @@
 import { appInitializer } from "@/firebase";
-import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/queries/designs";
+import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/apollo/queries/designs";
 import {
   deleteObject,
   getDownloadURL,
@@ -99,7 +99,6 @@ export const uploadFileToFB = async (
 }
 
 export const uploadMultipleImagesToFB = async (
-  storage: any,
   selectedImages: any,
   imageReference: string
 ) => {

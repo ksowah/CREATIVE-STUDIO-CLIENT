@@ -7,7 +7,7 @@ import DropDown from "@/components/Dropdown";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import SkeletonLoader from "@/components/SkeletonLoader";
-import { GET_ALL_DESIGNS } from "@/queries/designs";
+import { GET_ALL_DESIGNS } from "@/apollo/queries/designs";
 import { creativeWorkdata } from "@/utils/fake-db";
 import { useQuery } from "@apollo/client";
 import Image from "next/image";

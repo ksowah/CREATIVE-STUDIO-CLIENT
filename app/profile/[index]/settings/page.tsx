@@ -12,7 +12,7 @@ import { MyContext } from "@/context/Context";
 import { appInitializer } from "@/firebase";
 import { selectImage, uploadFileToFB } from "@/helpers/functions";
 import { getProfileImageReference } from "@/helpers/firebaseFileReferences";
-import { EDIT_PROFILE, GET_ME, GET_USER_BY_USERNAME } from "@/queries/user";
+import { EDIT_PROFILE, GET_ME, GET_USER_BY_USERNAME } from "@/apollo/queries/user";
 import { useMutation, useQuery } from "@apollo/client";
 import { Alert, TextField } from "@mui/material";
 import { getStorage } from "firebase/storage";

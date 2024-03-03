@@ -23,9 +23,9 @@ import {
 import ButtonOutlined from "./ButtonOutlined";
 import ButtonSolid from "./ButtonSolid";
 import { useMutation } from "@apollo/client";
-import { CREATE_DESIGN } from "@/mutations/designs";
+import { CREATE_DESIGN } from "@/apollo/mutations/designs";
 import { LiaTimesSolid } from "react-icons/lia";
-import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/queries/designs";
+import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/apollo/queries/designs";
 import { useRouter } from "next/navigation";
 import { MyContext } from "@/context/Context";
 import { uploadFileToFB } from "@/helpers/functions";
@@ -296,10 +296,10 @@ export default function UploadDialogue({
           )}
           <DialogTitle>{"Final Touches"}</DialogTitle>
           <DialogContent className="w-[60rem] pb-[2rem] ">
-            <p className="font-medium text-sm mb-2">Thumbnail preview</p>
             <div className="w-full flex items-start space-x-4">
-              <div className="space-y-6">
-                <div className="relative h-[16rem] w-[16rem]">
+              <div className="">
+            <p className="font-medium text-sm mb-2">Thumbnail preview</p>
+                <div className="relative h-[16rem] w-[16rem] mb-6">
                   <Image
                     src={selectedImage ? selectedImage : "/images/slide2.jpg"}
                     fill
