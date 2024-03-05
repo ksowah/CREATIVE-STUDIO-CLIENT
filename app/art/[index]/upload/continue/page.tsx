@@ -28,7 +28,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { LiaTimesSolid } from "react-icons/lia";
-import { GET_ALL_ARTS } from "@/apollo/queries/arts";
+import { GET_ALL_ARTS, GET_USER_ARTS } from "@/apollo/queries/arts";
 
 const ContinueArtUpload = () => {
   const { appState } = useContext(MyContext);
@@ -56,17 +56,16 @@ const ContinueArtUpload = () => {
 
   const [createArt] = useMutation(CREATE_ART);
 
-
   const createNewArt = async () => {
     setLoading(true);
 
     console.log("art upload started...");
 
-    if(!artUpload.selectedImage) {
-        setErrorOccured(true);
-        setErrorMessage("Select a preview image");
-        setLoading(false);
-        return;
+    if (!artUpload.selectedImage) {
+      setErrorOccured(true);
+      setErrorMessage("Select a preview image");
+      setLoading(false);
+      return;
     }
 
     if (
@@ -141,21 +140,41 @@ const ContinueArtUpload = () => {
         variables: {
           artInput,
         },
-        update: (cache, { data: {createArt} }) => {
-            const existingArts = cache.readQuery<any>({
-                query: GET_ALL_ARTS,
-            })
+        update: (cache, { data: { createArt } }) => {
+          const existingArts = cache.readQuery<any>({
+            query: GET_ALL_ARTS,
+          });
 
-            cache.writeQuery({
-                query: GET_ALL_ARTS,
-                data: {
-                    getAllArtWorks: [
-                        createArt,
-                        ...(existingArts?.getAllArtWorks || [])
-                    ]
-                }
-            })
-        }
+          cache.writeQuery({
+            query: GET_ALL_ARTS,
+            data: {
+              getAllArtWorks: [
+                createArt,
+                ...(existingArts?.getAllArtWorks || []),
+              ],
+            },
+          });
+
+          const existingUserArts = cache.readQuery<any>({
+            query: GET_USER_ARTS,
+            variables: {
+              userId: session?._id,
+            },
+          });
+
+          cache.writeQuery({
+            query: GET_USER_ARTS,
+            variables: {
+              userId: session?._id,
+            },
+            data: {
+              getUserArtWorks: [
+                createArt,
+                ...(existingUserArts?.getUserArtWorks || []),
+              ],
+            },
+          });
+        },
       });
 
       console.log("uploaded art", data);

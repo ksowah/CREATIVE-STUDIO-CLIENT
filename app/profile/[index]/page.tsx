@@ -17,6 +17,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useContext } from "react";
 import { IoCogSharp } from "react-icons/io5";
+import { GET_USER_ARTS } from "@/apollo/queries/arts";
+import ArtCard from "@/components/art/ArtCard";
 
 
 const Profile = ({ params }: { params: any }) => {
@@ -28,7 +30,7 @@ const Profile = ({ params }: { params: any }) => {
     variables: { username },
   });
 
-  const user = userData?.getUserByUsername;
+  const user:User = userData?.getUserByUsername;
 
   const router = useRouter();
 
@@ -36,8 +38,15 @@ const Profile = ({ params }: { params: any }) => {
     variables: { userId: user?._id },
   });
 
-  const userDesigns = data?.getUserDesigns;
+  const { loading:artLoading, data:artData } = useQuery(GET_USER_ARTS, {
+    variables: { userId: user?._id },
+  });
 
+  const userDesigns = data?.getUserDesigns;
+  const userArts:[ArtPiece] = artData?.getUserArtWorks;
+
+  console.log("user?.specialization",user);
+  
 
   return (
     <main>
@@ -50,7 +59,7 @@ const Profile = ({ params }: { params: any }) => {
 
             <div className="space-y-2 ml-8">
               <p className="font-medium text-3xl ">{user?.fullName}</p>
-              <p className="text-sm font-medium">Product Designer</p>
+              <p className="text-sm font-medium">{user?.specialization}</p>
 
               <div className="flex items-center cursor-default text-sm text-[#595862] space-x-4">
                 <p>200 followers</p>
@@ -90,7 +99,7 @@ const Profile = ({ params }: { params: any }) => {
         <Container>
           <ul className="flex items-center space-x-8 ">
             <li className="text-sm font-medium h-[2rem] px-3 bg-[#F8F7F5] flex items-center justify-center cursor-pointer mb-4 ">
-              Design
+              { user?.userType === "ARTIST" ? "Art works" : "Designs" }
             </li>
             <li className="text-sm font-medium h-[2rem] px-3 flex items-center justify-center cursor-pointer mb-4 ">
               Projects
@@ -110,12 +119,19 @@ const Profile = ({ params }: { params: any }) => {
                 <SkeletonLoader dontShowSubtitles />
               </div>
             ) : (
-              <div className="pt-[4rem] grid grid-cols-4 ">
+              <div className={`pt-[4rem] ${user?.userType === "ARTIST" ? "grid grid-cols-3" : "grid grid-cols-4"}  `}>
                 <>
                   {appState?.session?.username === user?.username && (
                     <UploadButton />
                   )}
-                  {userDesigns?.map((design: Design, idx: number) => (
+                  {user?.userType === "ARTIST" ? 
+                  userArts?.map((art: ArtPiece) => (
+                    <ArtCard
+                      art={art}
+                      key={art._id}
+                    />
+                  )) : 
+                  userDesigns?.map((design: Design, idx: number) => (
                     <ProfileWork
                       design={design}
                       key={design._id}
@@ -123,7 +139,7 @@ const Profile = ({ params }: { params: any }) => {
                     />
                   ))}
                 </>
-              </div>
+              </div> 
             )}
 
             <Footer />

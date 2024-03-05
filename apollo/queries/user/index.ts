@@ -31,22 +31,6 @@ export const GET_USER_BY_USERNAME = gql`
       fullName
       email
       avatar
-      username
-      available
-      subscription
-      verified
-    }
-  }
-`;
-
-export const EDIT_PROFILE = gql`
-mutation EditProfile($editProfileInput: EditProfileInput) {
-  editProfile(editProfileInput: $editProfileInput) {
-    user {
-      _id
-      fullName
-      email
-      avatar
       password
       authType
       userType
@@ -59,7 +43,30 @@ mutation EditProfile($editProfileInput: EditProfileInput) {
       phoneNumber
       website
     }
-    token
   }
-}
+`;
+
+export const EDIT_PROFILE = gql`
+  mutation EditProfile($editProfileInput: EditProfileInput) {
+    editProfile(editProfileInput: $editProfileInput) {
+      user {
+        _id
+        fullName
+        email
+        avatar
+        password
+        authType
+        userType
+        available
+        subscription
+        verified
+        bio
+        username
+        specialization
+        phoneNumber
+        website
+      }
+      token
+    }
+  }
 `;
