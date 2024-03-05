@@ -3,7 +3,26 @@ import Header from "@/components/Header";
 import React from "react";
 import { BsCart4 } from "react-icons/bs";
 
-    
+
+interface MeetingProps {
+  picture: string;
+  name: string;
+  description: string;
+  price: string;
+}
+
+const Meeting: React.FC<MeetingProps> = ({ picture, name, description, price }) => {
+  return (
+  <div className="w-[280px] h-[450px]">
+   <img src={picture} alt="profile picture" />
+  <p className="text-[18px] font-semibold py-2">{name}</p>
+  <p className="">{description}</p>
+  <p>{price}</p>
+  </div>
+  );
+};
+
+
 const ArtDetails: React.FC = () => {  
   return (
     <main>
@@ -89,12 +108,25 @@ I use the highest quality European-made materials. Clear, gloss coating protects
           <div className="border-t">
           <p className="mt-[2rem] text-center text-[22px] font-medium">You May Also Like</p>
 
+          <div className=" mx-[83px] mt-[3rem] flex justify-between">
+          <Meeting picture="../images/drawings.png" name="Amber Haze" description= "Annet Loginova | Paintings" price="$350" />
+          <Meeting picture="../images/drawings2.png" name="Little ballerina" description= "Annet Loginova | Paintings" price="$350" />
+          <Meeting picture="../images/drawings.png" name="Amber Haze" description= "Annet Loginova | Paintings" price="$350" />
+          </div>
+
+          <div className="flex justify-between mx-[83px] mt-[3.5rem]">
+          <Meeting picture="../images/drawings2.png" name="Little ballerina" description= "Annet Loginova | Paintings" price="$350" />
+          <Meeting picture="../images/drawings.png" name="Amber Haze" description= "Annet Loginova | Paintings" price="$350" />
+          <Meeting picture="../images/drawings2.png" name="Little ballerina" description= "Annet Loginova | Paintings" price="$350" />
+
+          
+          </div>
+         
          
           </div>
           
         </div>
       </Container>
-      
     </main>
   );
 };
