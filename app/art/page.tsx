@@ -64,13 +64,11 @@ const Art = () => {
         </ul>
       </div>
 
-        <div className="grid grid-cols-4 ">
+        <div className="grid grid-cols-3 ">
           {[...data?.getAllArtWorks || []].map((item:ArtPiece, idx) => (
             <ArtCard
-              key={idx}
-              authourImage={item.artist.avatar}
-              authourName={item.artist.fullName}
-              preview={item.artPreview}
+              art={item}
+              key={item._id}
             />
           ))}
         </div>

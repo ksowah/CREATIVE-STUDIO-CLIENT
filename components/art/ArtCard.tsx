@@ -7,55 +7,44 @@ import { FaRegComment } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 interface Props {
-  preview: string;
-  authourImage: string;
-  authourName: string;
+  art: ArtPiece;
 }
 
-const ArtCard = ({ authourImage, authourName, preview }: Props) => {
+const ArtCard = ({ art }: Props) => {
   const router = useRouter();
 
   return (
     <div
       onClick={() => router.push(`/art/details`)}
-      className="group h-[18rem] cursor-pointer w-[20rem] rounded-md border shadow-md overflow-hidden mb-12"
+      className="relative group cursor-pointer mb-12 w-[20rem] h-[26rem]"
     >
-      <div className="relative overflow-hidden w-full h-[14rem]">
+
+      <div className="relative w-full h-[18rem]">
         {/* {imageLoading && (
           <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
         )} */}
         <Image
           //   onLoad={() => setImageLoading(false)}
-          className="group-hover:scale-125 duration-500"
-          src={preview}
-          objectFit="cover"
+          className="group-hover:scale-105 duration-500"
+          src={art?.artPreview}
           fill
+          style={{ objectFit: "contain" }}
           alt="card image"
         />
       </div>
 
-      <div className="w-full h-[4rem] flex items-center justify-between px-4 ">
+      <div className="w-full mt-4 flex flex-col space-y-1">
         <div className="flex items-center space-x-2">
-          <SessionAvatar image={authourImage} size={40} />
+          <SessionAvatar image={art?.artist.avatar} size={40} />
 
-          <p className="text-sm text-[#595862] line-clamp-1 ">{authourName}</p>
+          <p className="text-sm text-[#595862] line-clamp-1 ">
+            {art?.artist.fullName}
+          </p>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <div className="flex cursor-pointer items-center space-x-1">
-            <CiHeart size={20} color="#595862" />
-            <p className="text-xs text-[#595862] ">3k</p>
-          </div>
-
-          <div className="flex cursor-pointer items-center space-x-1">
-            <TfiSave size={16} color="#595862" />
-            <p className="text-xs text-[#595862] ">50</p>
-          </div>
-
-          <div className="flex cursor-pointer items-center space-x-1">
-            <FaRegComment size={20} color="#595862" />
-            <p className="text-xs text-[#595862] ">2k</p>
-          </div>
+        <div className="flex items-center justify-between" >
+          <p className="font-medium text-[1.3rem] line-clamp-1 ">{art?.title}</p>
+          <p>{art?.price} ₵</p>
         </div>
       </div>
     </div>

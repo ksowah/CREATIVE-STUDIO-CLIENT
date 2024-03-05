@@ -73,7 +73,7 @@ export default function Home() {
           <SkeletonLoader />
         ) : (
           <div className="grid grid-cols-4 ">
-            {[...data?.getAllDesigns].map((item, idx) => (
+            {[...data?.getAllDesigns || []].map((item, idx) => (
               <CreativeCard
                 key={item._id}
                 designId={item._id}
