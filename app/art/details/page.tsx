@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import React from "react";
 import { BsCart4 } from "react-icons/bs";
 import Footer from "@/components/Footer";
+import Image from "next/image";
 
 interface MeetingProps {
   picture: string;
@@ -35,16 +36,24 @@ const ArtDetails: React.FC = () => {
       <Container>
         <div className="pt-[10rem]">
           {/* main div for the two */}
-          <div className="flex justify-evenly">
-            <div>
-              <img
-                src="/images/mainpicture.png"
-                className="w-[500px] h-[365px] "
-              />
+          <div className="flex justify-between">
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <div className="relative flex justify-start w-[700px] h-[500px] ">
+                <Image
+                  src="/images/mainpicture.png"
+                  fill
+                  style={{ objectFit: "contain" }}
+                  alt="main picture"
+                />
+              </div>
+              <div className="flex h-[120px] mt-10 ">
+                <img src="../images/smallpic.png" className="mr-7" />
+                <img src="../images/smallpic1.png" />
+              </div>
             </div>
 
             {/* div for the second writings */}
-            <div className="w-[500px] ml-[6rem]">
+            <div className="ml-[6rem]">
               <p className="font-medium text-[30px]">VISIONARY 3</p>
               <p className="text-[13px]">Painting Abstract</p>
 
@@ -86,13 +95,8 @@ const ArtDetails: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex ml-[83px] h-[120px] w-[200px] mt-10 ">
-            <img src="../images/smallpic.png" className="mr-7" />
-            <img src="../images/smallpic1.png" />
-          </div>
-
           {/* Text underneath */}
-          <div className="ml-[83px]  w-[500px]">
+          <div className="w-[500px]">
             <h2 className="mt-[4rem] mb-3 text-[23px] font-semibold">
               History
             </h2>
@@ -137,7 +141,7 @@ const ArtDetails: React.FC = () => {
               <Meeting
                 picture="../images/drawings.png"
                 name="Amber Haze"
-                description="Annet Loginova | Paintings"
+                description="Annet Loginova | Paintings"
                 price="$350"
               />
             </div>
@@ -166,7 +170,7 @@ const ArtDetails: React.FC = () => {
         </div>
       </Container>
 
-    <Footer />
+      <Footer />
     </main>
   );
 };
