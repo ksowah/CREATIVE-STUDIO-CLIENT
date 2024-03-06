@@ -70,3 +70,39 @@ export const GET_USER_ARTS = gql`
     }
   }
 `;
+
+export const GET_ART_BY_ID = gql`
+  query GetArtById($artId: ID!) {
+    getArtById(artId: $artId) {
+      _id
+      title
+      description
+      artist {
+        _id
+        fullName
+        email
+        avatar
+        password
+        authType
+        userType
+        available
+        subscription
+        verified
+        bio
+        username
+        specialization
+        phoneNumber
+        website
+      }
+      artPreview
+      previewImageRef
+      artImagesRef
+      artImages
+      category
+      dimensions
+      price
+      artState
+      auctionStartPrice
+    }
+  }
+`;

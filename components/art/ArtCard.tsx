@@ -15,7 +15,7 @@ const ArtCard = ({ art }: Props) => {
 
   return (
     <div
-      onClick={() => router.push(`/art/details`)}
+      onClick={() => router.push(`/art/details/${art?._id}`)}
       className="relative group cursor-pointer mb-12 w-[20rem] h-[26rem]"
     >
 
