@@ -11,6 +11,17 @@ import ProfileImage from "./ProfileImage";
 import { useContext, useState } from "react";
 import { MyContext } from "@/context/Context";
 import SessionAvatar from "./SessionAvatar";
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { Badge, Tooltip } from "@mui/material";
+import { withStyles } from "@mui/styles";
+import { ImHammer2 } from "react-icons/im";
+
+const styles = () => ({
+  customBadge: {
+    backgroundColor: (props: any) => props.color,
+    color: "white",
+  },
+});
 
 const Header = () => {
   const router = useRouter();
@@ -21,6 +32,28 @@ const Header = () => {
 
   const user = appState.session;
 
+  function CartBadge(props: any) {
+    const { classes } = props;
+    return (
+      <div>
+        <Tooltip title="Your cart">
+          <Badge
+            classes={{ badge: classes.customBadge }}
+            className={classes.margin}
+            badgeContent={4}
+          >
+            <Link
+              href={"/art/cart"}
+              className="h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center  "
+            >
+              <MdOutlineShoppingCart size={20} />
+            </Link>
+          </Badge>
+        </Tooltip>
+      </div>
+    );
+  }
+  const Cart = withStyles(styles)(CartBadge);
 
   return (
     <div className="absolute w-full h-[5rem] bg-white z-50">
@@ -34,8 +67,14 @@ const Header = () => {
 
           <div className="flex flex-1 px-[4rem] space-x-6">
             <ul className="flex items-center space-x-6 text-sm ">
-              <Link href={"/art"} >
-                <li className={`cursor-pointer ${pathname.includes("/art") && "font-bold"} `}>Art Store</li>
+              <Link href={"/art"}>
+                <li
+                  className={`cursor-pointer ${
+                    pathname.includes("/art") && "font-bold"
+                  } `}
+                >
+                  Art Store
+                </li>
               </Link>
               <li className="cursor-pointer">Explore</li>
               <li className="cursor-pointer">Free + premium</li>
@@ -52,26 +91,36 @@ const Header = () => {
             </div>
           </div>
 
-          {user ? (
-            <Link href={`/profile/${user?.username}`}>
-              <div className="cursor-pointer">
-                <SessionAvatar image={user?.avatar} size={45} />
+          <div className="flex items-center space-x-4">
+            <Tooltip title="Auction room">
+              <div className="h-[2.6rem] w-[2.6rem] cursor-pointer border rounded-md flex items-center justify-center  ">
+                <ImHammer2 size={20} />
               </div>
-            </Link>
-          ) : (
-            <div className="flex items-center space-x-4">
-              <Link href={"/login"}>
-                <ButtonOutlined
-                  className="w-[7rem] h-[2.8rem]"
-                  title="Log in"
-                />
-              </Link>
+            </Tooltip>
 
-              <Link href={"/signup"}>
-                <ButtonSolid title="Join" className="w-[7rem] h-[2.8rem] " />
+            <Cart color="#000" badgeContent={4} />
+
+            {user ? (
+              <Link href={`/profile/${user?.username}`}>
+                <div className="cursor-pointer">
+                  <SessionAvatar image={user?.avatar} size={45} />
+                </div>
               </Link>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link href={"/login"}>
+                  <ButtonOutlined
+                    className="w-[7rem] h-[2.8rem]"
+                    title="Log in"
+                  />
+                </Link>
+
+                <Link href={"/signup"}>
+                  <ButtonSolid title="Join" className="w-[7rem] h-[2.8rem] " />
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </Container>
     </div>
