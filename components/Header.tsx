@@ -78,7 +78,6 @@ const Header = () => {
               </Link>
               <li className="cursor-pointer">Explore</li>
               <li className="cursor-pointer">Free + premium</li>
-              <li className="cursor-pointer">Auction</li>
             </ul>
 
             <div className="flex items-center space-x-2">

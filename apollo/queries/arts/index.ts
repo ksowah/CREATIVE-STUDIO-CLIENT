@@ -32,6 +32,8 @@ export const GET_ALL_ARTS = gql`
       auctionStartPrice
       artImagesRef
       previewImageRef
+      auctionEndDate
+      auctionStartDate
     }
   }
 `;

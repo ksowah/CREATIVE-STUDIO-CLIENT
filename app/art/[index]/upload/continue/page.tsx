@@ -1,5 +1,7 @@
 "use client";
 
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import ButtonOutlined from "@/components/ButtonOutlined";
 import ButtonSolid from "@/components/ButtonSolid";
 import Container from "@/components/Container";
@@ -29,6 +31,8 @@ import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { LiaTimesSolid } from "react-icons/lia";
 import { GET_ALL_ARTS, GET_USER_ARTS } from "@/apollo/queries/arts";
+import { DateRangePicker } from "react-date-range";
+import { addDays } from "date-fns";
 
 const ContinueArtUpload = () => {
   const { appState } = useContext(MyContext);
@@ -46,6 +50,16 @@ const ContinueArtUpload = () => {
     category: "",
     artType: "",
   });
+
+  const [selectedDate, setSelectedDate] = useState<any>([
+    {
+      startDate: new Date(),
+      endDate: addDays(new Date(), 7),
+      key: "selection",
+    },
+  ]);
+
+  console.log("selected date >>>>", selectedDate);
 
   const [loading, setLoading] = useState(false);
   const [errorOccured, setErrorOccured] = useState(false);
@@ -104,6 +118,17 @@ const ContinueArtUpload = () => {
       return;
     }
 
+    
+    // check if start date is less than yesterday date if art type is auction
+    // if (artUploadData.artType === "auction") {
+    //   if (new Date(selectedDate[0].startDate) < new Date()) {
+    //     setErrorOccured(true);
+    //     setErrorMessage("Start date cannot be less than today's date");
+    //     setLoading(false);
+    //     return;
+    //   }
+    // }
+
     try {
       setErrorOccured(false);
       let previewImage: SingleFileUpload | undefined = await uploadFileToFB(
@@ -132,7 +157,10 @@ const ContinueArtUpload = () => {
         dimensions: `${artUploadData.dimensions}${dimenssionSelected}`,
         price: artUploadData.price,
         artState: artUploadData.artType,
-      };
+        auctionStartPrice: artUploadData.artType === "auction" ? artUploadData.price : 0,
+        auctionStartDate: artUploadData.artType === "auction" ? selectedDate[0].startDate : "",
+        auctionEndDate: artUploadData.artType === "auction" ? selectedDate[0].endDate : "",
+      }
 
       console.log("art input >>>>", artInput);
 
@@ -334,24 +362,6 @@ const ContinueArtUpload = () => {
                   </div>
                 </div>
 
-                <div>
-                  <p className="text-sm font-medium mb-2"> Price </p>
-                  <TextField
-                    id="outlined-basic"
-                    variant="outlined"
-                    className="w-full"
-                    placeholder="150.00"
-                    type="number"
-                    value={artUploadData.price}
-                    onChange={(e) =>
-                      setArtUploadData({
-                        ...artUploadData,
-                        price: parseFloat(e.target.value),
-                      })
-                    }
-                  />
-                </div>
-
                 <div className="flex items-center justify-between">
                   <FormControl className="w-[20rem] mt-[1rem]">
                     <InputLabel id="demo-simple-select-label">
@@ -380,7 +390,6 @@ const ContinueArtUpload = () => {
                       <MenuItem value={"textileArt"}>Textile Art</MenuItem>
                     </Select>
                   </FormControl>
-
                   <FormControl className="w-[20rem] mt-[1rem]">
                     <InputLabel id="demo-simple-select-label">
                       Art Type
@@ -404,6 +413,63 @@ const ContinueArtUpload = () => {
                     </Select>
                   </FormControl>
                 </div>
+
+                {artUploadData.artType === "onSale" && (
+                  <div>
+                    <p className="text-sm font-medium mb-2"> Price </p>
+                    <TextField
+                      id="outlined-basic"
+                      variant="outlined"
+                      className="w-full"
+                      placeholder="150.00"
+                      type="number"
+                      value={artUploadData.price}
+                      onChange={(e) =>
+                        setArtUploadData({
+                          ...artUploadData,
+                          price: parseFloat(e.target.value),
+                        })
+                      }
+                    />
+                  </div>
+                )}
+
+                {artUploadData.artType === "auction" && (
+                  <>
+                    <div className="w-full py-[2rem]">
+                      <div className="mb-4" >
+                        <p className="text-sm font-medium mb-2">Starting Price </p>
+                        <TextField
+                          id="outlined-basic"
+                          variant="outlined"
+                          className="w-full"
+                          placeholder="150.00"
+                          type="number"
+                          error={errorOccured}
+                          value={artUploadData.price}
+                          onChange={(e) =>
+                            setArtUploadData({
+                              ...artUploadData,
+                              price: parseFloat(e.target.value),
+                            })
+                          }
+                        />
+                      </div>
+                      <p className="text-sm font-medium mb-2">
+                        {" "}
+                        Start date - End date{" "}
+                      </p>
+                      <DateRangePicker
+                        onChange={(item) => setSelectedDate([item.selection])}
+                        moveRangeOnFirstSelection={false}
+                        months={2}
+                        ranges={selectedDate}
+                        direction="horizontal"
+                        minDate={new Date()}
+                      />
+                    </div>
+                  </>
+                )}
 
                 <div className="flex items-center justify-between pt-20 ">
                   <ButtonOutlined

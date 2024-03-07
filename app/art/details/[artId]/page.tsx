@@ -2,12 +2,13 @@
 
 import Container from "@/components/Container";
 import Header from "@/components/Header";
-import React from "react";
+import React, { useState } from "react";
 import { BsCart4 } from "react-icons/bs";
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import { useQuery } from "@apollo/client";
 import { GET_ART_BY_ID } from "@/apollo/queries/arts";
+import { Skeleton } from "@mui/material";
 
 interface MeetingProps {
   picture: string;
@@ -35,6 +36,8 @@ const Meeting: React.FC<MeetingProps> = ({
 const ArtDetails = ({ params }: { params: any }) => {
   let artId = params?.artId;
 
+  const [imageLoading, setImageLoading] = useState(true);
+
   const { loading, data } = useQuery(GET_ART_BY_ID, {
     variables: { artId },
   });
@@ -52,24 +55,65 @@ const ArtDetails = ({ params }: { params: any }) => {
           <div className="flex justify-between">
             <div className="flex-1 flex flex-col items-center justify-center">
               <div className="relative flex justify-start w-[700px] h-[500px]">
-                <Image
-                  src={artDetails?.artPreview}
-                  fill
-                  style={{ objectFit: "contain" }}
-                  alt="main art preview"
-                />
+                {loading ? (
+                  <Skeleton
+                    variant="rectangular"
+                    width={"100%"}
+                    height={"100%"}
+                  />
+                ) : (
+                  <Image
+                    onLoad={() => setImageLoading(false)}
+                    src={artDetails?.artPreview}
+                    fill
+                    style={{ objectFit: "contain" }}
+                    alt="main art preview"
+                  />
+                )}
               </div>
-              <div className="md:grid grid-cols-4  flex flex-wrap mt-10 ">
-                {[...(artDetails?.artImages || [])].map((image, idx) => (
-                  <div key={idx} className="relative h-[10rem] w-[10rem] mr-4 ">
-                    <Image
-                      src={image}
-                      fill
-                      style={{ objectFit: "contain" }}
-                      alt="other images"
+              <div className="md:grid grid-cols-4 flex flex-wrap mt-10 ">
+                {loading ? (
+                  <>
+                    <Skeleton
+                      className="mr-4"
+                      variant="rectangular"
+                      width={160}
+                      height={160}
                     />
-                  </div>
-                ))}
+                    <Skeleton
+                      className="mr-4"
+                      variant="rectangular"
+                      width={160}
+                      height={160}
+                    />
+                    <Skeleton
+                      className="mr-4"
+                      variant="rectangular"
+                      width={160}
+                      height={160}
+                    />
+                    <Skeleton
+                      className="mr-4"
+                      variant="rectangular"
+                      width={160}
+                      height={160}
+                    />
+                  </>
+                ) : (
+                  [...(artDetails?.artImages || [])].map((image, idx) => (
+                    <div
+                      key={idx}
+                      className="relative h-[10rem] w-[10rem] mr-4 "
+                    >
+                      <Image
+                        src={image}
+                        fill
+                        style={{ objectFit: "contain" }}
+                        alt="other images"
+                      />
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 
@@ -99,7 +143,9 @@ const ArtDetails = ({ params }: { params: any }) => {
                 </div>
 
                 <div className="flex justify-between mt-8 pr-3">
-                  <p className="text-[25px] font-medium">₵{artDetails?.price}</p>
+                  <p className="text-[25px] font-medium">
+                    ₵{artDetails?.price}
+                  </p>
 
                   <button className="bg-black w-[110px] h-[35px] text-white rounded-[7px]  flex justify-center items-center">
                     <BsCart4 className="pl- mr-2" />
@@ -112,12 +158,8 @@ const ArtDetails = ({ params }: { params: any }) => {
 
           {/* Text underneath */}
           <div className="w-[500px] py-[2rem] ">
-            <h2 className="mt-[4rem] mb-3 text-[23px] font-semibold">
-              Story
-            </h2>
-            <p className="text-[13px]">
-              {artDetails?.description}
-            </p>
+            <h2 className="mt-[4rem] mb-3 text-[23px] font-semibold">Story</h2>
+            <p className="text-[13px]">{artDetails?.description}</p>
           </div>
 
           <div className="border-t">

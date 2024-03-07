@@ -1,13 +1,15 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_ART = gql`
-  mutation CreateArt($artInput: ArtInput) {
+  mutation Mutation($artInput: ArtInput) {
     createArt(artInput: $artInput) {
       _id
       title
       description
       artist
       artPreview
+      previewImageRef
+      artImagesRef
       artImages
       category
       dimensions
@@ -15,8 +17,7 @@ export const CREATE_ART = gql`
       artState
       auctionStartPrice
       auctionStartDate
-      artImagesRef
-      previewImageRef
+      auctionEndDate
     }
   }
 `;
