@@ -72,184 +72,127 @@ const AuctionDetails = ({ params }: { params: any }) => {
       <Header />
 
       <Container>
-        <div className="pt-[7rem]">
-          <div className="border rounded-lg w-full flex text-[#595862]">
-            <div className="flex-1">
-              {/* header part */}
-              <div className="h-[4rem] border-b px-[2rem] flex items-center justify-between ">
-                <h3 className="font-medium text-[1.3rem] ">Auction</h3>
+        {loading ? (
+          <div className="pt-[7rem] ">
+            <div className=" flex items-center justify-between">
+              <Skeleton variant="rectangular" width={"45%"} height={400} />
+              <Skeleton variant="rectangular" width={"40%"} height={200} />
+            </div>
 
-                <p className="text-[.9rem]">DATE: 15th March, 2024</p>
+            <Skeleton className="mt-[4rem] mb-4" variant="rectangular" width={"75%"} height={40} />
+            <Skeleton variant="rectangular" width={"55%"} height={40} />
+          </div>
+        ) : (
+          <>
+            <div className="pt-[7rem]">
+              <div className="border rounded-lg w-full flex text-[#595862]">
+                <div className="flex-1">
+                  {/* header part */}
+                  <div className="h-[4rem] border-b px-[2rem] flex items-center justify-between ">
+                    <h3 className="font-medium text-[1.3rem] ">Auction</h3>
 
-                <p className="text-[.9rem]">TIME: 3h 54m 50s</p>
-              </div>
+                    <p className="text-[.9rem]">DATE: 15th March, 2024</p>
 
-              {/* content */}
-              <div className="flex items-center space-x-8 p-[1.5rem] ">
-                <div className="relative h-[18rem] w-[18rem]">
-                  {loading ? (
-                    <Skeleton
-                      variant="rectangular"
-                      width={"100%"}
-                      height={"100%"}
-                    />
-                  ) : (
-                    <Image
-                      className="group-hover:scale-105 duration-500"
-                      src={artDetails?.artPreview}
-                      fill
-                      style={{ objectFit: "contain" }}
-                      alt="art image"
-                    />
-                  )}
-                </div>
+                    <p className="text-[.9rem]">TIME: 3h 54m 50s</p>
+                  </div>
 
-                <div className="flex w-full items-end justify-between">
-                  <div className="flex-1 flex flex-col space-y-2 ">
-                    {loading ? (
-                      <>
-                        <Skeleton
-                          variant="rectangular"
-                          width={150}
-                          height={20}
-                        />
-                        <Skeleton
-                          variant="rectangular"
-                          width={120}
-                          height={20}
-                        />
-                        <Skeleton
-                          variant="rectangular"
-                          width={120}
-                          height={20}
-                        />
-                        <Skeleton
-                          variant="rectangular"
-                          width={120}
-                          height={20}
-                        />
-                      </>
-                    ) : (
-                      <>
+                  {/* content */}
+                  <div className="flex items-center space-x-8 p-[1.5rem] ">
+                    <div className="relative h-[18rem] w-[18rem]">
+                      <Image
+                        className="group-hover:scale-105 duration-500"
+                        src={artDetails?.artPreview}
+                        fill
+                        style={{ objectFit: "contain" }}
+                        alt="art image"
+                      />
+                    </div>
+
+                    <div className="flex w-full items-end justify-between">
+                      <div className="flex-1 flex flex-col space-y-2 ">
                         <p className="font-medium text-[1.3rem] ">
                           {artDetails?.title}
                         </p>
                         <p className="text-sm">
                           Artist: {artDetails?.artist.fullName}
                         </p>
-                        <p className="text-sm">Age: 22</p>
+                        <p className="text-sm">Dimensions: {artDetails?.dimensions}</p>
                         <p className="text-sm">Country: Ghana</p>
-                      </>
-                    )}
-                  </div>
+                      </div>
 
-                  <div className="space-y-2 flex flex-col items-end">
-                    {loading ? (
-                      <Skeleton variant="rectangular" width={150} height={20} />
-                    ) : (
-                      <p className="text-sm ">
-                        Starting price:{" "}
-                        <span className="text-lg font-bold">{`₵${
-                          artDetails?.auctionStartPrice || ""
-                        }`}</span>
-                      </p>
-                    )}
-                    {artBiddings?.length > 0 && (
-                      <p className="text-sm ">
-                        Highest Bid:{" "}
-                        <span className="text-lg font-bold">{`₵${highestBid}`}</span>
-                      </p>
-                    )}
+                      <div className="space-y-2 flex flex-col items-end">
+                        <p className="text-sm ">
+                          Starting price:{" "}
+                          <span className="text-lg font-bold">{`₵${
+                            artDetails?.auctionStartPrice || ""
+                          }`}</span>
+                        </p>
+
+                        {artBiddings?.length > 0 && (
+                          <p className="text-sm ">
+                            Highest Bid:{" "}
+                            <span className="text-lg font-bold">{`₵${highestBid}`}</span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <PaymentCard onClick={placeBidOnArt} setBidAmount={setBidAmount} />
-          </div>
-
-          <div className="w-full my-[4rem] ">
-            <div className="flex items-center space-x-10 ">
-              <div className="flex-1 ">
-                <div className="relative  h-[40rem] w-full">
-                  {loading ? (
-                    <Skeleton
-                      variant="rectangular"
-                      width={"100%"}
-                      height={"100%"}
-                    />
-                  ) : (
-                    <Image
-                      className="group-hover:scale-105 duration-500"
-                      src={artDetails?.artPreview}
-                      fill
-                      style={{ objectFit: "contain" }}
-                      alt="art image"
-                    />
-                  )}
-                </div>
+                <PaymentCard
+                  onClick={placeBidOnArt}
+                  setBidAmount={setBidAmount}
+                />
               </div>
 
-              <div className="flex-1 ">
-                <div className="flex items-center h-[2.6rem] w-[6rem] border-[#000] border-0 border-l-[4px] border-t-[4px] px-4 overflow-visible ">
-                  <h2 className="font-medium text-[1.2rem] text-nowrap ">
-                    {loading ? (
-                      <Skeleton variant="rectangular" width={150} height={20} />
-                    ) : (
-                      artDetails?.title
-                    )}
-                  </h2>
-                </div>
-
-                <div className="ml-[2.4rem] ">
-                  {loading ? (
-                    <Skeleton
-                      className="mb-4"
-                      variant="rectangular"
-                      width={"100%"}
-                      height={200}
-                    />
-                  ) : (
-                    <p className="text-lg">{artDetails?.description}</p>
-                  )}
-                </div>
-
-                <div className="w-full flex justify-end">
-                  <div className="h-[2.6rem] w-[6rem] border-[#000] border-0 border-r-[4px] border-b-[4px] "></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="md:grid grid-cols-4 flex flex-wrap mb-[4rem] w-[50%] mt-4 ">
-              {loading ? (
-                <>
-                  <Skeleton variant="rectangular" width={160} height={160} />
-                  <Skeleton variant="rectangular" width={160} height={160} />
-                  <Skeleton variant="rectangular" width={160} height={160} />
-                  <Skeleton variant="rectangular" width={160} height={160} />
-                </>
-              ) : (
-                [...(artDetails?.artImages || [])].map((image, idx) => (
-                  <div key={idx} className="relative h-[10rem] w-[10rem] mr-4 ">
-                    <Image
-                      src={image}
-                      fill
-                      style={{ objectFit: "contain" }}
-                      alt="other images"
-                    />
+              <div className="w-full my-[4rem] ">
+                <div className="flex items-center space-x-10 ">
+                  <div className="flex-1 ">
+                    <div className="relative  h-[40rem] w-full">
+                      <Image
+                        className="group-hover:scale-105 duration-500"
+                        src={artDetails?.artPreview}
+                        fill
+                        style={{ objectFit: "contain" }}
+                        alt="art image"
+                      />
+                    </div>
                   </div>
-                ))
-              )}
-            </div>
-          </div>
 
-          {biddingsLoading ? (
-            <div className="space-y-2" >
-              <Skeleton variant="rectangular" width={"50%"} height={40} />
-              <Skeleton variant="rectangular" width={"70%"} height={40} />
-            </div>
-          ) : (
-            <>
+                  <div className="flex-1 ">
+                    <div className="flex items-center h-[2.6rem] w-[6rem] border-[#000] border-0 border-l-[4px] border-t-[4px] px-4 overflow-visible ">
+                      <h2 className="font-medium text-[1.2rem] text-nowrap ">
+                        {artDetails?.title}
+                      </h2>
+                    </div>
+
+                    <div className="ml-[2.4rem] ">
+                      <p className="text-lg">{artDetails?.description}</p>
+                    </div>
+
+                    <div className="w-full flex justify-end">
+                      <div className="h-[2.6rem] w-[6rem] border-[#000] border-0 border-r-[4px] border-b-[4px] "></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="md:grid grid-cols-4 flex flex-wrap mb-[4rem] w-[50%] mt-4 ">
+                  {[...(artDetails?.artImages || [])].map((image, idx) => (
+                    <div
+                      key={idx}
+                      className="relative h-[10rem] w-[10rem] mr-4 "
+                    >
+                      <Image
+                        src={image}
+                        fill
+                        style={{ objectFit: "contain" }}
+                        alt="other images"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="flex items-center space-x-2">
                 <div className="h-[3rem] w-[9rem] rounded-md bg-black flex items-center justify-center ">
                   <p className="text-white">BIDS PLACED</p>
@@ -266,11 +209,10 @@ const AuctionDetails = ({ params }: { params: any }) => {
                   <BidRank position={idx} key={bid?._id} bid={bid} />
                 ))}
               </div>
-            </>
-          )}
-        </div>
-
-        <Footer />
+            </div>
+            <Footer />
+          </>
+        )}
       </Container>
     </main>
   );
