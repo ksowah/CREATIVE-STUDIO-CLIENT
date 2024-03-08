@@ -36,9 +36,9 @@ const ArtCard = ({ art }: Props) => {
         />
       </div>
 
-      <div className="w-full mt-4 flex justify-between">
-        <div className="space-y-1" >
-          <p className="font-medium text-[1.3rem] line-clamp-1 ">
+      <div className="w-full mt-2 flex items-center justify-between">
+        <div className="" >
+          <p className="font-medium text-[1.2rem] line-clamp-1 ">
             {art?.title}
           </p>
           <p className="text-sm text-[#595862] line-clamp-1 ">
@@ -49,7 +49,7 @@ const ArtCard = ({ art }: Props) => {
             <p className="text-white" >{art?.artState === "auction" ? "Auction" : art?.artState === "onSale" ? `₵${art?.price}` : "Gallery"}</p>
           </div>
         </div>
-          <SessionAvatar image={art?.artist.avatar} size={40} />
+          <SessionAvatar image={art?.artist.avatar} size={50} />
       </div>
     </div>
   );

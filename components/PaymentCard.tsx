@@ -4,8 +4,7 @@ import { ImHammer2 } from "react-icons/im";
 import { RiVisaLine } from "react-icons/ri";
 import ButtonSolid from "./ButtonSolid";
 
-
-const PaymentCard = () => {
+const PaymentCard = ({ setBidAmount, onClick }: { setBidAmount?: any, onClick?:any }) => {
   return (
     <div className="w-[24rem] border rounded-lg">
       {/* header part */}
@@ -51,7 +50,11 @@ const PaymentCard = () => {
           <p>BID AMOUNT</p>
 
           <div className="h-[2rem] w-[8rem] border flex items-center px-1 ">
-            <input type="number" className="w-full border-none outline-none" />
+            <input
+              onChange={(e) => setBidAmount(e.target.value)}
+              type="number"
+              className="w-full border-none outline-none"
+            />
           </div>
         </div>
 
@@ -70,7 +73,7 @@ const PaymentCard = () => {
           </div>
         </FormGroup>
 
-        <ButtonSolid className="my-4" title="PLACE BID" />
+        <ButtonSolid onClick={onClick} className="my-4" title="PLACE BID" />
       </div>
     </div>
   );

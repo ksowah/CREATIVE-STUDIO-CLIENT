@@ -36,8 +36,6 @@ const Meeting: React.FC<MeetingProps> = ({
 const ArtDetails = ({ params }: { params: any }) => {
   let artId = params?.artId;
 
-  const [imageLoading, setImageLoading] = useState(true);
-
   const { loading, data } = useQuery(GET_ART_BY_ID, {
     variables: { artId },
   });
@@ -63,7 +61,6 @@ const ArtDetails = ({ params }: { params: any }) => {
                   />
                 ) : (
                   <Image
-                    onLoad={() => setImageLoading(false)}
                     src={artDetails?.artPreview}
                     fill
                     style={{ objectFit: "contain" }}

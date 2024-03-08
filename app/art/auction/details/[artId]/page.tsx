@@ -1,21 +1,72 @@
-import ButtonSolid from "@/components/ButtonSolid";
+"use client";
+
 import Container from "@/components/Container";
 import Header from "@/components/Header";
-import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  TextField,
-} from "@mui/material";
 import Image from "next/image";
-import { RiVisaLine } from "react-icons/ri";
-import { ImHammer2 } from "react-icons/im";
 import PaymentCard from "@/components/PaymentCard";
-import SessionAvatar from "@/components/SessionAvatar";
 import BidRank from "@/components/art/BidRank";
 import Footer from "@/components/Footer";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_ART_BY_ID } from "@/apollo/queries/arts";
+import { PLACE_BID } from "@/apollo/mutations/auction";
+import { useState } from "react";
+import { Alert, Skeleton } from "@mui/material";
+import { set } from "date-fns";
+import { GET_ART_BIDDINGS } from "@/apollo/queries/auction";
 
-const AuctionDetails = () => {
+const AuctionDetails = ({ params }: { params: any }) => {
+  const { artId } = params;
+
+  const [bidAmount, setBidAmount] = useState<any>(0);
+
+  const [isErrorOccured, setIsErrorOccured] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const { data, loading } = useQuery(GET_ART_BY_ID, {
+    variables: { artId },
+  });
+
+  const {
+    loading: biddingsLoading,
+    data: biddingsData,
+    refetch: refetchArtBiddings,
+  } = useQuery(GET_ART_BIDDINGS, {
+    variables: { artId },
+  });
+
+  const [placeBid] = useMutation(PLACE_BID);
+
+  const artBiddings = biddingsData?.getArtBiddings;
+  let highestBid = artBiddings?.[0]?.bidAmount;
+
+  console.log("artBiddings[0]?.bidAmount >>", artBiddings);
+
+  const artDetails: ArtPiece = data?.getArtById;
+
+  const placeBidOnArt = async () => {
+    if (highestBid && bidAmount <= highestBid) {
+      alert("Bid amount must be greater than the highest bid");
+      return;
+    }
+
+    try {
+      const { data } = await placeBid({
+        variables: {
+          bidAmount: parseFloat(bidAmount),
+          artId,
+        },
+      });
+      setIsErrorOccured(false);
+      setIsSuccess(true);
+      refetchArtBiddings();
+      alert("Bid placed successfully");
+    } catch (error: any) {
+      setIsSuccess(false);
+      setIsErrorOccured(true);
+      alert(error.message);
+    }
+  };
+
   return (
     <main>
       <Header />
@@ -35,82 +86,188 @@ const AuctionDetails = () => {
 
               {/* content */}
               <div className="flex items-center space-x-8 p-[1.5rem] ">
-                <div>
-                  <div className="relative h-[18rem] w-[18rem]">
+                <div className="relative h-[18rem] w-[18rem]">
+                  {loading ? (
+                    <Skeleton
+                      variant="rectangular"
+                      width={"100%"}
+                      height={"100%"}
+                    />
+                  ) : (
                     <Image
                       className="group-hover:scale-105 duration-500"
-                      src={"/images/mainpicture.png"}
+                      src={artDetails?.artPreview}
                       fill
                       style={{ objectFit: "contain" }}
                       alt="art image"
                     />
-                  </div>
+                  )}
                 </div>
 
                 <div className="flex w-full items-end justify-between">
                   <div className="flex-1 flex flex-col space-y-2 ">
-                    <p className="font-medium text-[1.3rem] ">
-                      BLACK IS BEAUTIFUL
-                    </p>
-                    <p className="text-sm">Artist: Kelvin Sowah</p>
-                    <p className="text-sm">Age: 22</p>
-                    <p className="text-sm">Country: Ghana</p>
+                    {loading ? (
+                      <>
+                        <Skeleton
+                          variant="rectangular"
+                          width={150}
+                          height={20}
+                        />
+                        <Skeleton
+                          variant="rectangular"
+                          width={120}
+                          height={20}
+                        />
+                        <Skeleton
+                          variant="rectangular"
+                          width={120}
+                          height={20}
+                        />
+                        <Skeleton
+                          variant="rectangular"
+                          width={120}
+                          height={20}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <p className="font-medium text-[1.3rem] ">
+                          {artDetails?.title}
+                        </p>
+                        <p className="text-sm">
+                          Artist: {artDetails?.artist.fullName}
+                        </p>
+                        <p className="text-sm">Age: 22</p>
+                        <p className="text-sm">Country: Ghana</p>
+                      </>
+                    )}
                   </div>
 
-                  <p className="text-sm">Starting price: $40</p>
+                  <div className="space-y-2 flex flex-col items-end">
+                    {loading ? (
+                      <Skeleton variant="rectangular" width={150} height={20} />
+                    ) : (
+                      <p className="text-sm ">
+                        Starting price:{" "}
+                        <span className="text-lg font-bold">{`₵${
+                          artDetails?.auctionStartPrice || ""
+                        }`}</span>
+                      </p>
+                    )}
+                    {artBiddings?.length > 0 && (
+                      <p className="text-sm ">
+                        Highest Bid:{" "}
+                        <span className="text-lg font-bold">{`₵${highestBid}`}</span>
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <PaymentCard />
+            <PaymentCard onClick={placeBidOnArt} setBidAmount={setBidAmount} />
           </div>
 
-          <div className="mt-[2rem] flex items-center space-x-10 ">
-            <div className="relative h-[40rem] w-[40rem]">
-              <Image
-                className="group-hover:scale-105 duration-500"
-                src={"/images/mainpicture.png"}
-                fill
-                style={{ objectFit: "contain" }}
-                alt="art image"
-              />
-            </div>
-
-            <div className="flex-1 ">
-              <div className="flex items-center h-[2.6rem] w-[6rem] border-[#000] border-0 border-l-[4px] border-t-[4px] px-4 overflow-visible ">
-                <h2 className="font-medium text-[1.2rem] text-nowrap ">
-                  BLACK IS BEAUTIFUL
-                </h2>
+          <div className="w-full my-[4rem] ">
+            <div className="flex items-center space-x-10 ">
+              <div className="flex-1 ">
+                <div className="relative  h-[40rem] w-full">
+                  {loading ? (
+                    <Skeleton
+                      variant="rectangular"
+                      width={"100%"}
+                      height={"100%"}
+                    />
+                  ) : (
+                    <Image
+                      className="group-hover:scale-105 duration-500"
+                      src={artDetails?.artPreview}
+                      fill
+                      style={{ objectFit: "contain" }}
+                      alt="art image"
+                    />
+                  )}
+                </div>
               </div>
 
-              <div className="ml-[2.4rem] ">
-                <p className="text-lg">
-                  Black is powerful. There is so much power that comes with
-                  being black. And that includes beauty. The power that this
-                  lady holds is captured in this image. This image represents
-                  the beauty that is inherent in the nature of blacks.
-                </p>
+              <div className="flex-1 ">
+                <div className="flex items-center h-[2.6rem] w-[6rem] border-[#000] border-0 border-l-[4px] border-t-[4px] px-4 overflow-visible ">
+                  <h2 className="font-medium text-[1.2rem] text-nowrap ">
+                    {loading ? (
+                      <Skeleton variant="rectangular" width={150} height={20} />
+                    ) : (
+                      artDetails?.title
+                    )}
+                  </h2>
+                </div>
+
+                <div className="ml-[2.4rem] ">
+                  {loading ? (
+                    <Skeleton
+                      className="mb-4"
+                      variant="rectangular"
+                      width={"100%"}
+                      height={200}
+                    />
+                  ) : (
+                    <p className="text-lg">{artDetails?.description}</p>
+                  )}
+                </div>
+
+                <div className="w-full flex justify-end">
+                  <div className="h-[2.6rem] w-[6rem] border-[#000] border-0 border-r-[4px] border-b-[4px] "></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="md:grid grid-cols-4 flex flex-wrap mb-[4rem] w-[50%] mt-4 ">
+              {loading ? (
+                <>
+                  <Skeleton variant="rectangular" width={160} height={160} />
+                  <Skeleton variant="rectangular" width={160} height={160} />
+                  <Skeleton variant="rectangular" width={160} height={160} />
+                  <Skeleton variant="rectangular" width={160} height={160} />
+                </>
+              ) : (
+                [...(artDetails?.artImages || [])].map((image, idx) => (
+                  <div key={idx} className="relative h-[10rem] w-[10rem] mr-4 ">
+                    <Image
+                      src={image}
+                      fill
+                      style={{ objectFit: "contain" }}
+                      alt="other images"
+                    />
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {biddingsLoading ? (
+            <div className="space-y-2" >
+              <Skeleton variant="rectangular" width={"50%"} height={40} />
+              <Skeleton variant="rectangular" width={"70%"} height={40} />
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center space-x-2">
+                <div className="h-[3rem] w-[9rem] rounded-md bg-black flex items-center justify-center ">
+                  <p className="text-white">BIDS PLACED</p>
+                </div>
+                <div className="h-[3rem] px-4 rounded-md bg-black flex items-center justify-center ">
+                  <p className="text-white font-medium ">
+                    {artBiddings?.length}
+                  </p>
+                </div>
               </div>
 
-              <div className="w-full flex justify-end">
-                <div className="h-[2.6rem] w-[6rem] border-[#000] border-0 border-r-[4px] border-b-[4px] "></div>
+              <div className="mt-[2rem] space-y-4 ">
+                {[...(artBiddings || [])].map((bid, idx) => (
+                  <BidRank position={idx} key={bid?._id} bid={bid} />
+                ))}
               </div>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <div className="h-[3rem] w-[9rem] rounded-md bg-black flex items-center justify-center ">
-              <p className="text-white">BIDS PLACED</p>
-            </div>
-            <div className="h-[3rem] px-4 rounded-md bg-black flex items-center justify-center ">
-              <p className="text-white font-medium ">2</p>
-            </div>
-          </div>
-
-          <div className="mt-[2rem] space-y-4 ">
-            <BidRank />
-            <BidRank />
-          </div>
+            </>
+          )}
         </div>
 
         <Footer />

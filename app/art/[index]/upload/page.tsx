@@ -67,6 +67,7 @@ const UploadArtWork = () => {
             <Uploader
               selectImage={(e) => selectImage(e, setPickedImage)}
               selectedImage={pickedImage}
+              isArt
             />
 
             {pickedImage && (

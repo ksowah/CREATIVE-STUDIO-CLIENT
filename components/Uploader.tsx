@@ -6,9 +6,10 @@ import { HiMiniPhoto } from "react-icons/hi2";
 interface Props {
     selectImage: (e: any) => void;
     selectedImage: any;
+    isArt?: boolean;
 }
 
-const Uploader = ({selectImage, selectedImage}:Props) => {
+const Uploader = ({selectImage, selectedImage, isArt}:Props) => {
   const filePickerRef = useRef<any>(null);
 
   const init = () => {
@@ -25,7 +26,7 @@ const Uploader = ({selectImage, selectedImage}:Props) => {
       className="relative w-full h-[50rem] cursor-pointer border mt-4 flex flex-col items-center justify-center "
     >
       {selectedImage ? (
-        <Image src={selectedImage} fill objectFit="cover" alt="selected image" />
+        <Image src={selectedImage} fill style={{objectFit:`${isArt ? "contain":"cover"}`}} alt="selected image" />
       ) : (
         <div className="flex flex-col items-center justify-center">
           <HiMiniPhoto size={80} color="#85B6FF" />

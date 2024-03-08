@@ -40,17 +40,18 @@ type ArtPiece = {
   _id: string
     title: string
     description: string
-    artist: User
+    artist: ID
     artPreview: string
-    artImages: [string]
     previewImageRef: string
     artImagesRef: [string]
+    artImages: [string]
     category: string
     dimensions: string
-    price: number
+    price: Float
     artState: string
-    auctionStartPrice: number
+    auctionStartPrice: Float
     auctionStartDate: string
+    auctionEndDate: string
 }
 
 

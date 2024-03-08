@@ -56,7 +56,7 @@ const Header = () => {
   const Cart = withStyles(styles)(CartBadge);
 
   return (
-    <div className="absolute w-full h-[5rem] bg-white z-50">
+    <div className="absolute w-full h-[5rem] bg-white z-40">
       <Container>
         <div className="w-full h-full flex items-center">
           <Link href={"/"}>
