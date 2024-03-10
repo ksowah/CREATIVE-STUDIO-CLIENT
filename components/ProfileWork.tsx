@@ -68,7 +68,7 @@ const ProfileWork = ({
           src={design?.preview}
           className="group-hover:scale-125 duration-500"
           fill
-          objectFit="cover"
+          style={{objectFit:"cover"}}
           alt="work"
         />
       </div>

@@ -59,7 +59,7 @@ const MultiImageUploader = ({ selectedImages, setSelectedImages }: Props) => {
             >
               <LiaTimesSolid />
             </div>
-            <Image src={image} alt="" fill objectFit="cover" />
+            <Image src={image} alt="" fill style={{objectFit:"cover"}} />
           </div>
         ))}
       </div>

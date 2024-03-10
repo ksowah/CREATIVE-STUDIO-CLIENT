@@ -9,7 +9,7 @@ interface Props {
 const ProfileImage = ({dimension, image}:Props) => {
   return (
     <div className={`relative ${dimension} overflow-hidden rounded-full`}>
-      <Image src={image} objectFit="cover" fill alt={"author"} />
+      <Image src={image} style={{objectFit:"cover"}} fill alt={"author"} />
     </div>
   );
 };

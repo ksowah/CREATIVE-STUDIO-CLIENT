@@ -34,7 +34,7 @@ const SliderComponent = ({ sliderImages }: { sliderImages: [string] }) => {
   const SliderDot = ({ image }: { image: string }) => {
     return (
       <div className="relative top-7 cursor-pointer h-[2.2rem] mt-4 w-[1.7rem] border-2 border-[#949494] mr-8 rounded-md overflow-hidden">
-        <Image src={image} fill objectFit="cover" alt="slider dot" />
+        <Image src={image} fill style={{objectFit:"cover"}} alt="slider dot" />
       </div>
     );
   };

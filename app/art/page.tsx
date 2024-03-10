@@ -23,7 +23,7 @@ const Art = () => {
         <Image
           src={"/images/art-overlay.jpg"}
           fill
-          objectFit="cover"
+          style={{objectFit:"cover"}}
           alt="backgroung image"
         />
 
