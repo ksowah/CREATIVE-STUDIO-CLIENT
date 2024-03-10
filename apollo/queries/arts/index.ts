@@ -32,6 +32,8 @@ export const GET_ALL_ARTS = gql`
       auctionStartPrice
       artImagesRef
       previewImageRef
+      auctionEndDate
+      auctionStartDate
     }
   }
 `;
@@ -80,19 +82,10 @@ export const GET_ART_BY_ID = gql`
       artist {
         _id
         fullName
-        email
         avatar
-        password
-        authType
         userType
-        available
-        subscription
-        verified
-        bio
         username
         specialization
-        phoneNumber
-        website
       }
       artPreview
       previewImageRef
@@ -103,6 +96,8 @@ export const GET_ART_BY_ID = gql`
       price
       artState
       auctionStartPrice
+      auctionStartDate
+      auctionEndDate
     }
   }
 `;

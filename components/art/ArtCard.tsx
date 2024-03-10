@@ -13,18 +13,21 @@ interface Props {
 const ArtCard = ({ art }: Props) => {
   const router = useRouter();
 
+  const navigateToArtDetails = () => {
+    if(art?.artState === "auction") {
+      router.push(`/art/auction/details/${art?._id}`)
+    } else {
+      router.push(`/art/details/${art?._id}`)
+    }
+  }
+
   return (
     <div
-      onClick={() => router.push(`/art/details/${art?._id}`)}
+      onClick={navigateToArtDetails}
       className="relative group cursor-pointer mb-12 w-[20rem] h-[26rem]"
     >
-
       <div className="relative w-full h-[18rem]">
-        {/* {imageLoading && (
-          <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
-        )} */}
         <Image
-          //   onLoad={() => setImageLoading(false)}
           className="group-hover:scale-105 duration-500"
           src={art?.artPreview}
           fill
@@ -33,19 +36,20 @@ const ArtCard = ({ art }: Props) => {
         />
       </div>
 
-      <div className="w-full mt-4 flex flex-col space-y-1">
-        <div className="flex items-center space-x-2">
-          <SessionAvatar image={art?.artist.avatar} size={40} />
-
+      <div className="w-full mt-2 flex items-center justify-between">
+        <div className="" >
+          <p className="font-medium text-[1.2rem] line-clamp-1 ">
+            {art?.title}
+          </p>
           <p className="text-sm text-[#595862] line-clamp-1 ">
             {art?.artist.fullName}
           </p>
-        </div>
 
-        <div className="flex items-center justify-between" >
-          <p className="font-medium text-[1.3rem] line-clamp-1 ">{art?.title}</p>
-          <p>{art?.price} ₵</p>
+          <div className={`px-2 py-[2px] ${art?.artState === "auction" ? "bg-[#FF0000]" : art?.artState === "onSale" ? "bg-[#254AA5]" : "bg-[#343434]" } w-fit`} >
+            <p className="text-white" >{art?.artState === "auction" ? "Auction" : art?.artState === "onSale" ? `₵${art?.price}` : "Gallery"}</p>
+          </div>
         </div>
+          <SessionAvatar image={art?.artist.avatar} size={50} />
       </div>
     </div>
   );

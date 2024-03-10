@@ -56,7 +56,7 @@ const Header = () => {
   const Cart = withStyles(styles)(CartBadge);
 
   return (
-    <div className="absolute w-full h-[5rem] bg-white z-50">
+    <div className="absolute w-full h-[5rem] bg-white z-40">
       <Container>
         <div className="w-full h-full flex items-center">
           <Link href={"/"}>
@@ -78,7 +78,6 @@ const Header = () => {
               </Link>
               <li className="cursor-pointer">Explore</li>
               <li className="cursor-pointer">Free + premium</li>
-              <li className="cursor-pointer">Auction</li>
             </ul>
 
             <div className="flex items-center space-x-2">
@@ -93,9 +92,11 @@ const Header = () => {
 
           <div className="flex items-center space-x-4">
             <Tooltip title="Auction room">
-              <div className="h-[2.6rem] w-[2.6rem] cursor-pointer border rounded-md flex items-center justify-center  ">
-                <ImHammer2 size={20} />
-              </div>
+              <Link href={"/art/auctionroom"} >
+                <div className="h-[2.6rem] w-[2.6rem] cursor-pointer border rounded-md flex items-center justify-center  ">
+                  <ImHammer2 size={20} />
+                </div>
+              </Link>
             </Tooltip>
 
             <Cart color="#000" badgeContent={4} />

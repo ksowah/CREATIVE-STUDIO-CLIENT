@@ -17,7 +17,7 @@ const SlideItem = ({ image, ref, NextBtn, PrevBtn }: Props) => {
   return (
     <div className="relative w-full h-[50rem] rounded-xl overflow-hidden ">
       {imageLoading && (
-        <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
+        <Skeleton className="z-10" variant="rectangular" width={"100%"} height={"100%"} />
       )}
 
       <Image
