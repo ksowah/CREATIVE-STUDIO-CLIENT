@@ -13,15 +13,8 @@ import { MyContext } from "@/context/Context";
 import SessionAvatar from "./SessionAvatar";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { Badge, Tooltip } from "@mui/material";
-import { withStyles } from "@mui/styles";
 import { ImHammer2 } from "react-icons/im";
 
-const styles = () => ({
-  customBadge: {
-    backgroundColor: (props: any) => props.color,
-    color: "white",
-  },
-});
 
 const Header = () => {
   const router = useRouter();
@@ -31,29 +24,6 @@ const Header = () => {
   const { appState, setAppState } = useContext(MyContext);
 
   const user = appState.session;
-
-  function CartBadge(props: any) {
-    const { classes } = props;
-    return (
-      <div>
-        <Tooltip title="Your cart">
-          <Badge
-            classes={{ badge: classes.customBadge }}
-            className={classes.margin}
-            badgeContent={4}
-          >
-            <Link
-              href={"/art/cart"}
-              className="h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center  "
-            >
-              <MdOutlineShoppingCart size={20} />
-            </Link>
-          </Badge>
-        </Tooltip>
-      </div>
-    );
-  }
-  const Cart = withStyles(styles)(CartBadge);
 
   return (
     <div className="absolute w-full h-[5rem] bg-white z-40">
@@ -99,7 +69,12 @@ const Header = () => {
               </Link>
             </Tooltip>
 
-            <Cart color="#000" badgeContent={4} />
+            <Link
+              href={"/art/cart"}
+              className="h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center  "
+            >
+              <MdOutlineShoppingCart size={20} />
+            </Link>
 
             {user ? (
               <Link href={`/profile/${user?.username}`}>

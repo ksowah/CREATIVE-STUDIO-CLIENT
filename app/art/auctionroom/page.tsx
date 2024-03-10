@@ -114,7 +114,7 @@ const AuctionRoom = () => {
                   <p className="text-lg text-[#5C5B66] ">
                     An Auction is a public sale where goods or services are sold
                     to the highest bidder. In an auction, the item being sold
-                    (referred to as the "lot") is presented to potential buyers,
+                    (referred to as the &quot;lot&quot;) is presented to potential buyers,
                     who then place bids on the item. The auctioneer oversees the
                     process, announcing each bid and facilitating the sale.
                   </p>
