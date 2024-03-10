@@ -20,7 +20,7 @@ export default function Home() {
 
     const storage = getStorage(appInitializer);
 
-    console.log("data", data?.getAllDesigns);
+    console.log("environment >>", process.env.NEXT_PUBLIC_ENVIRONMENT);
     
 
   return (
