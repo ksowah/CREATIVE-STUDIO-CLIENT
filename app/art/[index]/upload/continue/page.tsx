@@ -249,7 +249,7 @@ const ContinueArtUpload = () => {
                   }
                   fill
                   alt=""
-                  objectFit="cover"
+                  style={{objectFit:"cover"}}
                 />
               </div>
 
@@ -262,7 +262,7 @@ const ContinueArtUpload = () => {
                     >
                       <LiaTimesSolid size={16} />
                     </div>
-                    <Image src={image} fill alt="" objectFit="cover" />
+                    <Image src={image} fill alt="" style={{objectFit:"cover"}} />
                   </div>
                 ))}
               </div>

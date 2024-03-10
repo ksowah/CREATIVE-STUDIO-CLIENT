@@ -188,7 +188,7 @@ const DesignDetails = ({ params }: { params: any }) => {
                     src={design.preview}
                     alt="more"
                     fill
-                    objectFit="cover"
+                    style={{objectFit:"cover"}}
                     className="hover:scale-125 duration-500"
                   />
                 </div>

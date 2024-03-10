@@ -30,7 +30,7 @@ const CreativeCard = ({authourImage, authourName, workImage, designId}:Props) =>
         {
             imageLoading && <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
         }
-        <Image onLoad={() => setImageLoading(false)} className="group-hover:scale-125 duration-500" src={workImage} objectFit="cover" fill alt="card image" />
+        <Image onLoad={() => setImageLoading(false)} className="group-hover:scale-125 duration-500" src={workImage} style={{objectFit:"cover"}} fill alt="card image" />
       </div>
 
       <div className="w-full h-[4rem] flex items-center justify-between px-4 ">

@@ -23,7 +23,7 @@ const SlideItem = ({ image, ref, NextBtn, PrevBtn }: Props) => {
       <Image
         onLoad={() => setImageLoading(false)}
         src={image}
-        objectFit="cover"
+        style={{objectFit:"cover"}}
         fill
         alt="slide image"
       />

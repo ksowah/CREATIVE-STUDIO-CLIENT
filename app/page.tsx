@@ -30,7 +30,7 @@ export default function Home() {
         <Image
           src={"/images/designoverlay.png"}
           fill
-          objectFit="cover"
+          style={{objectFit:"cover"}}
           alt="backgroung image"
         />
 

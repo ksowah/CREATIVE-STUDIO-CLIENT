@@ -304,7 +304,7 @@ export default function UploadDialogue({
                     src={selectedImage ? selectedImage : "/images/slide2.jpg"}
                     fill
                     alt=""
-                    objectFit="cover"
+                    style={{objectFit:"cover"}}
                   />
                 </div>
 
@@ -317,7 +317,7 @@ export default function UploadDialogue({
                       >
                         <LiaTimesSolid size={16} />
                       </div>
-                      <Image src={image} fill alt="" objectFit="cover" />
+                      <Image src={image} fill alt="" style={{objectFit:"cover"}} />
                     </div>
                   ))}
                 </div>
@@ -472,7 +472,7 @@ export default function UploadDialogue({
                           src={"/images/figma_logo.png"}
                           alt="file logo"
                           fill
-                          objectFit="cover"
+                          style={{objectFit:"cover"}}
                         />
                       </div>
                       <p className="font-medium text-sm ">
