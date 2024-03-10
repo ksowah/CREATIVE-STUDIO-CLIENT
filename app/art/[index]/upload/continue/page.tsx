@@ -33,6 +33,9 @@ import { LiaTimesSolid } from "react-icons/lia";
 import { GET_ALL_ARTS, GET_USER_ARTS } from "@/apollo/queries/arts";
 import { DateRangePicker } from "react-date-range";
 import { addDays } from "date-fns";
+import DateAndTimePicker from "@/components/DateAndTimePick";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const ContinueArtUpload = () => {
   const { appState } = useContext(MyContext);
@@ -51,20 +54,12 @@ const ContinueArtUpload = () => {
     artType: "",
   });
 
-  const [selectedDate, setSelectedDate] = useState<any>([
-    {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
-      key: "selection",
-    },
-  ]);
-
-  console.log("selected date >>>>", selectedDate);
-
   const [loading, setLoading] = useState(false);
   const [errorOccured, setErrorOccured] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [dimenssionSelected, setDimenssionSelected] = useState("");
+  const [auctionStartDate, setAuctionStartDate] = useState<any>("");
+  const [auctionEndDate, setAuctionEndDate] = useState<any>("");
 
   const router = useRouter();
 
@@ -72,8 +67,6 @@ const ContinueArtUpload = () => {
 
   const createNewArt = async () => {
     setLoading(true);
-
-    console.log("art upload started...");
 
     if (!artUpload.selectedImage) {
       setErrorOccured(true);
@@ -118,7 +111,6 @@ const ContinueArtUpload = () => {
       return;
     }
 
-    
     // check if start date is less than yesterday date if art type is auction
     // if (artUploadData.artType === "auction") {
     //   if (new Date(selectedDate[0].startDate) < new Date()) {
@@ -157,10 +149,13 @@ const ContinueArtUpload = () => {
         dimensions: `${artUploadData.dimensions}${dimenssionSelected}`,
         price: artUploadData.price,
         artState: artUploadData.artType,
-        auctionStartPrice: artUploadData.artType === "auction" ? artUploadData.price : 0,
-        auctionStartDate: artUploadData.artType === "auction" ? selectedDate[0].startDate : "",
-        auctionEndDate: artUploadData.artType === "auction" ? selectedDate[0].endDate : "",
-      }
+        auctionStartPrice:
+          artUploadData.artType === "auction" ? artUploadData.price : 0,
+        auctionStartDate:
+          artUploadData.artType === "auction" ? auctionStartDate : "",
+        auctionEndDate:
+          artUploadData.artType === "auction" ? auctionEndDate : "",
+      };
 
       console.log("art input >>>>", artInput);
 
@@ -437,8 +432,10 @@ const ContinueArtUpload = () => {
                 {artUploadData.artType === "auction" && (
                   <>
                     <div className="w-full py-[2rem]">
-                      <div className="mb-4" >
-                        <p className="text-sm font-medium mb-2">Starting Price </p>
+                      <div className="mb-4">
+                        <p className="text-sm font-medium mb-2">
+                          Starting Price{" "}
+                        </p>
                         <TextField
                           id="outlined-basic"
                           variant="outlined"
@@ -455,18 +452,28 @@ const ContinueArtUpload = () => {
                           }
                         />
                       </div>
-                      <p className="text-sm font-medium mb-2">
-                        {" "}
-                        Start date - End date{" "}
-                      </p>
-                      <DateRangePicker
-                        onChange={(item) => setSelectedDate([item.selection])}
-                        moveRangeOnFirstSelection={false}
-                        months={2}
-                        ranges={selectedDate}
-                        direction="horizontal"
-                        minDate={new Date()}
-                      />
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium mb-2">
+                            {" "}
+                            Start date & time
+                          </p>
+
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateTimePicker onChange={(e) => setAuctionStartDate(e.$d)} value={auctionStartDate} />
+                          </LocalizationProvider>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium mb-2">
+                            End date & time
+                          </p>
+
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateTimePicker onChange={(e) => setAuctionEndDate(e.$d)} value={auctionEndDate} />
+                          </LocalizationProvider>
+                        </div>
+                      </div>
                     </div>
                   </>
                 )}

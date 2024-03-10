@@ -14,7 +14,7 @@ import SkeletonLoader from "@/components/SkeletonLoader";
 const Art = () => {
   const { loading, error, data } = useQuery(GET_ALL_ARTS);
 
-  console.log("data", data);
+  console.log("data >>>", error, data);
 
   return (
     <main className="flex-1">

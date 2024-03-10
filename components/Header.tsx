@@ -92,9 +92,11 @@ const Header = () => {
 
           <div className="flex items-center space-x-4">
             <Tooltip title="Auction room">
-              <div className="h-[2.6rem] w-[2.6rem] cursor-pointer border rounded-md flex items-center justify-center  ">
-                <ImHammer2 size={20} />
-              </div>
+              <Link href={"/art/auctionroom"} >
+                <div className="h-[2.6rem] w-[2.6rem] cursor-pointer border rounded-md flex items-center justify-center  ">
+                  <ImHammer2 size={20} />
+                </div>
+              </Link>
             </Tooltip>
 
             <Cart color="#000" badgeContent={4} />

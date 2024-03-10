@@ -40,7 +40,7 @@ type ArtPiece = {
   _id: string
     title: string
     description: string
-    artist: ID
+    artist: User
     artPreview: string
     previewImageRef: string
     artImagesRef: [string]

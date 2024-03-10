@@ -3,16 +3,35 @@ import Image from "next/image";
 import { ImHammer2 } from "react-icons/im";
 import { RiVisaLine } from "react-icons/ri";
 import ButtonSolid from "./ButtonSolid";
+import { FaRegClock } from "react-icons/fa6";
 
-const PaymentCard = ({ setBidAmount, onClick }: { setBidAmount?: any, onClick?:any }) => {
+
+const PaymentCard = ({
+  setBidAmount,
+  onClick,
+  isAuctionLive,
+}: {
+  setBidAmount?: any;
+  onClick?: any;
+  isAuctionLive?: boolean;
+}) => {
   return (
     <div className="w-[24rem] border rounded-lg">
       {/* header part */}
       <div className="h-[3.95rem] border-b flex items-center justify-end px-[1rem] space-x-2 ">
-        <p>LIVE</p>
-        <div className="h-[1.2rem] w-[1.2rem] rounded-full bg-[#D9D9D9] animate-pulse flex items-center justify-center ">
-          <div className="h-[.75rem] w-[.75rem] rounded-full bg-[#000000] "></div>
-        </div>
+        {isAuctionLive ? (
+          <>
+            <p>LIVE</p>
+            <div className="h-[1.2rem] w-[1.2rem] rounded-full bg-[#D9D9D9] animate-pulse flex items-center justify-center ">
+              <div className="h-[.75rem] w-[.75rem] rounded-full bg-[#000000] "></div>
+            </div>
+          </>
+        ) : (
+          <>
+            <p>Upcoming</p>
+            <FaRegClock size={16} />
+          </>
+        )}
       </div>
 
       <div className="w-full flex flex-col items-center p-[1rem]">

@@ -9,10 +9,9 @@ import Footer from "@/components/Footer";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_ART_BY_ID } from "@/apollo/queries/arts";
 import { PLACE_BID } from "@/apollo/mutations/auction";
-import { useState } from "react";
-import { Alert, Skeleton } from "@mui/material";
-import { set } from "date-fns";
+import { useEffect, useState } from "react";
 import { GET_ART_BIDDINGS } from "@/apollo/queries/auction";
+import { Skeleton } from "@mui/material";
 
 const AuctionDetails = ({ params }: { params: any }) => {
   const { artId } = params;
@@ -21,26 +20,27 @@ const AuctionDetails = ({ params }: { params: any }) => {
 
   const [isErrorOccured, setIsErrorOccured] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isAuctionLive, setIsAuctionLive] = useState(false);
+  const [dateStatus, setDateStatus] = useState("");
+  const [timeStatus, setTimeStatus] = useState("");
 
   const { data, loading } = useQuery(GET_ART_BY_ID, {
     variables: { artId },
   });
 
-  const {
-    loading: biddingsLoading,
-    data: biddingsData,
-    refetch: refetchArtBiddings,
-  } = useQuery(GET_ART_BIDDINGS, {
-    variables: { artId },
-  });
+  const { data: biddingsData, refetch: refetchArtBiddings } = useQuery(
+    GET_ART_BIDDINGS,
+    {
+      variables: { artId },
+    }
+  );
 
   const [placeBid] = useMutation(PLACE_BID);
 
   const artBiddings = biddingsData?.getArtBiddings;
   let highestBid = artBiddings?.[0]?.bidAmount;
 
-  console.log("artBiddings[0]?.bidAmount >>", artBiddings);
-
+  
   const artDetails: ArtPiece = data?.getArtById;
 
   const placeBidOnArt = async () => {
@@ -67,6 +67,47 @@ const AuctionDetails = ({ params }: { params: any }) => {
     }
   };
 
+  const auctionStartDate = new Date(parseInt(artDetails?.auctionStartDate));
+  const auctionEndDate = new Date(parseInt(artDetails?.auctionEndDate));
+  const currentDate = new Date();
+
+  function formatDate(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    // @ts-ignore
+    return new Intl.DateTimeFormat("en-US", options).format(date != "Invalid Date" ? date : currentDate)
+  }
+
+  function formatTime(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "numeric",
+      minute: "numeric",
+    };
+    // @ts-ignore
+    return new Intl.DateTimeFormat("en-US", options).format(date != "Invalid Date" ? date : currentDate);
+  }
+
+  useEffect(() => {
+    const checkArtDateStatus = () => {
+        if (auctionStartDate > currentDate) {
+          setDateStatus(`STARTS AT: ${formatDate(auctionStartDate)}`);
+          setTimeStatus(`TIME: ${formatTime(auctionStartDate)}`);
+          setIsAuctionLive(false);
+        } else {
+          setDateStatus(`ENDS AT: ${formatDate(auctionEndDate)}`);
+          setTimeStatus(`TIME: ${formatTime(auctionEndDate)}`);
+          setIsAuctionLive(true);
+        }
+    };
+
+    console.log(">>>>", auctionStartDate, auctionEndDate)
+
+    checkArtDateStatus();
+  }, [auctionStartDate, auctionEndDate]);
+
   return (
     <main>
       <Header />
@@ -79,7 +120,12 @@ const AuctionDetails = ({ params }: { params: any }) => {
               <Skeleton variant="rectangular" width={"40%"} height={200} />
             </div>
 
-            <Skeleton className="mt-[4rem] mb-4" variant="rectangular" width={"75%"} height={40} />
+            <Skeleton
+              className="mt-[4rem] mb-4"
+              variant="rectangular"
+              width={"75%"}
+              height={40}
+            />
             <Skeleton variant="rectangular" width={"55%"} height={40} />
           </div>
         ) : (
@@ -91,9 +137,9 @@ const AuctionDetails = ({ params }: { params: any }) => {
                   <div className="h-[4rem] border-b px-[2rem] flex items-center justify-between ">
                     <h3 className="font-medium text-[1.3rem] ">Auction</h3>
 
-                    <p className="text-[.9rem]">DATE: 15th March, 2024</p>
+                    <p className="text-[.9rem]">{dateStatus}</p>
 
-                    <p className="text-[.9rem]">TIME: 3h 54m 50s</p>
+                    <p className="text-[.9rem]">{timeStatus}</p>
                   </div>
 
                   {/* content */}
@@ -116,7 +162,9 @@ const AuctionDetails = ({ params }: { params: any }) => {
                         <p className="text-sm">
                           Artist: {artDetails?.artist.fullName}
                         </p>
-                        <p className="text-sm">Dimensions: {artDetails?.dimensions}</p>
+                        <p className="text-sm">
+                          Dimensions: {artDetails?.dimensions}
+                        </p>
                         <p className="text-sm">Country: Ghana</p>
                       </div>
 
@@ -142,6 +190,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                 <PaymentCard
                   onClick={placeBidOnArt}
                   setBidAmount={setBidAmount}
+                  isAuctionLive={isAuctionLive}
                 />
               </div>
 
