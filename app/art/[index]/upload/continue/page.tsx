@@ -1,7 +1,5 @@
 "use client";
 
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
 import ButtonOutlined from "@/components/ButtonOutlined";
 import ButtonSolid from "@/components/ButtonSolid";
 import Container from "@/components/Container";
