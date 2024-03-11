@@ -9,19 +9,10 @@ export const GET_ALL_ARTS = gql`
       artist {
         _id
         fullName
-        email
         avatar
-        password
-        authType
-        userType
-        available
         subscription
-        verified
-        bio
         username
         specialization
-        phoneNumber
-        website
       }
       artPreview
       artImages

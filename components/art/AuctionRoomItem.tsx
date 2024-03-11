@@ -34,7 +34,7 @@ const AuctionRoomItem = ({ group }: { group: any }) => {
                 <div className="flex items-center space-x-6">
                   <p className="text-[#5C5B66]">Starting at: </p>
                   <div className="h-[2rem] flex items-center justify-center px-4 rounded-md bg-[#DEDDDF] ">
-                    <p className="text-sm">₵{art?.auctionStartPrice}</p>
+                    <p className="text-sm">${art?.auctionStartPrice}</p>
                   </div>
                 </div>
               </div>

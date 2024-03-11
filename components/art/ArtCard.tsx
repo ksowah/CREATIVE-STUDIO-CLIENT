@@ -1,9 +1,6 @@
 import Image from "next/image";
 import React from "react";
 import SessionAvatar from "../SessionAvatar";
-import { CiHeart } from "react-icons/ci";
-import { TfiSave } from "react-icons/tfi";
-import { FaRegComment } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -24,9 +21,9 @@ const ArtCard = ({ art }: Props) => {
   return (
     <div
       onClick={navigateToArtDetails}
-      className="relative group cursor-pointer mb-12 w-[20rem] h-[26rem]"
+      className="relative group cursor-pointer mb-12 w-[18rem] h-[25rem] "
     >
-      <div className="relative w-full h-[18rem]">
+      <div className="relative w-full h-[19rem]">
         <Image
           className="group-hover:scale-105 duration-500"
           src={art?.artPreview}
@@ -46,7 +43,7 @@ const ArtCard = ({ art }: Props) => {
           </p>
 
           <div className={`px-2 py-[2px] ${art?.artState === "auction" ? "bg-[#FF0000]" : art?.artState === "onSale" ? "bg-[#254AA5]" : "bg-[#343434]" } w-fit`} >
-            <p className="text-white" >{art?.artState === "auction" ? "Auction" : art?.artState === "onSale" ? `₵${art?.price}` : "Gallery"}</p>
+            <p className="text-white" >{art?.artState === "auction" ? "Auction" : art?.artState === "onSale" ? `$${art?.price}` : "Gallery"}</p>
           </div>
         </div>
           <SessionAvatar image={art?.artist.avatar} size={50} />

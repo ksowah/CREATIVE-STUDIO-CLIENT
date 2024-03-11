@@ -18,7 +18,7 @@ const UploadButton = () => {
       <IoCloudUploadSharp size={50} color="#85B6FF" />
 
       <p className="font-bold text-[.8rem] mt-4 ">
-        upload your first masterpiece
+        upload your masterpiece
       </p>
       <p className="text-xs text-[#595862] text-center mt-2">
         Showcase your talents, receive feedback and join our expanding community

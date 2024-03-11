@@ -65,7 +65,7 @@ const Art = () => {
         {loading ? (
           <SkeletonLoader />
         ) : (
-          <div className="grid grid-cols-3 ">
+          <div className="grid grid-cols-4 ">
             {[...(data?.getAllArtWorks || [])].map((item: ArtPiece, idx) => (
               <ArtCard art={item} key={item._id} />
             ))}

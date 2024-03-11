@@ -17,7 +17,7 @@ const BidRank = ({bid, position}:{bid:any, position:number}) => {
           <p>BID AMOUNT</p>
         </div>
         <div className="h-[3rem] px-4 rounded-md border flex items-center justify-center ">
-          <p>₵{bid?.bidAmount}</p>
+          <p>${bid?.bidAmount}</p>
         </div>
         <div className="h-[3rem] px-4 rounded-md border flex items-center justify-center ">
           <p>{rankPosition}{`${rankPosition === 1 ? "st" : rankPosition === 2 ? "nd" : rankPosition === 3 ? "rd" : "th"}`}</p>
