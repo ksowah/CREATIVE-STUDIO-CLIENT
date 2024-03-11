@@ -9,17 +9,10 @@ export const GET_ALL_DESIGNS = gql`
         fullName
         email
         avatar
-        password
-        authType
         userType
-        available
         subscription
-        verified
-        bio
         username
         specialization
-        phoneNumber
-        website
       }
       preview
       views
@@ -48,17 +41,10 @@ export const GET_DESIGN_BY_ID = gql`
         fullName
         email
         avatar
-        password
-        authType
         userType
-        available
         subscription
-        verified
-        bio
         username
         specialization
-        phoneNumber
-        website
       }
       preview
       views
@@ -85,19 +71,10 @@ export const GET_USER_DESIGNS = gql`
       designer {
         _id
         fullName
-        email
         avatar
-        password
-        authType
-        userType
-        available
         subscription
-        verified
-        bio
         username
         specialization
-        phoneNumber
-        website
       }
       preview
       views
