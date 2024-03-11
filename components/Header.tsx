@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ButtonOutlined from "./ButtonOutlined";
 import ButtonSolid from "./ButtonSolid";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { MyContext } from "@/context/Context";
 import SessionAvatar from "./SessionAvatar";
 import { MdOutlineShoppingCart } from "react-icons/md";
@@ -22,10 +22,15 @@ const Header = () => {
 
   const { appState } = useContext(MyContext);
 
-  const { data, loading } = useQuery(GET_CART_ITEMS);
+  const { data, loading, refetch } = useQuery(GET_CART_ITEMS);
 
   
   const user = appState.session;
+
+  useEffect(() => {
+    refetch()
+  }, [])
+  
 
   return (
     <div className="absolute w-full h-[5rem] bg-white z-40">
@@ -75,7 +80,7 @@ const Header = () => {
               href={"/art/cart"}
               className="relative h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center"
             >
-              {!loading && data?.getCartItems.length > 0 && (
+              {user && !loading && data?.getCartItems.length > 0 && (
                 <div className="absolute -top-2 -right-2 px-[6px]  flex items-center justify-center rounded-full bg-black ">
                   <p className="text-white text-[11px]">
                     {data?.getCartItems.length}

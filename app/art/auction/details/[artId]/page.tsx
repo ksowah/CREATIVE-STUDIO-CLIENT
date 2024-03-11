@@ -19,6 +19,8 @@ import { DELETE_ART } from "@/apollo/mutations/arts";
 import { deleteArtData } from "@/helpers/functions";
 import { MyContext } from "@/context/Context";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+
 
 const AuctionDetails = ({ params }: { params: any }) => {
   const { artId } = params;
@@ -58,8 +60,9 @@ const AuctionDetails = ({ params }: { params: any }) => {
   const artDetails: ArtPiece = data?.getArtById;
 
   const placeBidOnArt = async () => {
+
     if (highestBid && bidAmount <= highestBid) {
-      alert("Bid amount must be greater than the highest bid");
+      toast.error("Bid amount must be greater than the highest bid");
       return;
     }
 
@@ -73,13 +76,13 @@ const AuctionDetails = ({ params }: { params: any }) => {
       setIsErrorOccured(false);
       setIsSuccess(true);
       refetchArtBiddings();
-      alert("Bid placed successfully");
+      toast.success("Bid placed successfully");
     } catch (error: any) {
       setIsSuccess(false);
       setIsErrorOccured(true);
-      alert(error.message);
+      toast.error(error.message);
     }
-  };
+  }
 
   const auctionStartDate = new Date(parseInt(artDetails?.auctionStartDate));
   const auctionEndDate = new Date(parseInt(artDetails?.auctionEndDate));
@@ -151,6 +154,8 @@ const AuctionDetails = ({ params }: { params: any }) => {
   return (
     <main>
       <Header />
+
+      <ToastContainer />
 
       <Container>
         {loading ? (

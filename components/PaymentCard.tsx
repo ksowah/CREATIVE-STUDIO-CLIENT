@@ -4,6 +4,7 @@ import { ImHammer2 } from "react-icons/im";
 import { RiVisaLine } from "react-icons/ri";
 import ButtonSolid from "./ButtonSolid";
 import { FaRegClock } from "react-icons/fa6";
+import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
 
 
 const PaymentCard = ({
@@ -15,6 +16,10 @@ const PaymentCard = ({
   onClick?: any;
   isAuctionLive?: boolean;
 }) => {
+  const OpenDialogueButton = () => {
+    return <ButtonSolid className="my-4" title="PLACE BID" />;
+  };
+
   return (
     <div className="w-[24rem] border rounded-lg">
       {/* header part */}
@@ -92,7 +97,14 @@ const PaymentCard = ({
           </div>
         </FormGroup>
 
-        <ButtonSolid onClick={onClick} className="my-4" title="PLACE BID" />
+        <ActionConfirmationDialogue
+          action={onClick}
+          actionBodyText="Are you sure you want to place this bid? this action can not be undone."
+          actionButtonTitle="Place Bid"
+          actionHeaderTitle="Place Bid"
+          OpenDialogueButton={OpenDialogueButton}
+          isNotDelete
+        />
       </div>
     </div>
   );
