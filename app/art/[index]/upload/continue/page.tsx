@@ -29,9 +29,6 @@ import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { LiaTimesSolid } from "react-icons/lia";
 import { GET_ALL_ARTS, GET_USER_ARTS } from "@/apollo/queries/arts";
-import { DateRangePicker } from "react-date-range";
-import { addDays } from "date-fns";
-import DateAndTimePicker from "@/components/DateAndTimePick";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -47,7 +44,7 @@ const ContinueArtUpload = () => {
     title: artUpload.title,
     story: "",
     dimensions: "",
-    price: 0,
+    price: 1,
     category: "",
     artType: "",
   });
@@ -60,6 +57,9 @@ const ContinueArtUpload = () => {
   const [auctionEndDate, setAuctionEndDate] = useState<any>("");
 
   const router = useRouter();
+
+  console.log("auctionStartDate >>>", new Date(auctionStartDate));
+  
 
   const [createArt] = useMutation(CREATE_ART);
 
@@ -101,23 +101,45 @@ const ContinueArtUpload = () => {
       setLoading(false);
       return;
     }
-
+    
     if (session?.userType !== "ARTIST" && session?.userType !== "CREATOR") {
       setErrorOccured(true);
       setErrorMessage("You are not authorized to publish designs");
       setLoading(false);
       return;
     }
+    
+    if (artUploadData.artType === "auction" && artUploadData.price < 1) {
+      setErrorOccured(true);
+      setErrorMessage("Set a price for the art");
+      setLoading(false);
+      return;
+    }
+    // make sure start date and end date is set if art type is auction
+    if (artUploadData.artType === "auction" && !auctionStartDate) {
+      setErrorOccured(true);
+      setErrorMessage("Select auction start date");
+      setLoading(false);
+      return;
+    }
+    if (artUploadData.artType === "auction" && !auctionEndDate) {
+      setErrorOccured(true);
+      setErrorMessage("Select auction end date");
+      setLoading(false);
+      return;
+    }
+    
+    if (
+      artUploadData.artType === "auction" &&
+      auctionStartDate > auctionEndDate
+    ) {
+      setErrorOccured(true);
+      setErrorMessage("Auction start date cannot be greater than end date");
+      setLoading(false);
+      return;
+    }
 
-    // check if start date is less than yesterday date if art type is auction
-    // if (artUploadData.artType === "auction") {
-    //   if (new Date(selectedDate[0].startDate) < new Date()) {
-    //     setErrorOccured(true);
-    //     setErrorMessage("Start date cannot be less than today's date");
-    //     setLoading(false);
-    //     return;
-    //   }
-    // }
+
 
     try {
       setErrorOccured(false);
@@ -249,7 +271,7 @@ const ContinueArtUpload = () => {
                   }
                   fill
                   alt=""
-                  style={{objectFit:"cover"}}
+                  style={{ objectFit: "cover" }}
                 />
               </div>
 
@@ -262,7 +284,12 @@ const ContinueArtUpload = () => {
                     >
                       <LiaTimesSolid size={16} />
                     </div>
-                    <Image src={image} fill alt="" style={{objectFit:"cover"}} />
+                    <Image
+                      src={image}
+                      fill
+                      alt=""
+                      style={{ objectFit: "cover" }}
+                    />
                   </div>
                 ))}
               </div>
@@ -392,12 +419,14 @@ const ContinueArtUpload = () => {
                       id="demo-simple-select"
                       value={artUploadData.artType}
                       error={errorOccured}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setArtUploadData({
                           ...artUploadData,
                           artType: e.target.value,
                         })
-                      }
+                        setAuctionStartDate("");
+                        setAuctionEndDate("");
+                      }}
                       label="Art Type"
                     >
                       <MenuItem value={"onSale"}>On Sale</MenuItem>
@@ -459,17 +488,26 @@ const ContinueArtUpload = () => {
                           </p>
 
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateTimePicker onChange={(e) => setAuctionStartDate(e.$d)} value={auctionStartDate} />
+                            <DateTimePicker
+                              onChange={(e) => setAuctionStartDate(e.$d)}
+                              value={auctionStartDate}
+                            />
                           </LocalizationProvider>
                         </div>
                         <div>
-                          <p className="text-sm font-medium mb-2">
-                            End date & time
-                          </p>
-
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateTimePicker onChange={(e) => setAuctionEndDate(e.$d)} value={auctionEndDate} />
-                          </LocalizationProvider>
+                          {auctionStartDate && (
+                            <>
+                              <p className="text-sm font-medium mb-2">
+                                End date & time
+                              </p>
+                              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                  onChange={(e) => setAuctionEndDate(e.$d)}
+                                  value={auctionEndDate}
+                                />
+                              </LocalizationProvider>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>

@@ -21,3 +21,9 @@ export const CREATE_ART = gql`
     }
   }
 `;
+
+export const DELETE_ART = gql`
+  mutation DeleteArt($artId: ID!) {
+    deleteArt(artId: $artId)
+  }
+`;

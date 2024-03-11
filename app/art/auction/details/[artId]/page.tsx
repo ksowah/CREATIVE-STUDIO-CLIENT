@@ -9,12 +9,27 @@ import Footer from "@/components/Footer";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_ART_BY_ID } from "@/apollo/queries/arts";
 import { PLACE_BID } from "@/apollo/mutations/auction";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GET_ART_BIDDINGS } from "@/apollo/queries/auction";
 import { Skeleton } from "@mui/material";
+import { IoTrashOutline } from "react-icons/io5";
+import { CiEdit } from "react-icons/ci";
+import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
+import { DELETE_ART } from "@/apollo/mutations/arts";
+import { deleteArtData } from "@/helpers/functions";
+import { MyContext } from "@/context/Context";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+
 
 const AuctionDetails = ({ params }: { params: any }) => {
   const { artId } = params;
+
+  const { appState } = useContext(MyContext);
+
+  const { session } = appState;
+
+  const router = useRouter();
 
   const [bidAmount, setBidAmount] = useState<any>(0);
 
@@ -35,17 +50,19 @@ const AuctionDetails = ({ params }: { params: any }) => {
     }
   );
 
+  const [deleteArt] = useMutation(DELETE_ART);
+
   const [placeBid] = useMutation(PLACE_BID);
 
   const artBiddings = biddingsData?.getArtBiddings;
   let highestBid = artBiddings?.[0]?.bidAmount;
 
-  
   const artDetails: ArtPiece = data?.getArtById;
 
   const placeBidOnArt = async () => {
+
     if (highestBid && bidAmount <= highestBid) {
-      alert("Bid amount must be greater than the highest bid");
+      toast.error("Bid amount must be greater than the highest bid");
       return;
     }
 
@@ -59,13 +76,13 @@ const AuctionDetails = ({ params }: { params: any }) => {
       setIsErrorOccured(false);
       setIsSuccess(true);
       refetchArtBiddings();
-      alert("Bid placed successfully");
+      toast.success("Bid placed successfully");
     } catch (error: any) {
       setIsSuccess(false);
       setIsErrorOccured(true);
-      alert(error.message);
+      toast.error(error.message);
     }
-  };
+  }
 
   const auctionStartDate = new Date(parseInt(artDetails?.auctionStartDate));
   const auctionEndDate = new Date(parseInt(artDetails?.auctionEndDate));
@@ -77,8 +94,10 @@ const AuctionDetails = ({ params }: { params: any }) => {
       month: "long",
       year: "numeric",
     };
-    // @ts-ignore
-    return new Intl.DateTimeFormat("en-US", options).format(date != "Invalid Date" ? date : currentDate)
+    return new Intl.DateTimeFormat("en-US", options).format(
+      // @ts-ignore
+      date != "Invalid Date" ? date : currentDate
+    );
   }
 
   function formatTime(date: Date): string {
@@ -86,31 +105,57 @@ const AuctionDetails = ({ params }: { params: any }) => {
       hour: "numeric",
       minute: "numeric",
     };
-    // @ts-ignore
-    return new Intl.DateTimeFormat("en-US", options).format(date != "Invalid Date" ? date : currentDate);
+    return new Intl.DateTimeFormat("en-US", options).format(
+      // @ts-ignore
+      date != "Invalid Date" ? date : currentDate
+    );
   }
 
   useEffect(() => {
     const checkArtDateStatus = () => {
-        if (auctionStartDate > currentDate) {
-          setDateStatus(`STARTS AT: ${formatDate(auctionStartDate)}`);
-          setTimeStatus(`TIME: ${formatTime(auctionStartDate)}`);
-          setIsAuctionLive(false);
-        } else {
-          setDateStatus(`ENDS AT: ${formatDate(auctionEndDate)}`);
-          setTimeStatus(`TIME: ${formatTime(auctionEndDate)}`);
-          setIsAuctionLive(true);
-        }
+      if (auctionStartDate > currentDate) {
+        setDateStatus(`STARTS AT: ${formatDate(auctionStartDate)}`);
+        setTimeStatus(`TIME: ${formatTime(auctionStartDate)}`);
+        setIsAuctionLive(false);
+      } else {
+        setDateStatus(`ENDS AT: ${formatDate(auctionEndDate)}`);
+        setTimeStatus(`TIME: ${formatTime(auctionEndDate)}`);
+        setIsAuctionLive(true);
+      }
     };
 
-    console.log(">>>>", auctionStartDate, auctionEndDate)
+    console.log(">>>>", auctionStartDate, auctionEndDate);
 
     checkArtDateStatus();
   }, [auctionStartDate, auctionEndDate]);
 
+  const handleDeleteArt = async () => {
+    try {
+      await deleteArtData(
+        [artDetails?.previewImageRef, ...artDetails?.artImagesRef],
+        deleteArt,
+        artId,
+        session?._id
+      );
+      router.push("/art");
+    } catch (error) {
+      console.error("error", error);
+    }
+  };
+
+  const OpenDialogueButton = () => {
+    return (
+      <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+        <IoTrashOutline size={18} color="#595862" />
+      </button>
+    );
+  };
+
   return (
     <main>
       <Header />
+
+      <ToastContainer />
 
       <Container>
         {loading ? (
@@ -130,7 +175,25 @@ const AuctionDetails = ({ params }: { params: any }) => {
           </div>
         ) : (
           <>
-            <div className="pt-[7rem]">
+            <div className="mt-[6rem] flex items-end justify-end space-x-4 w-full h-[4rem]">
+              {session?._id === artDetails?.artist._id && (
+                <>
+                  <ActionConfirmationDialogue
+                    action={handleDeleteArt}
+                    actionBodyText="Are you sure you want to delete this Art Piece? This action cannot be undone."
+                    actionButtonTitle="Delete"
+                    actionHeaderTitle="Delete Art"
+                    OpenDialogueButton={OpenDialogueButton}
+                  />
+
+                  <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+                    <CiEdit size={22} color="#595862" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            <div className="pt-[1rem]">
               <div className="border rounded-lg w-full flex text-[#595862]">
                 <div className="flex-1">
                   {/* header part */}
@@ -171,7 +234,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                       <div className="space-y-2 flex flex-col items-end">
                         <p className="text-sm ">
                           Starting price:{" "}
-                          <span className="text-lg font-bold">{`₵${
+                          <span className="text-lg font-bold">{`$${
                             artDetails?.auctionStartPrice || ""
                           }`}</span>
                         </p>
@@ -179,7 +242,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                         {artBiddings?.length > 0 && (
                           <p className="text-sm ">
                             Highest Bid:{" "}
-                            <span className="text-lg font-bold">{`₵${highestBid}`}</span>
+                            <span className="text-lg font-bold">{`$${highestBid}`}</span>
                           </p>
                         )}
                       </div>

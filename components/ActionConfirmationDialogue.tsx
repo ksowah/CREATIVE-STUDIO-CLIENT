@@ -5,8 +5,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { IoTrashOutline } from "react-icons/io5";
 import ButtonSolid from "./ButtonSolid";
+import ButtonOutlined from "./ButtonOutlined";
 
 interface Props {
   action: any;
@@ -14,6 +14,7 @@ interface Props {
   actionHeaderTitle: string;
   actionBodyText: string;
   OpenDialogueButton: React.FC;
+  isNotDelete?: boolean;
 }
 
 export default function ActionConfirmationDialogue({
@@ -22,6 +23,7 @@ export default function ActionConfirmationDialogue({
   actionHeaderTitle,
   actionBodyText,
   OpenDialogueButton,
+  isNotDelete,
 }: Props) {
   const [open, setOpen] = React.useState(false);
 
@@ -40,7 +42,7 @@ export default function ActionConfirmationDialogue({
 
   return (
     <React.Fragment>
-      <div onClick={handleClickOpen} >
+      <div onClick={handleClickOpen}>
         <OpenDialogueButton />
       </div>
 
@@ -57,10 +59,19 @@ export default function ActionConfirmationDialogue({
           </DialogContentText>
         </DialogContent>
         <DialogActions className="space-x-4 p-4">
-          <ButtonSolid title="Cancel" onClick={handleClose} />
-          <button onClick={handleAction} className="text-red-500">
-            {actionButtonTitle}
-          </button>
+          {isNotDelete ? (
+            <>
+              <ButtonOutlined title="Cancel" onClick={handleClose} />
+              <ButtonSolid title={actionButtonTitle} onClick={handleAction} />
+            </>
+          ) : (
+            <>
+              <ButtonSolid title="Cancel" onClick={handleClose} />
+              <button onClick={handleAction} className="text-red-500">
+                {actionButtonTitle}
+              </button>
+            </>
+          )}
         </DialogActions>
       </Dialog>
     </React.Fragment>

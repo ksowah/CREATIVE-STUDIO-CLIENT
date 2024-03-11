@@ -2,28 +2,35 @@
 
 import Container from "./Container";
 import { CiSearch } from "react-icons/ci";
-import Button from "@mui/material/Button";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import ButtonOutlined from "./ButtonOutlined";
 import ButtonSolid from "./ButtonSolid";
-import ProfileImage from "./ProfileImage";
-import { useContext, useState } from "react";
+import { useContext, useEffect } from "react";
 import { MyContext } from "@/context/Context";
 import SessionAvatar from "./SessionAvatar";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { Badge, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import { ImHammer2 } from "react-icons/im";
+import { useQuery } from "@apollo/client";
+import { GET_CART_ITEMS } from "@/apollo/queries/cart";
 
 
 const Header = () => {
-  const router = useRouter();
-
+  
   const pathname = usePathname();
 
-  const { appState, setAppState } = useContext(MyContext);
+  const { appState } = useContext(MyContext);
 
+  const { data, loading, refetch } = useQuery(GET_CART_ITEMS);
+
+  
   const user = appState.session;
+
+  useEffect(() => {
+    refetch()
+  }, [])
+  
 
   return (
     <div className="absolute w-full h-[5rem] bg-white z-40">
@@ -62,7 +69,7 @@ const Header = () => {
 
           <div className="flex items-center space-x-4">
             <Tooltip title="Auction room">
-              <Link href={"/art/auctionroom"} >
+              <Link href={"/art/auctionroom"}>
                 <div className="h-[2.6rem] w-[2.6rem] cursor-pointer border rounded-md flex items-center justify-center  ">
                   <ImHammer2 size={20} />
                 </div>
@@ -71,8 +78,15 @@ const Header = () => {
 
             <Link
               href={"/art/cart"}
-              className="h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center  "
+              className="relative h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center"
             >
+              {user && !loading && data?.getCartItems.length > 0 && (
+                <div className="absolute -top-2 -right-2 px-[6px]  flex items-center justify-center rounded-full bg-black ">
+                  <p className="text-white text-[11px]">
+                    {data?.getCartItems.length}
+                  </p>
+                </div>
+              )}
               <MdOutlineShoppingCart size={20} />
             </Link>
 

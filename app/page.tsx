@@ -8,20 +8,13 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import { GET_ALL_DESIGNS } from "@/apollo/queries/designs";
-import { creativeWorkdata } from "@/utils/fake-db";
 import { useQuery } from "@apollo/client";
 import Image from "next/image";
-import { getStorage, ref, deleteObject } from "firebase/storage";
-import { appInitializer } from "@/firebase";
 
 
 export default function Home() {
-  const { loading, error, data } = useQuery(GET_ALL_DESIGNS);
+  const { loading, data } = useQuery(GET_ALL_DESIGNS);
 
-    const storage = getStorage(appInitializer);
-
-    console.log("environment >>", process.env.NEXT_PUBLIC_ENVIRONMENT);
-    
 
   return (
     <main className="flex-1">

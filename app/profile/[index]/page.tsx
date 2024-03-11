@@ -119,7 +119,7 @@ const Profile = ({ params }: { params: any }) => {
                 <SkeletonLoader dontShowSubtitles />
               </div>
             ) : (
-              <div className={`pt-[4rem] ${user?.userType === "ARTIST" ? "grid grid-cols-3" : "grid grid-cols-4"}  `}>
+              <div className={`pt-[4rem] grid grid-cols-4`}>
                 <>
                   {appState?.session?.username === user?.username && (
                     <UploadButton />
