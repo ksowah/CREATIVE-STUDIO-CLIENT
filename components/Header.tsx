@@ -11,26 +11,22 @@ import { MyContext } from "@/context/Context";
 import SessionAvatar from "./SessionAvatar";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { Tooltip } from "@mui/material";
-import { ImHammer2 } from "react-icons/im";
 import { useQuery } from "@apollo/client";
 import { GET_CART_ITEMS } from "@/apollo/queries/cart";
-
+import Image from "next/image";
 
 const Header = () => {
-  
   const pathname = usePathname();
 
   const { appState } = useContext(MyContext);
 
   const { data, loading, refetch } = useQuery(GET_CART_ITEMS);
 
-  
   const user = appState.session;
 
   useEffect(() => {
-    refetch()
-  }, [])
-  
+    refetch();
+  }, []);
 
   return (
     <div className="absolute w-full h-[5rem] bg-white z-40">
@@ -71,7 +67,13 @@ const Header = () => {
             <Tooltip title="Auction room">
               <Link href={"/art/auctionroom"}>
                 <div className="h-[2.6rem] w-[2.6rem] cursor-pointer border rounded-md flex items-center justify-center  ">
-                  <ImHammer2 size={20} />
+                  <Image
+                    src={"/icons/hammer.svg"}
+                    alt=""
+                    height={20}
+                    width={20}
+                    style={{ objectFit: "contain" }}
+                  />
                 </div>
               </Link>
             </Tooltip>

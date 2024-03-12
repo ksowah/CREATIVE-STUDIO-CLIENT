@@ -19,7 +19,7 @@ import React, { useContext } from "react";
 import { IoCogSharp } from "react-icons/io5";
 import { GET_USER_ARTS } from "@/apollo/queries/arts";
 import ArtCard from "@/components/art/ArtCard";
-
+import { ImageList, ImageListItem } from "@mui/material";
 
 const Profile = ({ params }: { params: any }) => {
   const { appState, setAppState } = useContext(MyContext);
@@ -30,7 +30,7 @@ const Profile = ({ params }: { params: any }) => {
     variables: { username },
   });
 
-  const user:User = userData?.getUserByUsername;
+  const user: User = userData?.getUserByUsername;
 
   const router = useRouter();
 
@@ -38,15 +38,14 @@ const Profile = ({ params }: { params: any }) => {
     variables: { userId: user?._id },
   });
 
-  const { loading:artLoading, data:artData } = useQuery(GET_USER_ARTS, {
+  const { loading: artLoading, data: artData } = useQuery(GET_USER_ARTS, {
     variables: { userId: user?._id },
   });
 
   const userDesigns = data?.getUserDesigns;
-  const userArts:[ArtPiece] = artData?.getUserArtWorks;
+  const userArts: [ArtPiece] = artData?.getUserArtWorks;
 
-  console.log("user?.specialization",user);
-  
+  console.log("user?.specialization", user);
 
   return (
     <main>
@@ -68,18 +67,17 @@ const Profile = ({ params }: { params: any }) => {
 
               {appState?.session?.username === username ? (
                 <div className="flex items-center space-x-4">
-                  <Link href={`${appState?.session?.username}/settings`} >
+                  <Link href={`${appState?.session?.username}/settings`}>
                     <ButtonSolid
                       className="h-[3rem] w-[8rem] "
                       title="Settings"
-                      Icon={<IoCogSharp/>}
+                      Icon={<IoCogSharp />}
                     />
                   </Link>
                   <ButtonOutlined
                     className="h-[3rem] w-[8rem] "
                     title="Go Premium"
                   />
-
                 </div>
               ) : (
                 <div className="flex items-center space-x-4">
@@ -99,7 +97,7 @@ const Profile = ({ params }: { params: any }) => {
         <Container>
           <ul className="flex items-center space-x-8 ">
             <li className="text-sm font-medium h-[2rem] px-3 bg-[#F8F7F5] flex items-center justify-center cursor-pointer mb-4 ">
-              { user?.userType === "ARTIST" ? "Art works" : "Designs" }
+              {user?.userType === "ARTIST" ? "Art works" : "Designs"}
             </li>
             <li className="text-sm font-medium h-[2rem] px-3 flex items-center justify-center cursor-pointer mb-4 ">
               Projects
@@ -119,27 +117,39 @@ const Profile = ({ params }: { params: any }) => {
                 <SkeletonLoader dontShowSubtitles />
               </div>
             ) : (
-              <div className={`pt-[4rem] grid grid-cols-4`}>
-                <>
-                  {appState?.session?.username === user?.username && (
-                    <UploadButton />
-                  )}
-                  {user?.userType === "ARTIST" ? 
-                  userArts?.map((art: ArtPiece) => (
-                    <ArtCard
-                      art={art}
-                      key={art._id}
-                    />
-                  )) : 
-                  userDesigns?.map((design: Design, idx: number) => (
-                    <ProfileWork
-                      design={design}
-                      key={design._id}
-                      isUsersProfile={appState?.session?.username === user?.username}
-                    />
-                  ))}
-                </>
-              </div> 
+              <div className="pt-[4rem] " >
+                {user?.userType === "ARTIST" ? (
+                  <>
+                    {appState?.session?.username === user?.username && (
+                      <UploadButton />
+                    )}
+                  <ImageList variant="masonry" cols={3} gap={8}>
+                    {[...(artData?.getUserArtWorks || [])].map(
+                      (item: ArtPiece, idx) => (
+                        <ImageListItem key={item._id}>
+                          <ArtCard art={item} />
+                        </ImageListItem>
+                      )
+                    )}
+                  </ImageList>
+                  </>
+                ) : (
+                  <div className={`grid grid-cols-4`}>
+                    {appState?.session?.username === user?.username && (
+                      <UploadButton />
+                    )}
+                    {userDesigns?.map((design: Design, idx: number) => (
+                      <ProfileWork
+                        design={design}
+                        key={design._id}
+                        isUsersProfile={
+                          appState?.session?.username === user?.username
+                        }
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
 
             <Footer />
