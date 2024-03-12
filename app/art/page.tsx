@@ -10,6 +10,7 @@ import ArtCard from "@/components/art/ArtCard";
 import { useQuery } from "@apollo/client";
 import { GET_ALL_ARTS } from "@/apollo/queries/arts";
 import SkeletonLoader from "@/components/SkeletonLoader";
+import { ImageList, ImageListItem } from "@mui/material";
 
 const Art = () => {
   const { loading, error, data } = useQuery(GET_ALL_ARTS);
@@ -23,7 +24,7 @@ const Art = () => {
         <Image
           src={"/images/art-overlay.jpg"}
           fill
-          style={{objectFit:"cover"}}
+          style={{ objectFit: "cover" }}
           alt="backgroung image"
         />
 
@@ -65,11 +66,13 @@ const Art = () => {
         {loading ? (
           <SkeletonLoader />
         ) : (
-          <div className="grid grid-cols-4 ">
+          <ImageList variant="masonry" cols={3} gap={8}>
             {[...(data?.getAllArtWorks || [])].map((item: ArtPiece, idx) => (
-              <ArtCard art={item} key={item._id} />
+              <ImageListItem key={item._id}>
+                <ArtCard art={item}  />
+              </ImageListItem>
             ))}
-          </div>
+          </ImageList>
         )}
 
         <Footer />

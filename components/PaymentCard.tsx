@@ -1,11 +1,9 @@
 import { Checkbox, FormGroup } from "@mui/material";
 import Image from "next/image";
-import { ImHammer2 } from "react-icons/im";
 import { RiVisaLine } from "react-icons/ri";
 import ButtonSolid from "./ButtonSolid";
 import { FaRegClock } from "react-icons/fa6";
 import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
-
 
 const PaymentCard = ({
   setBidAmount,
@@ -41,7 +39,13 @@ const PaymentCard = ({
 
       <div className="w-full flex flex-col items-center p-[1rem]">
         <div className="h-[4rem] w-[4rem] -mt-[3rem] mb-4 z-10 rounded-full bg-[#f4f4f4] flex items-center justify-center ">
-          <ImHammer2 size={30} />
+          <Image
+            src={"/icons/hammer.svg"}
+            alt=""
+            height={30}
+            width={30}
+            style={{ objectFit: "contain" }}
+          />
         </div>
         <p className="text-center text-[.85rem] w-[18rem] ">
           By placing the order, you agree to the{" "}

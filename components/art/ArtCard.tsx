@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import SessionAvatar from "../SessionAvatar";
 import { useRouter } from "next/navigation";
+import { IoEyeOutline } from "react-icons/io5";
 
 interface Props {
   art: ArtPiece;
@@ -11,42 +12,82 @@ const ArtCard = ({ art }: Props) => {
   const router = useRouter();
 
   const navigateToArtDetails = () => {
-    if(art?.artState === "auction") {
-      router.push(`/art/auction/details/${art?._id}`)
+    if (art?.artState === "auction") {
+      router.push(`/art/auction/details/${art?._id}`);
     } else {
-      router.push(`/art/details/${art?._id}`)
+      router.push(`/art/details/${art?._id}`);
     }
-  }
+  };
 
   return (
     <div
       onClick={navigateToArtDetails}
-      className="relative group cursor-pointer mb-12 w-[18rem] h-[25rem] "
+      className="relative group cursor-pointer mb-12 w-[20rem] "
     >
-      <div className="relative w-full h-[19rem]">
+      {art?.artState === "onSale" ? (
+        <Image
+          src={"/icons/buy.svg"}
+          alt=""
+          height={60}
+          width={60}
+          style={{ objectFit: "contain" }}
+          className="z-20 absolute top-0 right-0"
+        />
+      ) : art?.artState === "auction" ? (
+        <Image
+          src={"/icons/auction.svg"}
+          alt=""
+          height={60}
+          width={60}
+          style={{ objectFit: "contain" }}
+          className="z-20 absolute top-0 right-0"
+        />
+      ) : (
+        <></>
+      )}
+      <div className="relative w-full overflow-hidden flex items-end">
         <Image
           className="group-hover:scale-105 duration-500"
           src={art?.artPreview}
-          fill
+          height={288}
+          width={320}
           style={{ objectFit: "contain" }}
           alt="card image"
         />
       </div>
 
       <div className="w-full mt-2 flex items-center justify-between">
-        <div className="" >
-          <p className="font-medium text-[1.2rem] line-clamp-1 ">
-            {art?.title}
+        <div className="">
+          <p className="font-medium text-[.9rem] line-clamp-1 ">
+            {art?.title} | {art?.dimensions}
           </p>
           <p className="text-sm text-[#595862] line-clamp-1 ">
             {art?.artist.fullName}
           </p>
 
-          <div className={`px-2 py-[2px] ${art?.artState === "auction" ? "bg-[#FF0000]" : art?.artState === "onSale" ? "bg-[#254AA5]" : "bg-[#343434]" } w-fit`} >
-            <p className="text-white" >{art?.artState === "auction" ? "Auction" : art?.artState === "onSale" ? `$${art?.price}` : "Gallery"}</p>
-          </div>
+          {art?.artState === "onSale" ? (
+            <p className="text-[14px] text-[#595862] ">${art?.price}</p>
+          ) : art?.artState === "auction" ? (
+            <div className="flex items-center space-x-1">
+              <Image
+                src={"/icons/hammer.svg"}
+                alt=""
+                height={14}
+                width={14}
+                style={{ objectFit: "contain" }}
+              />
+              <p className="text-[14px] text-[#595862] ">
+                ${art?.auctionStartPrice}
+              </p>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-1">
+              <IoEyeOutline color="#595862" size={16} />
+              <p className="text-[14px] text-[#595862] ">SHOWCASE</p>
+            </div>
+          )}
         </div>
-          <SessionAvatar image={art?.artist.avatar} size={50} />
+        <SessionAvatar image={art?.artist.avatar} size={50} />
       </div>
     </div>
   );

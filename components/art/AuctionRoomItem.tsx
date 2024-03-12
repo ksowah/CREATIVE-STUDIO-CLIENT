@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { FaRegCalendar } from "react-icons/fa";
 import SessionAvatar from "../SessionAvatar";
-import { ImHammer2 } from "react-icons/im";
 import { useRouter } from "next/navigation";
 
 const AuctionRoomItem = ({ group }: { group: any }) => {
@@ -53,7 +52,13 @@ const AuctionRoomItem = ({ group }: { group: any }) => {
                   }
                   className="h-[3rem] cursor-pointer flex items-center justify-center px-4 rounded-md bg-[#DEDDDF] hover:bg-[#cccad1] "
                 >
-                  <ImHammer2 size={20} />
+                  <Image
+                    src={"/icons/hammer.svg"}
+                    alt=""
+                    height={20}
+                    width={20}
+                    style={{ objectFit: "contain" }}
+                  />
                 </div>
               </div>
             </div>
