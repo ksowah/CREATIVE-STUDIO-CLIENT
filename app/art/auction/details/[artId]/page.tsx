@@ -21,7 +21,6 @@ import { MyContext } from "@/context/Context";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 
-
 const AuctionDetails = ({ params }: { params: any }) => {
   const { artId } = params;
 
@@ -59,30 +58,38 @@ const AuctionDetails = ({ params }: { params: any }) => {
 
   const artDetails: ArtPiece = data?.getArtById;
 
-  const placeBidOnArt = async () => {
 
+  const placeidPromise = async () => {
+    await placeBid({
+      variables: {
+        bidAmount: parseFloat(bidAmount),
+        artId,
+      },
+    });
+    refetchArtBiddings();
+    setIsErrorOccured(false);
+    setIsSuccess(true);
+  }
+
+  const placeBidOnArt = async () => {
     if (highestBid && bidAmount <= highestBid) {
       toast.error("Bid amount must be greater than the highest bid");
       return;
     }
-
     try {
-      const { data } = await placeBid({
-        variables: {
-          bidAmount: parseFloat(bidAmount),
-          artId,
-        },
-      });
-      setIsErrorOccured(false);
-      setIsSuccess(true);
-      refetchArtBiddings();
-      toast.success("Bid placed successfully");
+      toast.promise(
+        placeidPromise,
+        {
+          pending: "Placing bid...",
+          success: "Bid placed successfully",
+        }
+      );
     } catch (error: any) {
       setIsSuccess(false);
       setIsErrorOccured(true);
       toast.error(error.message);
     }
-  }
+  };
 
   const auctionStartDate = new Date(parseInt(artDetails?.auctionStartDate));
   const auctionEndDate = new Date(parseInt(artDetails?.auctionEndDate));
@@ -254,6 +261,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                   onClick={placeBidOnArt}
                   setBidAmount={setBidAmount}
                   isAuctionLive={isAuctionLive}
+                  isAuctionPage
                 />
               </div>
 
