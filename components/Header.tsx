@@ -85,7 +85,7 @@ const Header = () => {
                 href={"/art/cart"}
                 className="relative h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center"
               >
-                {user && !loading && data?.getCartItems.length > 0 && (
+                {user && data?.getCartItems.length > 0 && (
                   <div className="absolute -top-2 -right-2 px-[6px]  flex items-center justify-center rounded-full bg-black ">
                     <p className="text-white text-[11px]">
                       {numberOfItems}
