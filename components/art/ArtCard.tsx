@@ -1,8 +1,9 @@
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import SessionAvatar from "../SessionAvatar";
 import { useRouter } from "next/navigation";
 import { IoEyeOutline } from "react-icons/io5";
+import { Skeleton } from "@mui/material";
 
 interface Props {
   art: ArtPiece;
@@ -10,6 +11,8 @@ interface Props {
 
 const ArtCard = ({ art }: Props) => {
   const router = useRouter();
+
+  const [imageLoading, setImageLoading] = useState(true);
 
   const navigateToArtDetails = () => {
     if (art?.artState === "auction") {
@@ -45,8 +48,12 @@ const ArtCard = ({ art }: Props) => {
       ) : (
         <></>
       )}
-      <div className="relative w-full overflow-hidden flex items-end">
+      <div className="relative w-full overflow-hidden flex flex-col items-end">
+        {imageLoading && (
+          <Skeleton className="absolute top-0 bottom-0 left-0 right-0" variant="rectangular" width={"100%"} height={320} />
+        )}
         <Image
+          onLoad={() => setImageLoading(false)}
           className="group-hover:scale-105 duration-500"
           src={art?.artPreview}
           height={288}

@@ -24,6 +24,8 @@ const Header = () => {
 
   const user = appState.session;
 
+  const numberOfItems = data?.getCartItems.length;
+
   useEffect(() => {
     refetch();
   }, []);
@@ -78,19 +80,21 @@ const Header = () => {
               </Link>
             </Tooltip>
 
-            <Link
-              href={"/art/cart"}
-              className="relative h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center"
-            >
-              {user && !loading && data?.getCartItems.length > 0 && (
-                <div className="absolute -top-2 -right-2 px-[6px]  flex items-center justify-center rounded-full bg-black ">
-                  <p className="text-white text-[11px]">
-                    {data?.getCartItems.length}
-                  </p>
-                </div>
-              )}
-              <MdOutlineShoppingCart size={20} />
-            </Link>
+            <Tooltip title="Your cart">
+              <Link
+                href={"/art/cart"}
+                className="relative h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center"
+              >
+                {user && !loading && data?.getCartItems.length > 0 && (
+                  <div className="absolute -top-2 -right-2 px-[6px]  flex items-center justify-center rounded-full bg-black ">
+                    <p className="text-white text-[11px]">
+                      {numberOfItems}
+                    </p>
+                  </div>
+                )}
+                <MdOutlineShoppingCart size={20} />
+              </Link>
+            </Tooltip>
 
             {user ? (
               <Link href={`/profile/${user?.username}`}>

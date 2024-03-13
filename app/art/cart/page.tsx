@@ -1,39 +1,80 @@
+"use client";
+
 import Container from "@/components/Container";
 import Header from "@/components/Header";
-import CreativeCard from "@/components/CreativeCard";
 import Footer from "@/components/Footer";
-
-
+import EmptyCart from "@/components/art/EmptyCart";
+import PaymentCard from "@/components/PaymentCard";
+import CartItem from "@/components/art/CartItem";
+import { GET_CART_ITEMS } from "@/apollo/queries/cart";
+import { useQuery } from "@apollo/client";
+import { Skeleton } from "@mui/material";
 
 const CartPage = () => {
+  const { data, loading } = useQuery(GET_CART_ITEMS);
+
+  const cartItems = data?.getCartItems;
+
+  // get the subtotal price of all items in the cart
+  const subTotal = cartItems?.reduce((acc: number, item: any) => {
+    return acc + item.item.price;
+  }, 0);
+
   return (
     <main>
       <Header />
       <Container>
-        <div className="pt-[7rem] ">
-          <div className="h-[25rem] bg-white border-2 border-[#bdbcco] border-solid	rounded-[10px] ">
-            <div className="flex flex-col justify-center items-center mt-16 ">
-            <img src="/images/shoppingcart.png" width={120}/>
-            <p className="text-[#5c5b66] font-semibold text-[15px] mt-5">Ooops! Your cart is empty</p>
-            <p className="text-[13px] my-5">It’s worth every penny spent on an artwork!</p>
-            <button className="bg-[#000] text-[#fff] text-[13px] rounded-[5px] p-2 h-[35px] w-[130px]">START SHOPPING</button>
+        {loading ? (
+          <div className="pt-[7rem] flex space-x-6 " >
+            <div className="flex-1" >
+              <Skeleton className="mb-[1rem] " variant="rectangular" width={"100%"} height={200} />
+              <Skeleton className="mb-[1rem] " variant="rectangular" width={"100%"} height={200} />
             </div>
+            <Skeleton className="" variant="rectangular" width={400} height={320} />
           </div>
-          
-          <h3 className="text-center my-10 text-[25px]">Top Selling</h3>
+        ) : (
+          <>
+            <div className="pt-[7rem] ">
+              {cartItems?.length > 0 ? (
+                <div className="w-full border rounded-lg flex ">
+                  <div className="flex-1 text-[#595862] ">
+                    {/* Header */}
+                    <div className="h-[4rem] w-full border-b flex items-center justify-between px-[1rem] ">
+                      <div className="flex items-center space-x-8">
+                        <h3 className="text-[1.2rem] font-medium ">
+                          Your Gallery
+                        </h3>
+                        <p className="text-sm">1 ITEM</p>
+                      </div>
 
-          <div className="flex justify-evenly flex-wrap"> 
-            <CreativeCard authourImage="/images/profilepic1.svg" authourName="John Doe" workImage="/images/art1.svg" designId="1" />
-            <CreativeCard authourImage="/images/profilepic1.svg" authourName="Kelvin Sowah" workImage="/images/art2.svg" designId="2" />
-            <CreativeCard authourImage="/images/profilepic1.svg" authourName="Paul Israel" workImage="/images/art3.svg" designId="3" />
-            <CreativeCard authourImage="/images/profilepic1.svg" authourName="Nukpezah Winfred" workImage="/images/art4.svg" designId="4" />
-            <CreativeCard authourImage="/images/profilepic1.svg" authourName="Kofi Doe" workImage="/images/art5.svg" designId="5" />
-            <CreativeCard authourImage="/images/profilepic1.svg" authourName="Jane Doe" workImage="/images/art6.svg" designId="6" />
-            <CreativeCard authourImage="/images/profilepic1.svg" authourName="Jane Doe" workImage="/images/art7.svg" designId="6" />
-            <CreativeCard authourImage="/images/profilepic1.svg" authourName="Jane Doe" workImage="/images/art8.svg" designId="6" />
-          </div>
-          <Footer />
-        </div>
+                      <p className="font-medium text-sm">Keep Shopping</p>
+                    </div>
+
+                    <div className="w-full p-[1rem]">
+                      {cartItems?.map((art: any, idx: any) => (
+                        <CartItem
+                          key={art?.item._id}
+                          artPreview={art?.item.artPreview}
+                          artist={art?.artist.fullName}
+                          category={art?.item.category}
+                          dimension={art?.item.dimensions}
+                          price={art?.item.price}
+                          title={art?.item.title}
+                          itemId={art?.item._id}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <PaymentCard subtotal={subTotal} />
+                </div>
+              ) : (
+                <EmptyCart />
+              )}
+            </div>
+            <Footer />
+          </>
+        )}
       </Container>
     </main>
   );

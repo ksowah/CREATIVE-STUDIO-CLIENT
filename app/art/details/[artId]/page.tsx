@@ -85,7 +85,6 @@ const ArtDetails = ({ params }: { params: any }) => {
       toast.success(`${artDetails?.title} added to cart`);
     } catch (error: any) {
       console.error("error", error);
-      toast.error(error.message);
     }
   };
 
