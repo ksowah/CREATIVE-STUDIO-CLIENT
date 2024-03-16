@@ -53,6 +53,11 @@ const Header = () => {
               </Link>
               <li className="cursor-pointer">Explore</li>
               <li className="cursor-pointer">Free + premium</li>
+              <Link href={"/wallet"}>
+                <li className={`cursor-pointer ${
+                    pathname.includes("/wallet") && "font-bold"
+                  } `}>Wallet</li>
+              </Link>
             </ul>
 
             <div className="flex items-center space-x-2">
@@ -87,9 +92,7 @@ const Header = () => {
               >
                 {user && data?.getCartItems.length > 0 && (
                   <div className="absolute -top-2 -right-2 px-[6px]  flex items-center justify-center rounded-full bg-black ">
-                    <p className="text-white text-[11px]">
-                      {numberOfItems}
-                    </p>
+                    <p className="text-white text-[11px]">{numberOfItems}</p>
                   </div>
                 )}
                 <MdOutlineShoppingCart size={20} />
