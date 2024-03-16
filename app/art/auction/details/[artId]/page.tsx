@@ -37,6 +37,8 @@ const AuctionDetails = ({ params }: { params: any }) => {
   const [isAuctionLive, setIsAuctionLive] = useState(false);
   const [dateStatus, setDateStatus] = useState("");
   const [timeStatus, setTimeStatus] = useState("");
+  const [userAgreementOne, setUserAgreementOne] = useState(false)
+  const [userAgreementTwo, setUserAgreementTwo] = useState(false)
 
   const { data, loading } = useQuery(GET_ART_BY_ID, {
     variables: { artId },
@@ -60,6 +62,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
 
 
   const placeidPromise = async () => {
+
     await placeBid({
       variables: {
         bidAmount: parseFloat(bidAmount),
@@ -72,10 +75,17 @@ const AuctionDetails = ({ params }: { params: any }) => {
   }
 
   const placeBidOnArt = async () => {
+
+    if(!userAgreementOne || !userAgreementTwo){
+      toast.error("Please agree to the terms and conditions")
+      return
+    }
+  
     if (highestBid && bidAmount <= highestBid) {
       toast.error("Bid amount must be greater than the highest bid");
       return;
     }
+
     try {
       toast.promise(
         placeidPromise,
@@ -262,6 +272,10 @@ const AuctionDetails = ({ params }: { params: any }) => {
                   setBidAmount={setBidAmount}
                   isAuctionLive={isAuctionLive}
                   isAuctionPage
+                  checkedOne={userAgreementOne}
+                  checkedTwo={userAgreementTwo}
+                  setCheckedOne={setUserAgreementOne}
+                  setCheckedTwo={setUserAgreementTwo}
                 />
               </div>
 

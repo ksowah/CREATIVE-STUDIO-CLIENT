@@ -11,13 +11,21 @@ const PaymentCard = ({
   onClick,
   isAuctionLive,
   isAuctionPage,
-  subtotal
+  subtotal,
+  checkedOne,
+  checkedTwo,
+  setCheckedOne,
+  setCheckedTwo
 }: {
   setBidAmount?: any;
   onClick?: any;
   isAuctionLive?: boolean;
   isAuctionPage?: boolean;
   subtotal?:number
+  checkedOne?: boolean;
+  checkedTwo?:boolean
+  setCheckedOne?:any
+  setCheckedTwo?:any
 }) => {
   const OpenDialogueButton = () => {
     return <ButtonSolid className="my-4" title="PLACE BID" />;
@@ -111,13 +119,13 @@ const PaymentCard = ({
 
         <FormGroup className="w-full flex flex-col items-start my-4">
           <div className="flex items-center">
-            <Checkbox />
+            <Checkbox checked={checkedOne} onChange={() => setCheckedOne(!checkedOne)} />
             <p className="text-sm">
               I have read and agreed to the Privacy Policy
             </p>
           </div>
           <div className="flex ">
-            <Checkbox />
+            <Checkbox checked={checkedTwo} onChange={() => setCheckedTwo(!checkedTwo)} />
             <p className="text-sm">
               I have read and agreed to the Refund and Cancellation policy
             </p>

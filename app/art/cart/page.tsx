@@ -15,6 +15,8 @@ const CartPage = () => {
 
   const cartItems = data?.getCartItems;
 
+  const numberOfCartItems = data?.getCartItems.length
+
   // get the subtotal price of all items in the cart
   const subTotal = cartItems?.reduce((acc: number, item: any) => {
     return acc + item.item.price;
@@ -44,7 +46,7 @@ const CartPage = () => {
                         <h3 className="text-[1.2rem] font-medium ">
                           Your Gallery
                         </h3>
-                        <p className="text-sm">1 ITEM</p>
+                        <p className="text-sm">{numberOfCartItems} ITEMS</p>
                       </div>
 
                       <p className="font-medium text-sm">Keep Shopping</p>
