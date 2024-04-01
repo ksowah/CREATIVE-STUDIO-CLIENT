@@ -10,18 +10,19 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 import { setContext } from "@apollo/client/link/context";
 
-
-
 const httpLink = createHttpLink({
-  uri: process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
-  ? "http://localhost:8000/graphql"
-  : "https://creative-studio-ksowahsoftwares.koyeb.app/graphql"
+  uri:
+    process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
+      ? "http://localhost:8000/graphql"
+      : "https://creative-studio-ksowahsoftwares.koyeb.app/graphql",
 });
-
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:8000/graphql",
+    url:
+      process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
+        ? "ws://localhost:8000/graphql"
+        : "ws://creative-studio-ksowahsoftwares.koyeb.app/graphql",
   })
 );
 

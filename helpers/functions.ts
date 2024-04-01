@@ -246,3 +246,4 @@ export const deleteArtData = async (
     console.error("Error deleting design:", error);
   }
 };
+
