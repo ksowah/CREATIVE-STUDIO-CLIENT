@@ -11,11 +11,19 @@ import { useQuery } from "@apollo/client";
 import { GET_ALL_ARTS } from "@/apollo/queries/arts";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import { ImageList, ImageListItem } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { MyContext } from "@/context/Context";
 
 const Art = () => {
   const { loading, error, data } = useQuery(GET_ALL_ARTS);
 
-  console.log("data >>>", error, data);
+
+  const router = useRouter();
+
+  const { appState } = useContext(MyContext);
+
+  const { session } = appState;
 
   return (
     <main className="flex-1">
@@ -32,10 +40,13 @@ const Art = () => {
           <h2 className="text-white font-medium text-3xl mb-[4rem] ">
             Unveil your creative brilliance to the world.
           </h2>
-          <ButtonSolid
-            className="w-[12.6rem] h-[4rem]"
-            title="Become an Artist"
-          />
+          {session?.subscription === "FREE" && (
+            <ButtonSolid
+              className="w-[12.6rem] h-[4rem]"
+              title="Become an Artist"
+              onClick={() => router.push("/subscription")}
+            />
+          )}
         </div>
       </div>
 

@@ -3,21 +3,30 @@
 import Container from "@/components/Container";
 import Header from "@/components/Header";
 import Image from "next/image";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { GoThumbsup } from "react-icons/go";
 import { TfiSave } from "react-icons/tfi";
-import { FaRegComment } from "react-icons/fa";
+import { FaHeart, FaRegComment, FaRegHeart } from "react-icons/fa";
 import SliderComponent from "@/components/SliderComponent";
 import UserFooter from "@/components/UserFooter";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_DESIGN_BY_ID, GET_USER_DESIGNS } from "@/apollo/queries/designs";
+import {
+  GET_DESIGN_BY_ID,
+  GET_DESIGN_LIKES,
+  GET_USER_DESIGNS,
+} from "@/apollo/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
 import { Button, Skeleton } from "@mui/material";
 import { MyContext } from "@/context/Context";
 import { IoTrashOutline } from "react-icons/io5";
 import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
 import { deleteDesignData } from "@/helpers/functions";
-import { DELETE_DESIGN } from "@/apollo/mutations/designs";
+import {
+  COUNT_DESIGN_VIEWS,
+  DELETE_DESIGN,
+  LIKE_DESIGN,
+  UNLIKE_DESIGN,
+} from "@/apollo/mutations/designs";
 import { useRouter } from "next/navigation";
 import { GoDownload } from "react-icons/go";
 import { GoShieldCheck } from "react-icons/go";
@@ -26,7 +35,7 @@ import { FaRegFile } from "react-icons/fa";
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
 
-  const { appState, setAppState } = useContext(MyContext);
+  const { appState } = useContext(MyContext);
 
   const { session } = appState;
 
@@ -50,7 +59,16 @@ const DesignDetails = ({ params }: { params: any }) => {
 
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  console.log("design details", designDetails);
+  const [countDesignViews, { data: viewCountData }] = useMutation(
+    COUNT_DESIGN_VIEWS,
+    {
+      variables: { designId },
+    }
+  );
+
+  useEffect(() => {
+    countDesignViews();
+  }, []);
 
   const designImages: any = [
     ...(designDetails?.preview ? [designDetails.preview] : []),
@@ -83,6 +101,88 @@ const DesignDetails = ({ params }: { params: any }) => {
     );
   };
 
+  const { data: likesData, loading: likesLoading } = useQuery(
+    GET_DESIGN_LIKES,
+    {
+      variables: { designId },
+    }
+  );
+  const [likeDesign] = useMutation(LIKE_DESIGN);
+  const [unlikeDesign] = useMutation(UNLIKE_DESIGN);
+  const [likeLoading, setLikeLoading] = useState(false);
+
+  const [alreadyLiked, setAlreadyLiked] = useState<any>(false);
+
+  let designLikes = likesData?.getDesignLikes?.data;
+
+  console.log("design likes >>>>", designLikes);
+
+  useEffect(() => {
+    setAlreadyLiked(
+      designLikes?.findIndex(
+        (like: any) => like.likedBy._id === session?._id
+      ) !== -1
+    );
+  }, [designLikes]);
+
+  const handleLikeDesign = async () => {
+    try {
+      if (alreadyLiked) {
+        await unlikeDesign({
+          variables: { designId },
+          update: (cache) => {
+            const existingLikes = cache.readQuery<any>({
+              query: GET_DESIGN_LIKES,
+              variables: { designId },
+            });
+
+            if (existingLikes) {
+              const updatedLikes = existingLikes.getDesignLikes.data.filter(
+                (like: any) => like._id !== designId
+              );
+
+              cache.writeQuery({
+                query: GET_DESIGN_LIKES,
+                variables: { designId },
+                data: {
+                  getDesignLikes: updatedLikes,
+                },
+              });
+            }
+          },
+        });
+      } else {
+        setLikeLoading(true);
+        await likeDesign({
+          variables: { designId },
+          update: (cache, { data: { likeDesign } }) => {
+            const existingLikes = cache.readQuery<any>({
+              query: GET_DESIGN_LIKES,
+              variables: { designId },
+            });
+
+            cache.writeQuery({
+              query: GET_DESIGN_LIKES,
+              variables: { designId },
+              data: {
+                getDesignLikes: [
+                  likeDesign,
+                  ...(existingLikes?.getDesignLikes.data || []),
+                ],
+              },
+            });
+          },
+        });
+
+        setTimeout(() => {
+          setLikeLoading(false);
+        }, 1500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-ful">
       <Header />
@@ -112,9 +212,32 @@ const DesignDetails = ({ params }: { params: any }) => {
               </div>
 
               <div className="flex items-center space-x-4">
-                <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
-                  <GoThumbsup size={22} color="#595862" />
-                </button>
+                {likeLoading ? (
+                  <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+                    <FaHeart
+                      size={22}
+                      className="text-pink-200 hover:scale-110 duration-200"
+                    />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleLikeDesign}
+                    className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center "
+                  >
+                    {alreadyLiked ? (
+                      <FaHeart
+                        size={22}
+                        className="text-pink-500 hover:scale-110 duration-200"
+                      />
+                    ) : (
+                      <FaRegHeart
+                        size={22}
+                        color="#595862"
+                        className="hover:scale-110 duration-200"
+                      />
+                    )}
+                  </button>
+                )}
 
                 <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
                   <FaRegComment size={22} color="#595862" />

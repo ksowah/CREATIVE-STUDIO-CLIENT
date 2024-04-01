@@ -10,11 +10,18 @@ import SkeletonLoader from "@/components/SkeletonLoader";
 import { GET_ALL_DESIGNS } from "@/apollo/queries/designs";
 import { useQuery } from "@apollo/client";
 import Image from "next/image";
-
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { MyContext } from "@/context/Context";
 
 export default function Home() {
   const { loading, data } = useQuery(GET_ALL_DESIGNS);
 
+  const router = useRouter();
+
+  const { appState } = useContext(MyContext);
+
+  const { session } = appState;
 
   return (
     <main className="flex-1">
@@ -23,7 +30,7 @@ export default function Home() {
         <Image
           src={"/images/designoverlay.png"}
           fill
-          style={{objectFit:"cover"}}
+          style={{ objectFit: "cover" }}
           alt="backgroung image"
         />
 
@@ -31,10 +38,13 @@ export default function Home() {
           <h2 className="text-white font-medium text-3xl mb-[4rem] ">
             Unveil your creative brilliance to the world.
           </h2>
-          <ButtonSolid
-            className="w-[12.6rem] h-[4rem]"
-            title="Become a Designer"
-          />
+          {session?.subscription === "FREE" && (
+            <ButtonSolid
+              className="w-[12.6rem] h-[4rem]"
+              title="Become a Designer"
+              onClick={() => router.push("/subscription")}
+            />
+          )}
         </div>
       </div>
 
@@ -66,13 +76,15 @@ export default function Home() {
           <SkeletonLoader />
         ) : (
           <div className="grid grid-cols-4 ">
-            {[...data?.getAllDesigns || []].map((item, idx) => (
+            {[...(data?.getAllDesigns || [])].map((item:Design, idx) => (
               <CreativeCard
                 key={item._id}
                 designId={item._id}
                 authourImage={item.designer.avatar}
                 authourName={item.designer.fullName}
+                authourUsername={item.designer.username}
                 workImage={item.preview}
+                views={item.views}
               />
             ))}
           </div>

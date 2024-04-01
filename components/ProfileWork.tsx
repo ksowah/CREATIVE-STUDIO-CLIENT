@@ -1,17 +1,26 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { TfiSave } from "react-icons/tfi";
 import { IoTrashOutline } from "react-icons/io5";
-import { useMutation } from "@apollo/client";
-import { DELETE_DESIGN } from "@/apollo/mutations/designs";
-import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/apollo/queries/designs";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  DELETE_DESIGN,
+  LIKE_DESIGN,
+  UNLIKE_DESIGN,
+} from "@/apollo/mutations/designs";
+import {
+  GET_ALL_DESIGNS,
+  GET_DESIGN_LIKES,
+  GET_USER_DESIGNS,
+} from "@/apollo/queries/designs";
 import { MyContext } from "@/context/Context";
 import { useRouter } from "next/navigation";
 import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
 import { deleteDesignData, deleteImageFromFB } from "@/helpers/functions";
 import { LuEye } from "react-icons/lu";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 const ProfileWork = ({
   design,
@@ -45,6 +54,83 @@ const ProfileWork = ({
     setDeleteLoading(false);
   };
 
+  const { data } = useQuery(GET_DESIGN_LIKES, {
+    variables: { designId: design?._id },
+  });
+  const [likeDesign] = useMutation(LIKE_DESIGN);
+  const [unlikeDesign] = useMutation(UNLIKE_DESIGN);
+  const [likeLoading, setLikeLoading] = useState(false);
+
+  const [alreadyLiked, setAlreadyLiked] = useState<any>(false);
+
+  let designLikes = data?.getDesignLikes?.data;
+
+  useEffect(() => {
+    setAlreadyLiked(
+      designLikes?.findIndex(
+        (like: any) => like.likedBy._id === session?._id
+      ) !== -1
+    );
+  }, [designLikes]);
+
+  const handleLikeDesign = async () => {
+    try {
+      if (alreadyLiked) {
+        await unlikeDesign({
+          variables: { designId: design?._id },
+          update: (cache) => {
+            const existingLikes = cache.readQuery<any>({
+              query: GET_DESIGN_LIKES,
+              variables: { designId: design?._id },
+            });
+
+            if (existingLikes) {
+              const updatedLikes = existingLikes.getDesignLikes.data.filter(
+                (like: any) => like._id !== design?._id
+              );
+
+              cache.writeQuery({
+                query: GET_DESIGN_LIKES,
+                variables: { designId: design?._id },
+                data: {
+                  getDesignLikes: updatedLikes,
+                },
+              });
+            }
+          },
+        });
+      } else {
+        setLikeLoading(true);
+        await likeDesign({
+          variables: { designId: design?._id },
+          update: (cache, { data: { likeDesign } }) => {
+            const existingLikes = cache.readQuery<any>({
+              query: GET_DESIGN_LIKES,
+              variables: { designId: design?._id },
+            });
+
+            cache.writeQuery({
+              query: GET_DESIGN_LIKES,
+              variables: { designId: design?._id },
+              data: {
+                getDesignLikes: [
+                  likeDesign,
+                  ...(existingLikes?.getDesignLikes.data || []),
+                ],
+              },
+            });
+          },
+        });
+
+        setTimeout(() => {
+          setLikeLoading(false);
+        }, 1000);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const OpenDialogueButton = () => {
     return (
       <div className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md ">
@@ -68,7 +154,7 @@ const ProfileWork = ({
           src={design?.preview}
           className="group-hover:scale-125 duration-500"
           fill
-          style={{objectFit:"cover"}}
+          style={{ objectFit: "cover" }}
           alt="work"
         />
       </div>
@@ -81,9 +167,23 @@ const ProfileWork = ({
           >
             <LuEye size={20} color="#fff" />
           </div>
-          <div className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md ">
-            <CiHeart size={20} color="#fff" />
-          </div>
+          {likeLoading ? (
+            <div className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md ">
+              <FaHeart className="text-pink-200" size={18} />
+            </div>
+          ) : (
+            <div
+              onClick={handleLikeDesign}
+              className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md "
+            >
+              {alreadyLiked ? (
+                <FaHeart className="text-pink-500" size={18} />
+              ) : (
+                <FaRegHeart size={18} color="#fff" />
+              )}
+            </div>
+          )}
+
           {isUsersProfile ? (
             <ActionConfirmationDialogue
               action={handleDeleteDesign}

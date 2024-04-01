@@ -92,6 +92,11 @@ const AuctionDetails = ({ params }: { params: any }) => {
         {
           pending: "Placing bid...",
           success: "Bid placed successfully",
+          error: {
+            render: ({ data }:any) => {
+              return data.message;
+            },
+          }
         }
       );
     } catch (error: any) {

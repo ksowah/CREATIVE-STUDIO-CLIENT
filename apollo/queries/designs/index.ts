@@ -93,3 +93,22 @@ export const GET_USER_DESIGNS = gql`
     }
   }
 `;
+
+export const GET_DESIGN_LIKES = gql`
+  query Query($designId: String!) {
+    getDesignLikes(designId: $designId) {
+      data {
+        _id
+        designId
+        likedAt
+        likedBy {
+          fullName
+          email
+          username
+          _id
+          avatar
+        }
+      }
+    }
+  }
+`;

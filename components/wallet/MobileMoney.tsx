@@ -7,9 +7,38 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import ButtonSolid from "../ButtonSolid";
+import { useMutation } from "@apollo/client";
+import { DEPOSIT_TO_WALLET } from "@/apollo/mutations/wallet";
+import { ToastContainer, toast } from "react-toastify";
+
 
 const MobileMoney = () => {
   const [selected, setSelected] = useState("");
+
+  const [depositAmount, setDepositAmount] = useState(0)
+
+  const [deposit, { loading }] = useMutation(DEPOSIT_TO_WALLET)
+
+
+  const depositFunds = async () => {
+    if(depositAmount < 10) {
+      toast.error('Minimum deposit amount is 10 cedis')
+      return
+    }
+
+    try {
+     const amountDeposited = await deposit({
+        variables: {
+          amount: depositAmount
+        }
+      })
+      setDepositAmount(0)
+      toast.success('Deposit successful')
+    } catch (error:any) {
+      console.log(error)
+      toast.error(error.message)
+    }
+  }
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelected(event.target.value);
@@ -17,6 +46,9 @@ const MobileMoney = () => {
 
   return (
     <div>
+      <ToastContainer />
+
+
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-6">
           <p className="font-medium text-[1.2rem] text-[#595862] ">
@@ -57,16 +89,16 @@ const MobileMoney = () => {
 
       <div className="flex items-center space-x-4 mt-6">
         <p className="font-medium text-[1.2rem] text-[#595862] ">
-          Amount (GHS)
+          Amount (USD)
         </p>
 
         <div className="h-[3rem] w-[300px] border flex items-center px-2 rounded-lg ">
-          <input type="number" className="border-0 outline-none w-full  " />
+          <input onChange={(e) => setDepositAmount(parseFloat(e.target.value))} placeholder="min. 10.00" type="number" className="border-0 outline-none w-full  " />
         </div>
       </div>
 
       <div className="w-full flex justify-end" >
-        <ButtonSolid className="my-[2rem] " title="Top Up Now" />
+        <ButtonSolid onClick={depositFunds} className="my-[2rem] " title="Top Up Now" />
       </div>
 
       <div className="w-full border-t pt-[2rem] text-[#595862] " >
