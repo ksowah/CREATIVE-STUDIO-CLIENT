@@ -8,19 +8,27 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   DELETE_DESIGN,
   LIKE_DESIGN,
+  SAVE_DESIGN,
   UNLIKE_DESIGN,
+  UNSAVE_DESIGN,
 } from "@/apollo/mutations/designs";
 import {
   GET_ALL_DESIGNS,
   GET_DESIGN_LIKES,
+  GET_SAVED_DESIGNS,
   GET_USER_DESIGNS,
 } from "@/apollo/queries/designs";
 import { MyContext } from "@/context/Context";
 import { useRouter } from "next/navigation";
 import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
-import { deleteDesignData, deleteImageFromFB } from "@/helpers/functions";
+import {
+  deleteDesignData,
+  deleteImageFromFB,
+  handleLikeDesign,
+  handleSaveDesign,
+} from "@/helpers/functions";
 import { LuEye } from "react-icons/lu";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaBookmark, FaHeart, FaRegBookmark, FaRegHeart } from "react-icons/fa";
 
 const ProfileWork = ({
   design,
@@ -59,9 +67,17 @@ const ProfileWork = ({
   });
   const [likeDesign] = useMutation(LIKE_DESIGN);
   const [unlikeDesign] = useMutation(UNLIKE_DESIGN);
+  const [saveDesign] = useMutation(SAVE_DESIGN);
+  const [unsaveDesign] = useMutation(UNSAVE_DESIGN);
+
   const [likeLoading, setLikeLoading] = useState(false);
 
+  const { data: savedDesignsData } = useQuery(GET_SAVED_DESIGNS);
+  let savedDesigns = savedDesignsData?.getSavedDesigns || [];
+
   const [alreadyLiked, setAlreadyLiked] = useState<any>(false);
+  const [alreadySaved, setAlreadySaved] = useState<any>(false);
+  const [saveLoading, setSaveLoading] = useState(false);
 
   let designLikes = data?.getDesignLikes?.data;
 
@@ -73,63 +89,13 @@ const ProfileWork = ({
     );
   }, [designLikes]);
 
-  const handleLikeDesign = async () => {
-    try {
-      if (alreadyLiked) {
-        await unlikeDesign({
-          variables: { designId: design?._id },
-          update: (cache) => {
-            const existingLikes = cache.readQuery<any>({
-              query: GET_DESIGN_LIKES,
-              variables: { designId: design?._id },
-            });
-
-            if (existingLikes) {
-              const updatedLikes = existingLikes.getDesignLikes.data.filter(
-                (like: any) => like._id !== design?._id
-              );
-
-              cache.writeQuery({
-                query: GET_DESIGN_LIKES,
-                variables: { designId: design?._id },
-                data: {
-                  getDesignLikes: updatedLikes,
-                },
-              });
-            }
-          },
-        });
-      } else {
-        setLikeLoading(true);
-        await likeDesign({
-          variables: { designId: design?._id },
-          update: (cache, { data: { likeDesign } }) => {
-            const existingLikes = cache.readQuery<any>({
-              query: GET_DESIGN_LIKES,
-              variables: { designId: design?._id },
-            });
-
-            cache.writeQuery({
-              query: GET_DESIGN_LIKES,
-              variables: { designId: design?._id },
-              data: {
-                getDesignLikes: [
-                  likeDesign,
-                  ...(existingLikes?.getDesignLikes.data || []),
-                ],
-              },
-            });
-          },
-        });
-
-        setTimeout(() => {
-          setLikeLoading(false);
-        }, 1000);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  useEffect(() => {
+    setAlreadySaved(
+      savedDesigns?.findIndex(
+        (saved: any) => saved.design._id === design?._id
+      ) !== -1
+    );
+  }, [savedDesigns]);
 
   const OpenDialogueButton = () => {
     return (
@@ -173,7 +139,15 @@ const ProfileWork = ({
             </div>
           ) : (
             <div
-              onClick={handleLikeDesign}
+              onClick={() =>
+                handleLikeDesign(
+                  alreadyLiked,
+                  unlikeDesign,
+                  design?._id,
+                  setLikeLoading,
+                  likeDesign
+                )
+              }
               className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md "
             >
               {alreadyLiked ? (
@@ -193,8 +167,31 @@ const ProfileWork = ({
               OpenDialogueButton={OpenDialogueButton}
             />
           ) : (
-            <div className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md ">
-              <TfiSave size={16} color="#fff" />
+            <div onClick={()=>handleSaveDesign(
+              alreadySaved,
+              unsaveDesign,
+              design?._id,
+              design?.designer._id,
+              setSaveLoading,
+              saveDesign,
+            )} className="flex items-center justify-center cursor-pointer h-[2rem] w-[2rem] rounded-full bg-transparent backdrop-blur-md ">
+              {saveLoading ? (
+                <FaBookmark
+                  size={16}
+                  className="text-[#dddde1]"
+                />
+              ) : (
+                <>
+                  {alreadySaved ? (
+                    <FaBookmark
+                      size={16}
+                      color="#fff"
+                    />
+                  ) : (
+                    <FaRegBookmark size={16} color="#fff" />
+                  )}
+                </>
+              )}
             </div>
           )}
         </div>

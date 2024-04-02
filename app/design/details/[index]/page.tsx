@@ -3,16 +3,22 @@
 import Container from "@/components/Container";
 import Header from "@/components/Header";
 import Image from "next/image";
-import React, { useContext, useEffect, useState } from "react";
+import React, { cache, useContext, useEffect, useState } from "react";
 import { GoThumbsup } from "react-icons/go";
 import { TfiSave } from "react-icons/tfi";
-import { FaHeart, FaRegComment, FaRegHeart } from "react-icons/fa";
+import {
+  FaHeart,
+  FaRegBookmark,
+  FaRegComment,
+  FaRegHeart,
+} from "react-icons/fa";
 import SliderComponent from "@/components/SliderComponent";
 import UserFooter from "@/components/UserFooter";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   GET_DESIGN_BY_ID,
   GET_DESIGN_LIKES,
+  GET_SAVED_DESIGNS,
   GET_USER_DESIGNS,
 } from "@/apollo/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
@@ -20,17 +26,28 @@ import { Button, Skeleton } from "@mui/material";
 import { MyContext } from "@/context/Context";
 import { IoTrashOutline } from "react-icons/io5";
 import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
-import { deleteDesignData } from "@/helpers/functions";
+import {
+  deleteDesignData,
+  handleFollowUser,
+  handleLikeDesign,
+  handleSaveDesign,
+} from "@/helpers/functions";
 import {
   COUNT_DESIGN_VIEWS,
   DELETE_DESIGN,
   LIKE_DESIGN,
+  SAVE_DESIGN,
   UNLIKE_DESIGN,
+  UNSAVE_DESIGN,
 } from "@/apollo/mutations/designs";
 import { useRouter } from "next/navigation";
 import { GoDownload } from "react-icons/go";
 import { GoShieldCheck } from "react-icons/go";
 import { FaRegFile } from "react-icons/fa";
+import { FaBookmark } from "react-icons/fa";
+import Link from "next/link";
+import { FOLLOW_USER, UNFOLLOW_USER } from "@/apollo/mutations/user";
+import { GET_FOLLOWERS } from "@/apollo/queries/user";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
@@ -61,14 +78,37 @@ const DesignDetails = ({ params }: { params: any }) => {
 
   const [countDesignViews, { data: viewCountData }] = useMutation(
     COUNT_DESIGN_VIEWS,
-    {
-      variables: { designId },
-    }
+    { variables: { designId } }
   );
+
+  const [saveDesign] = useMutation(SAVE_DESIGN);
+  const [unsaveDesign] = useMutation(UNSAVE_DESIGN);
+
+  const [follow, { loading: followLoading }] = useMutation(FOLLOW_USER);
+  const [unfollow, { loading: unfollowLoading }] = useMutation(UNFOLLOW_USER);
+
+  const [alreadyFollowed, setAlreadyFollowed] = useState<any>(false);
+
+  const { data: savedDesignsData } = useQuery(GET_SAVED_DESIGNS);
+  let savedDesigns = savedDesignsData?.getSavedDesigns || [];
 
   useEffect(() => {
     countDesignViews();
   }, []);
+
+  const { data: followersData } = useQuery(GET_FOLLOWERS, {
+    variables: { userId: designDetails?.designer._id },
+  });
+
+  let getUserFollowers = followersData?.getFollowers?.data;
+
+  useEffect(() => {
+    setAlreadyFollowed(
+      getUserFollowers?.findIndex(
+        (follow: any) => follow.followedBy._id === appState?.session?._id
+      ) !== -1
+    );
+  }, [getUserFollowers]);
 
   const designImages: any = [
     ...(designDetails?.preview ? [designDetails.preview] : []),
@@ -110,12 +150,12 @@ const DesignDetails = ({ params }: { params: any }) => {
   const [likeDesign] = useMutation(LIKE_DESIGN);
   const [unlikeDesign] = useMutation(UNLIKE_DESIGN);
   const [likeLoading, setLikeLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
 
   const [alreadyLiked, setAlreadyLiked] = useState<any>(false);
+  const [alreadySaved, setAlreadySaved] = useState<any>(false);
 
   let designLikes = likesData?.getDesignLikes?.data;
-
-  console.log("design likes >>>>", designLikes);
 
   useEffect(() => {
     setAlreadyLiked(
@@ -125,63 +165,13 @@ const DesignDetails = ({ params }: { params: any }) => {
     );
   }, [designLikes]);
 
-  const handleLikeDesign = async () => {
-    try {
-      if (alreadyLiked) {
-        await unlikeDesign({
-          variables: { designId },
-          update: (cache) => {
-            const existingLikes = cache.readQuery<any>({
-              query: GET_DESIGN_LIKES,
-              variables: { designId },
-            });
-
-            if (existingLikes) {
-              const updatedLikes = existingLikes.getDesignLikes.data.filter(
-                (like: any) => like._id !== designId
-              );
-
-              cache.writeQuery({
-                query: GET_DESIGN_LIKES,
-                variables: { designId },
-                data: {
-                  getDesignLikes: updatedLikes,
-                },
-              });
-            }
-          },
-        });
-      } else {
-        setLikeLoading(true);
-        await likeDesign({
-          variables: { designId },
-          update: (cache, { data: { likeDesign } }) => {
-            const existingLikes = cache.readQuery<any>({
-              query: GET_DESIGN_LIKES,
-              variables: { designId },
-            });
-
-            cache.writeQuery({
-              query: GET_DESIGN_LIKES,
-              variables: { designId },
-              data: {
-                getDesignLikes: [
-                  likeDesign,
-                  ...(existingLikes?.getDesignLikes.data || []),
-                ],
-              },
-            });
-          },
-        });
-
-        setTimeout(() => {
-          setLikeLoading(false);
-        }, 1500);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  useEffect(() => {
+    setAlreadySaved(
+      savedDesigns?.findIndex(
+        (design: any) => design.design._id === designDetails?._id
+      ) !== -1
+    );
+  }, [savedDesigns]);
 
   return (
     <div className="w-ful">
@@ -206,9 +196,21 @@ const DesignDetails = ({ params }: { params: any }) => {
 
               <div className="flex-1">
                 <h3 className="font-medium text-xl">{designDetails?.title}</h3>
-                <p className="text-[#595862] text-xs cursor-pointer ">
-                  {designDetails?.designer.fullName} · Follow{" "}
-                </p>
+                <div className="flex items-center space-x-1">
+                  <Link href={`/profile/${designDetails?.designer.username}`}>
+                    <p className="text-[#595862] text-xs cursor-pointer ">{designDetails?.designer.fullName}</p>
+                  </Link>
+                  <p className="text-[#595862] text-xs">·</p>
+                  <p onClick={()=>handleFollowUser(
+                    alreadyFollowed,
+                    unfollow,
+                    designDetails?.designer._id,
+                    session?._id,
+                    follow,
+                  )} className="text-[#595862] text-xs cursor-pointer">
+                    {alreadyFollowed ? "Unfollow" : "Follow"}
+                  </p>
+                </div>
               </div>
 
               <div className="flex items-center space-x-4">
@@ -221,7 +223,15 @@ const DesignDetails = ({ params }: { params: any }) => {
                   </button>
                 ) : (
                   <button
-                    onClick={handleLikeDesign}
+                    onClick={() =>
+                      handleLikeDesign(
+                        alreadyLiked,
+                        unlikeDesign,
+                        designDetails?._id,
+                        setLikeLoading,
+                        likeDesign
+                      )
+                    }
                     className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center "
                   >
                     {alreadyLiked ? (
@@ -251,8 +261,30 @@ const DesignDetails = ({ params }: { params: any }) => {
                     OpenDialogueButton={OpenDialogueButton}
                   />
                 ) : (
-                  <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
-                    <TfiSave size={18} color="#595862" />
+                  <button
+                    onClick={() =>
+                      handleSaveDesign(
+                        alreadySaved,
+                        unsaveDesign,
+                        designDetails?._id,
+                        designDetails?.designer._id,
+                        setSaveLoading,
+                        saveDesign
+                      )
+                    }
+                    className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center "
+                  >
+                    {saveLoading ? (
+                      <FaBookmark className="text-[#9d9da1]" size={18} />
+                    ) : alreadySaved ? (
+                      <FaBookmark
+                        className="hover:scale-110 duration-200"
+                        size={18}
+                        color="#000"
+                      />
+                    ) : (
+                      <FaRegBookmark size={18} color="#595862" />
+                    )}
                   </button>
                 )}
               </div>

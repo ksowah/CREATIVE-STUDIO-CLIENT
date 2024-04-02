@@ -51,3 +51,21 @@ export const UNLIKE_DESIGN = gql`
     unlikeDesign(designId: $designId)
   }
 `;
+
+export const SAVE_DESIGN = gql`
+  mutation Mutation($designId: String!, $designer: String) {
+    saveDesign(designId: $designId, designer: $designer) {
+      _id
+      design
+      savedBy
+      savedAt
+      designer
+    }
+  }
+`;
+
+export const UNSAVE_DESIGN = gql`
+  mutation UnsaveDesign($designId: String!) {
+    unsaveDesign(designId: $designId)
+  }
+`;

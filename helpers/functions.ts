@@ -1,5 +1,5 @@
 import { appInitializer } from "@/firebase";
-import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/apollo/queries/designs";
+import { GET_ALL_DESIGNS, GET_DESIGN_LIKES, GET_SAVED_DESIGNS, GET_USER_DESIGNS } from "@/apollo/queries/designs";
 import {
   deleteObject,
   getDownloadURL,
@@ -8,6 +8,7 @@ import {
   uploadString,
 } from "firebase/storage";
 import { GET_ALL_ARTS, GET_USER_ARTS } from "@/apollo/queries/arts";
+import { GET_FOLLOWERS } from "@/apollo/queries/user";
 
 const storage = getStorage(appInitializer);
 
@@ -244,6 +245,196 @@ export const deleteArtData = async (
     });
   } catch (error) {
     console.error("Error deleting design:", error);
+  }
+};
+
+export  const handleSaveDesign = async (
+  alreadySaved:boolean,
+  unsaveDesign: any,
+  designID: string,
+  designerID: string,
+  setSaveLoading: any,
+  saveDesign: any,
+) => {
+  try {
+    if (alreadySaved) {
+      await unsaveDesign({
+        variables: { designId: designID },
+        update: (cache:any) => {
+          const existingSavedDesigns:any = cache.readQuery({
+            query: GET_SAVED_DESIGNS,
+          });
+
+          if (existingSavedDesigns) {
+            const updatedSavedDesigns =
+              existingSavedDesigns.getSavedDesigns.filter(
+                (design: any) => design.design._id !== designID
+              );
+
+            cache.writeQuery({
+              query: GET_SAVED_DESIGNS,
+              data: {
+                getSavedDesigns: updatedSavedDesigns,
+              },
+            });
+          }
+        },
+      });
+    } else {
+      setSaveLoading(true);
+      await saveDesign({
+        variables: {
+          designId: designID,
+          designer: designerID,
+        },
+        update: (cache:any, { data: { saveDesign } }:any) => {
+          const existingSavedDesigns = cache.readQuery({
+            query: GET_SAVED_DESIGNS,
+          });
+
+          cache.writeQuery({
+            query: GET_SAVED_DESIGNS,
+            data: {
+              getSavedDesigns: [
+                saveDesign,
+                ...(existingSavedDesigns?.getSavedDesigns || []),
+              ],
+            },
+          });
+        },
+      });
+
+      setTimeout(() => {
+        setSaveLoading(false);
+      }, 1500);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const handleLikeDesign = async (
+  alreadyLiked: boolean,
+  unlikeDesign: any,
+  designId: string,
+  setLikeLoading: any,
+  likeDesign: any,
+) => {
+  try {
+    if (alreadyLiked) {
+      await unlikeDesign({
+        variables: { designId },
+        update: (cache:any) => {
+          const existingLikes = cache.readQuery({
+            query: GET_DESIGN_LIKES,
+            variables: { designId },
+          });
+
+          if (existingLikes) {
+            const updatedLikes = existingLikes.getDesignLikes.data.filter(
+              (like: any) => like._id !== designId
+            );
+
+            cache.writeQuery({
+              query: GET_DESIGN_LIKES,
+              variables: { designId },
+              data: {
+                getDesignLikes: updatedLikes,
+              },
+            });
+          }
+        },
+      });
+    } else {
+      setLikeLoading(true);
+      await likeDesign({
+        variables: { designId },
+        update: (cache:any, { data: { likeDesign }}:any) => {
+          const existingLikes = cache.readQuery({
+            query: GET_DESIGN_LIKES,
+            variables: { designId },
+          });
+
+          cache.writeQuery({
+            query: GET_DESIGN_LIKES,
+            variables: { designId },
+            data: {
+              getDesignLikes: [
+                likeDesign,
+                ...(existingLikes?.getDesignLikes.data || []),
+              ],
+            },
+          });
+        },
+      });
+
+      setTimeout(() => {
+        setLikeLoading(false);
+      }, 1000);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const handleFollowUser = async (
+  alreadyFollowed: boolean,
+  unfollow: any,
+  followedUser: string,
+  sessionId: string,
+  follow: any,
+) => {
+  try {
+    if (alreadyFollowed) {
+      await unfollow({
+        variables: { followedUser },
+        update: (cache:any) => {
+          const existingFollowers = cache.readQuery({
+            query: GET_FOLLOWERS,
+            variables: { userId: followedUser },
+          });
+
+          if (existingFollowers) {
+            const updatedFollowers =
+              existingFollowers.getFollowers.data.filter(
+                (follower: any) =>
+                  follower.followedBy !== sessionId
+              );
+
+            cache.writeQuery({
+              query: GET_FOLLOWERS,
+              variables: { userId: followedUser },
+              data: {
+                getFollowers: updatedFollowers,
+              },
+            });
+          }
+        },
+      });
+    } else {
+      await follow({
+        variables: { followedUser },
+        update: (cache:any, { data: { follow }}:any) => {
+          const existingFollowers = cache.readQuery({
+            query: GET_FOLLOWERS,
+            variables: { userId: followedUser },
+          });
+
+          cache.writeQuery({
+            query: GET_FOLLOWERS,
+            variables: { userId: followedUser },
+            data: {
+              getFollowers: [
+                follow,
+                ...(existingFollowers?.getFollowers.data || []),
+              ],
+            },
+          });
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 

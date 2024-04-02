@@ -79,12 +79,7 @@ export default function Home() {
             {[...(data?.getAllDesigns || [])].map((item:Design, idx) => (
               <CreativeCard
                 key={item._id}
-                designId={item._id}
-                authourImage={item.designer.avatar}
-                authourName={item.designer.fullName}
-                authourUsername={item.designer.username}
-                workImage={item.preview}
-                views={item.views}
+                designDetails={item}
               />
             ))}
           </div>
