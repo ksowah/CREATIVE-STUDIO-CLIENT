@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoCheckmark } from "react-icons/io5";
+import CssTextField from "@/components/CSSTextField";
 
 const SignUp = () => {
   const router = useRouter();
@@ -63,47 +64,47 @@ const SignUp = () => {
           </h2>
 
           <form className="mt-[2rem] w-full space-y-8">
-            <TextField
+            <CssTextField
               id="outlined-basic"
               error={registrationError}
               label="Full Name"
               type="text"
               variant="outlined"
               className="w-full h-[2.5rem] "
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setRegisterData({ ...registerData, fullName: e.target.value })
               }
             />
-            <TextField
+            <CssTextField
               id="outlined-basic"
               error={registrationError}
               label="Username"
               type="text"
               variant="outlined"
               className="w-full h-[2.5rem] "
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setRegisterData({ ...registerData, username: e.target.value })
               }
             />
-            <TextField
+            <CssTextField
               id="outlined-basic"
               error={registrationError}
               label="Email"
               type="email"
               variant="outlined"
               className="w-full h-[2.5rem] "
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setRegisterData({ ...registerData, email: e.target.value })
               }
             />
-            <TextField
+            <CssTextField
               id="outlined-basic"
               error={registrationError}
               label="Password"
               type="password"
               variant="outlined"
               className="w-full h-[2.5rem] "
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setRegisterData({ ...registerData, password: e.target.value })
               }
             />

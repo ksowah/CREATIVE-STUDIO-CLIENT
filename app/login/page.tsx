@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import CssTextField from "@/components/CSSTextField";
 
 const Login = () => {
   const [login, { error, loading }] = useMutation(LOGIN_USER);
@@ -54,25 +55,25 @@ const Login = () => {
           </h2>
 
           <div className="mt-[2rem] w-full space-y-8">
-            <TextField
+            <CssTextField
               error={registrationError}
               id="outlined-basic"
               label="Email"
               type="email"
               variant="outlined"
               className="w-full"
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setLoginData({ ...loginData, email: e.target.value })
               }
             />
-            <TextField
+            <CssTextField
               error={registrationError}
               id="outlined-basic"
               label="Password"
               type="password"
               variant="outlined"
               className="w-full"
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setLoginData({ ...loginData, password: e.target.value })
               }
             />

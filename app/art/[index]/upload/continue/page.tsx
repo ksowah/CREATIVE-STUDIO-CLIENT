@@ -31,6 +31,7 @@ import { LiaTimesSolid } from "react-icons/lia";
 import { GET_ALL_ARTS, GET_USER_ARTS } from "@/apollo/queries/arts";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import CssTextField from "@/components/CSSTextField";
 
 const ContinueArtUpload = () => {
   const { appState } = useContext(MyContext);
@@ -309,13 +310,13 @@ const ContinueArtUpload = () => {
               <div className={`space-y-4 pb-6 px-6 ${loading && "opacity-40"}`}>
                 <div className="mt-6">
                   <p className="text-sm font-medium mb-2"> Art Title </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     variant="outlined"
                     className="w-full"
                     value={artUploadData.title}
                     error={errorOccured}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setArtUploadData({
                         ...artUploadData,
                         title: e.target.value,
@@ -326,7 +327,7 @@ const ContinueArtUpload = () => {
 
                 <div>
                   <p className="text-sm font-medium mb-2"> Story </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     variant="outlined"
                     className="w-full"
@@ -335,7 +336,7 @@ const ContinueArtUpload = () => {
                     rows={4}
                     value={artUploadData.story}
                     error={errorOccured}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setArtUploadData({
                         ...artUploadData,
                         story: e.target.value,
@@ -346,14 +347,14 @@ const ContinueArtUpload = () => {
 
                 <div>
                   <p className="text-sm font-medium mb-2"> Dimensions </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     variant="outlined"
                     className="w-full"
                     placeholder="100*150"
                     value={artUploadData.dimensions}
                     error={errorOccured}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setArtUploadData({
                         ...artUploadData,
                         dimensions: e.target.value,
@@ -384,12 +385,24 @@ const ContinueArtUpload = () => {
 
                 <div className="flex items-center justify-between">
                   <FormControl className="w-[20rem] mt-[1rem]">
-                    <InputLabel id="demo-simple-select-label">
-                      Category
+                    <InputLabel id="select-filter-by-field">
+                    <p className='text-black'>Category</p>
                     </InputLabel>
                     <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
+                      labelId="select-filter-by-field-labe;"
+                      id="select-filter-by-field"
+                      sx={{
+                        color: "#000",
+                        '.MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#A6A6A6',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#808080',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#797979',
+                        },
+                      }}
                       value={artUploadData.category}
                       error={errorOccured}
                       onChange={(e) =>
@@ -412,11 +425,23 @@ const ContinueArtUpload = () => {
                   </FormControl>
                   <FormControl className="w-[20rem] mt-[1rem]">
                     <InputLabel id="demo-simple-select-label">
-                      Art Type
+                    <p className='text-black'>Art Type</p>
                     </InputLabel>
                     <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
+                      labelId="select-filter-by-field-labe;"
+                      id="select-filter-by-field"
+                      sx={{
+                        color: "#000",
+                        '.MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#A6A6A6',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#808080',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#797979',
+                        },
+                      }}
                       value={artUploadData.artType}
                       error={errorOccured}
                       onChange={(e) => {
@@ -439,14 +464,14 @@ const ContinueArtUpload = () => {
                 {artUploadData.artType === "onSale" && (
                   <div>
                     <p className="text-sm font-medium mb-2"> Price </p>
-                    <TextField
+                    <CssTextField
                       id="outlined-basic"
                       variant="outlined"
                       className="w-full"
                       placeholder="150.00"
                       type="number"
                       value={artUploadData.price}
-                      onChange={(e) =>
+                      onChange={(e:any) =>
                         setArtUploadData({
                           ...artUploadData,
                           price: parseFloat(e.target.value),
@@ -463,7 +488,7 @@ const ContinueArtUpload = () => {
                         <p className="text-sm font-medium mb-2">
                           Starting Price{" "}
                         </p>
-                        <TextField
+                        <CssTextField
                           id="outlined-basic"
                           variant="outlined"
                           className="w-full"
@@ -471,7 +496,7 @@ const ContinueArtUpload = () => {
                           type="number"
                           error={errorOccured}
                           value={artUploadData.price}
-                          onChange={(e) =>
+                          onChange={(e:any) =>
                             setArtUploadData({
                               ...artUploadData,
                               price: parseFloat(e.target.value),

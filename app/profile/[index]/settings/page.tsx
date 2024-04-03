@@ -18,6 +18,7 @@ import { Alert, TextField } from "@mui/material";
 import { getStorage } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
+import CssTextField from "@/components/CSSTextField";
 
 const Settings = () => {
   const { data: session } = useQuery(GET_ME);
@@ -163,14 +164,14 @@ const Settings = () => {
               <div className="py-[4rem] space-y-6 ">
                 <div>
                   <p className="text-md font-medium mb-2 "> Full Name </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     variant="outlined"
                     error={isErrorOccured}
                     className="w-full"
                     placeholder="Kelvin Sowah"
                     value={editProfileData?.fullName || ""}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setEditProfileData({
                         ...editProfileData,
                         fullName: e.target.value,
@@ -180,13 +181,13 @@ const Settings = () => {
                 </div>
                 <div>
                   <p className="text-md font-medium mb-2">Specialization</p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     variant="outlined"
                     className="w-full"
                     placeholder="Product Designer"
                     value={editProfileData?.specialization || ""}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setEditProfileData({
                         ...editProfileData,
                         specialization: e.target.value,
@@ -198,7 +199,7 @@ const Settings = () => {
                   <p className="text-md font-medium mb-2 text-[#B1B1B1] ">
                     Username
                   </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     variant="outlined"
                     className="w-full"
@@ -209,7 +210,7 @@ const Settings = () => {
                 </div>
                 <div>
                   <p className="text-md font-medium mb-2">Bio</p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     multiline
                     rows={5}
@@ -217,7 +218,7 @@ const Settings = () => {
                     className="w-full"
                     placeholder="I am a..."
                     value={editProfileData?.bio || ""}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setEditProfileData({
                         ...editProfileData,
                         bio: e.target.value,
@@ -231,13 +232,13 @@ const Settings = () => {
 
                   <div>
                     <p className="text-md font-medium mb-2">Phone Number</p>
-                    <TextField
+                    <CssTextField
                       id="outlined-basic"
                       variant="outlined"
                       className="w-full"
                       type="tel"
                       value={editProfileData?.phoneNumber || ""}
-                      onChange={(e) =>
+                      onChange={(e:any) =>
                         setEditProfileData({
                           ...editProfileData,
                           phoneNumber: e.target.value,
@@ -250,7 +251,7 @@ const Settings = () => {
                     <p className="text-md font-medium mb-2 text-[#B1B1B1]">
                       Email
                     </p>
-                    <TextField
+                    <CssTextField
                       id="outlined-basic"
                       variant="outlined"
                       className="w-full"
@@ -268,13 +269,13 @@ const Settings = () => {
                     <p className="text-md font-medium mb-2">
                       Portfolio Website
                     </p>
-                    <TextField
+                    <CssTextField
                       id="outlined-basic"
                       variant="outlined"
                       className="w-full"
                       type="url"
                       value={editProfileData?.website || ""}
-                      onChange={(e) =>
+                      onChange={(e:any) =>
                         setEditProfileData({
                           ...editProfileData,
                           website: e.target.value,

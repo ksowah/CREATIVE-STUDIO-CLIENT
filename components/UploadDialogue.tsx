@@ -18,7 +18,6 @@ import {
   Radio,
   RadioGroup,
   Select,
-  TextField,
 } from "@mui/material";
 import ButtonOutlined from "./ButtonOutlined";
 import ButtonSolid from "./ButtonSolid";
@@ -28,8 +27,7 @@ import { LiaTimesSolid } from "react-icons/lia";
 import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/apollo/queries/designs";
 import { useRouter } from "next/navigation";
 import { MyContext } from "@/context/Context";
-import { uploadFileToFB } from "@/helpers/functions";
-import { getDesignFileReference } from "@/helpers/firebaseFileReferences";
+import CssTextField from "./CSSTextField";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -48,7 +46,7 @@ interface Props {
   getPreviewImage: () => Promise<SingleFileUpload | undefined>;
   getDesignImagesURLs: () => Promise<MultipleImageUpload>;
   getDesignFile: () => Promise<SingleFileUpload | undefined>;
-  selectDesignFile: (e: any) => void;
+  selectDesignFile: (e:any) => void;
   designFilePickerRef: any;
   designFileSelected: any;
   selectedDesignFileName: string;
@@ -331,14 +329,14 @@ export default function UploadDialogue({
                       separate each tag with a comma &quot;,&quot; (maximum 20)
                     </span>
                   </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     label="Add tags..."
                     variant="outlined"
                     className="w-full"
                     error={designUploadDataEmptyState.tags}
                     value={designUploadData.tags}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setDesignUploadData({
                         ...designUploadData,
                         tags: e.target.value,
@@ -356,7 +354,7 @@ export default function UploadDialogue({
 
                 <div>
                   <p className="text-sm font-medium mb-2"> Description </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     multiline
                     rows={4}
@@ -365,7 +363,7 @@ export default function UploadDialogue({
                     className="w-full"
                     error={designUploadDataEmptyState.description}
                     value={designUploadData.description}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setDesignUploadData({
                         ...designUploadData,
                         description: e.target.value,
@@ -432,11 +430,23 @@ export default function UploadDialogue({
 
                 <FormControl className="w-[20rem] ">
                   <InputLabel id="demo-simple-select-label">
-                    Design Subscription
+                  <p className='text-black'>Design Subscription</p>
                   </InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="select-filter-by-field-labe;"
+                    id="select-filter-by-field"
+                    sx={{
+                      color: "#000",
+                      '.MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#A6A6A6',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#808080',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#797979',
+                      },
+                    }}
                     error={designUploadDataEmptyState.subscription}
                     value={designUploadData.subscription}
                     label="Design Subscription"

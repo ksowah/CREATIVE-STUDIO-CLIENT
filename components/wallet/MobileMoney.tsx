@@ -11,34 +11,32 @@ import { useMutation } from "@apollo/client";
 import { DEPOSIT_TO_WALLET } from "@/apollo/mutations/wallet";
 import { ToastContainer, toast } from "react-toastify";
 
-
 const MobileMoney = () => {
   const [selected, setSelected] = useState("");
 
-  const [depositAmount, setDepositAmount] = useState(0)
+  const [depositAmount, setDepositAmount] = useState(0);
 
-  const [deposit, { loading }] = useMutation(DEPOSIT_TO_WALLET)
-
+  const [deposit, { loading }] = useMutation(DEPOSIT_TO_WALLET);
 
   const depositFunds = async () => {
-    if(depositAmount < 10) {
-      toast.error('Minimum deposit amount is 10 cedis')
-      return
+    if (depositAmount < 10) {
+      toast.error("Minimum deposit amount is 10 cedis");
+      return;
     }
 
     try {
-     const amountDeposited = await deposit({
+      const amountDeposited = await deposit({
         variables: {
-          amount: depositAmount
-        }
-      })
-      setDepositAmount(0)
-      toast.success('Deposit successful')
-    } catch (error:any) {
-      console.log(error)
-      toast.error(error.message)
+          amount: depositAmount,
+        },
+      });
+      setDepositAmount(0);
+      toast.success("Deposit successful");
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message);
     }
-  }
+  };
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelected(event.target.value);
@@ -47,7 +45,6 @@ const MobileMoney = () => {
   return (
     <div>
       <ToastContainer />
-
 
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-6">
@@ -58,11 +55,23 @@ const MobileMoney = () => {
           <div>
             <FormControl sx={{ m: 1, minWidth: 300 }}>
               <InputLabel id="demo-simple-select-helper-label">
-                Provider
+                <p className="text-black">Provider</p>
               </InputLabel>
               <Select
-                labelId="demo-simple-select-helper-label"
-                id="demo-simple-select-helper"
+                labelId="select-filter-by-field-labe;"
+                id="select-filter-by-field"
+                sx={{
+                  color: "#000",
+                  ".MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#A6A6A6",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#808080",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#797979",
+                  },
+                }}
                 value={selected}
                 label="Provider"
                 onChange={handleChange}
@@ -93,20 +102,32 @@ const MobileMoney = () => {
         </p>
 
         <div className="h-[3rem] w-[300px] border flex items-center px-2 rounded-lg ">
-          <input onChange={(e) => setDepositAmount(parseFloat(e.target.value))} placeholder="min. 10.00" type="number" className="border-0 outline-none w-full  " />
+          <input
+            onChange={(e) => setDepositAmount(parseFloat(e.target.value))}
+            placeholder="min. 10.00"
+            type="number"
+            className="border-0 outline-none w-full  "
+          />
         </div>
       </div>
 
-      <div className="w-full flex justify-end" >
-        <ButtonSolid onClick={depositFunds} className="my-[2rem] " title="Top Up Now" />
+      <div className="w-full flex justify-end">
+        <ButtonSolid
+          onClick={depositFunds}
+          className="my-[2rem] "
+          title="Top Up Now"
+        />
       </div>
 
-      <div className="w-full border-t pt-[2rem] text-[#595862] " >
-        <p className="font-medium text-[1.1rem] " >Note</p>
-        <p className="text-sm" >1. Maximum per transaction is GHS 50,000</p>
-        <p className="text-sm" >2. Minimum per transaction is GHS 10</p>
-        <p className="text-sm" >3. Deposit is free, no transaction fees.</p>
-        <p className="text-sm" >4. Your number can only be withdrawn to the mobile number you registered with.</p>
+      <div className="w-full border-t pt-[2rem] text-[#595862] ">
+        <p className="font-medium text-[1.1rem] ">Note</p>
+        <p className="text-sm">1. Maximum per transaction is GHS 50,000</p>
+        <p className="text-sm">2. Minimum per transaction is GHS 10</p>
+        <p className="text-sm">3. Deposit is free, no transaction fees.</p>
+        <p className="text-sm">
+          4. Your number can only be withdrawn to the mobile number you
+          registered with.
+        </p>
       </div>
     </div>
   );

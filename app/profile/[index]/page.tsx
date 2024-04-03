@@ -38,34 +38,38 @@ const Profile = ({ params }: { params: any }) => {
 
   return (
     <ProfilePageContainer username={username}>
-    <div className="pt-[4rem] ">
-      {user?.userType === "ARTIST" ? (
-        <>
-          {appState?.session?.username === user?.username && <UploadButton />}
-          <ImageList variant="masonry" cols={3} gap={8}>
-            {[...(artData?.getUserArtWorks || [])].map(
-              (item: ArtPiece, idx) => (
-                <ImageListItem key={item._id}>
-                  <ArtCard art={item} />
+      <div className="pt-[4rem] ">
+        {user?.userType === "ARTIST" ? (
+          <>
+            <ImageList variant="masonry" cols={3} gap={8}>
+              {appState?.session?.username === user?.username && (
+                <ImageListItem>
+                  <UploadButton />
                 </ImageListItem>
-              )
-            )}
-          </ImageList>
-        </>
-      ) : (
-        <div className={`grid grid-cols-4`}>
-          {appState?.session?.username === user?.username && <UploadButton />}
-          {userDesigns?.map((design: Design, idx: number) => (
-            <ProfileWork
-              design={design}
-              key={design._id}
-              isUsersProfile={appState?.session?.username === user?.username}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  </ProfilePageContainer>
+              )}
+              {[...(artData?.getUserArtWorks || [])].map(
+                (item: ArtPiece, idx) => (
+                  <ImageListItem key={item._id}>
+                    <ArtCard art={item} />
+                  </ImageListItem>
+                )
+              )}
+            </ImageList>
+          </>
+        ) : (
+          <div className={`grid grid-cols-4`}>
+            {appState?.session?.username === user?.username && <UploadButton />}
+            {userDesigns?.map((design: Design, idx: number) => (
+              <ProfileWork
+                design={design}
+                key={design._id}
+                isUsersProfile={appState?.session?.username === user?.username}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </ProfilePageContainer>
   );
 };
 

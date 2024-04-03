@@ -12,7 +12,7 @@ interface Props {
 const MultiImageUploader = ({ selectedImages, setSelectedImages }: Props) => {
   const filePickerRef = useRef<any>(null);
 
-  const selectImages = (e: any) => {
+  const selectImages = (e:any) => {
     const selectedImagesArray = [...selectedImages]; // Create a copy of the existing images array
 
     // Loop through each selected file
