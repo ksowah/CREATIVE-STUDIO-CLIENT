@@ -17,6 +17,7 @@ import UserFooter from "@/components/UserFooter";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   GET_DESIGN_BY_ID,
+  GET_DESIGN_COMMENTS,
   GET_DESIGN_LIKES,
   GET_SAVED_DESIGNS,
   GET_USER_DESIGNS,
@@ -34,6 +35,7 @@ import {
 } from "@/helpers/functions";
 import {
   COUNT_DESIGN_VIEWS,
+  CREAETE_COMMENT,
   DELETE_DESIGN,
   LIKE_DESIGN,
   SAVE_DESIGN,
@@ -49,6 +51,7 @@ import Link from "next/link";
 import { FOLLOW_USER, UNFOLLOW_USER } from "@/apollo/mutations/user";
 import { GET_FOLLOWERS } from "@/apollo/queries/user";
 import CommentItem from "@/components/CommentItem";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
@@ -60,6 +63,15 @@ const DesignDetails = ({ params }: { params: any }) => {
   const { loading, data } = useQuery(GET_DESIGN_BY_ID, {
     variables: { designId },
   });
+
+  const { loading: getCommentsLoading, data: commentsData } = useQuery(
+    GET_DESIGN_COMMENTS,
+    {
+      variables: { designId },
+    }
+  );
+
+  console.log("comments ?>>>>", commentsData);
 
   const designDetails: Design = data?.getDesignById;
 
@@ -87,6 +99,8 @@ const DesignDetails = ({ params }: { params: any }) => {
 
   const [follow, { loading: followLoading }] = useMutation(FOLLOW_USER);
   const [unfollow, { loading: unfollowLoading }] = useMutation(UNFOLLOW_USER);
+  const [createComment, { loading: commentLoading }] =
+    useMutation(CREAETE_COMMENT);
 
   const [alreadyFollowed, setAlreadyFollowed] = useState<any>(false);
 
@@ -152,6 +166,7 @@ const DesignDetails = ({ params }: { params: any }) => {
   const [unlikeDesign] = useMutation(UNLIKE_DESIGN);
   const [likeLoading, setLikeLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [comment, setComment] = useState("");
 
   const [alreadyLiked, setAlreadyLiked] = useState<any>(false);
   const [alreadySaved, setAlreadySaved] = useState<any>(false);
@@ -173,6 +188,36 @@ const DesignDetails = ({ params }: { params: any }) => {
       ) !== -1
     );
   }, [savedDesigns]);
+
+  const addCommentToDesign = async () => {
+    try {
+      if (comment !== "") {
+        await createComment({
+          variables: { designId, comment },
+          update: (cache, { data: { createComment } }) => {
+            const existingComments = cache.readQuery<any>({
+              query: GET_DESIGN_COMMENTS,
+              variables: { designId },
+            });
+
+            cache.writeQuery({
+              query: GET_DESIGN_COMMENTS,
+              variables: { designId },
+              data: {
+                getDesignComments: [
+                  createComment,
+                  ...(existingComments?.getDesignComments || []),
+                ],
+              },
+            });
+          },
+        });
+        setComment("");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="w-ful">
@@ -366,19 +411,41 @@ const DesignDetails = ({ params }: { params: any }) => {
 
               <div className="my-[2rem] w-full h-[6rem] border rounded-md flex items-center overflow-hidden ">
                 <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
                   className="flex-1 p-2 resize-none h-full border-none outline-none"
                   placeholder="Leave a feedback on this design "
                 />
 
-                <div className="relative h-[1.8rem] w-[1.8rem] mx-4 cursor-pointer " >
-                  <Image fill src={"/icons/send.svg"} alt="" className="hover:scale-110 duration-150" />
+                <div
+                  onClick={addCommentToDesign}
+                  className="relative h-[1.8rem] w-[1.8rem] mx-4 cursor-pointer "
+                >
+                  {commentLoading ? (
+                    <AiOutlineLoading3Quarters
+                      size={25}
+                      className="animate-spin"
+                    />
+                  ) : (
+                    <Image
+                      fill
+                      src={"/icons/send.svg"}
+                      alt=""
+                      className="hover:scale-110 duration-150"
+                    />
+                  )}
                 </div>
               </div>
 
-              <div className="w-full border rounded-lg mt-[2rem] p-[1.5rem] " >
-                <CommentItem />
-                <CommentItem />
-              </div>
+              {commentsData?.getDesignComments.length > 0 && (
+                <div className="w-full border rounded-lg mt-[2rem] p-[1.5rem] ">
+                  {commentsData?.getDesignComments.map(
+                    (comment: DesignComment, _: any) => (
+                      <CommentItem comment={comment} key={comment._id} />
+                    )
+                  )}
+                </div>
+              )}
             </div>
 
             <UserFooter

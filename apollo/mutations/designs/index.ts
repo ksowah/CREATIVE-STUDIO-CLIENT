@@ -69,3 +69,26 @@ export const UNSAVE_DESIGN = gql`
     unsaveDesign(designId: $designId)
   }
 `;
+
+export const CREAETE_COMMENT = gql`
+  mutation Mutation($designId: String!, $comment: String!) {
+    createComment(designId: $designId, comment: $comment) {
+      _id
+      comment
+      commentedBy
+      commentedAt
+      designId
+    }
+  }
+`;
+
+export const REPLY_TO_COMMENT = gql`
+  mutation Mutation($commentId: String!, $reply: String!) {
+    replyToComment(commentId: $commentId, reply: $reply) {
+      reply
+      commentId
+      repliedBy
+      repliedAt
+    }
+  }
+`;
