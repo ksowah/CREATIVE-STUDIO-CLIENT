@@ -115,7 +115,7 @@ const ProfilePageContainer = ({
 
                   {appState?.session?.username === username ? (
                     <div className="flex items-center space-x-4">
-                      <Link href={`${appState?.session?.username}/settings`}>
+                      <Link href={`/profile/${appState?.session?.username}/settings`}>
                         <ButtonSolid
                           className="h-[3rem] w-[8rem] "
                           title="Edit Profile"
