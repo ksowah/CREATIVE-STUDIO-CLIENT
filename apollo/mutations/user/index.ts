@@ -56,3 +56,23 @@ export const LOGIN_USER = gql`
     }
   }
 `;
+
+export const FOLLOW_USER = gql`
+  mutation Mutation($followedUser: ID!) {
+    follow(followedUser: $followedUser) {
+      followedBy
+      followedUser
+      followedAt
+    }
+  }
+`;
+
+export const UNFOLLOW_USER = gql`
+  mutation Unfollow($followedUser: ID!) {
+    unfollow(followedUser: $followedUser) {
+      followedBy
+      followedUser
+      followedAt
+    }
+  }
+`;

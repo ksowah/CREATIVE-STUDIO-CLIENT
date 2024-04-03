@@ -70,3 +70,39 @@ export const EDIT_PROFILE = gql`
     }
   }
 `;
+
+export const GET_FOLLOWERS = gql`
+  query Query($userId: ID!) {
+    getFollowers(userId: $userId) {
+      data {
+        followedAt
+        followedBy {
+          email
+          fullName
+          _id
+          username
+          avatar
+        }
+      }
+      numberOfFollowers
+    }
+  }
+`;
+
+export const GET_FOLLOWING = gql`
+  query GetFollowing($userId: ID!) {
+    getFollowing(userId: $userId) {
+      data {
+        followedBy
+        followedUser {
+          _id
+          avatar
+          email
+          fullName
+          username
+        }
+      }
+      followingCount
+    }
+  }
+`;

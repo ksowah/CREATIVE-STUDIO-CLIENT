@@ -112,3 +112,36 @@ export const GET_DESIGN_LIKES = gql`
     }
   }
 `;
+
+export const GET_SAVED_DESIGNS = gql`
+query Query {
+  getSavedDesigns {
+    _id
+    design {
+      _id
+      designer
+      preview
+      views
+      saves
+      description
+      designSubscription
+      designFile
+      designFileRef
+      designImages
+      createdAt
+      tags
+      category
+      title
+      previewImageRef
+      designImagesRef
+    }
+    savedBy
+    savedAt
+    designer {
+      _id
+      avatar
+      fullName
+    }
+  }
+}
+`;
