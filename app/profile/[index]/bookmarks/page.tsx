@@ -1,7 +1,7 @@
 "use client";
 
 import { GET_USER_ARTS } from "@/apollo/queries/arts";
-import { GET_USER_DESIGNS } from "@/apollo/queries/designs";
+import { GET_SAVED_DESIGNS, GET_USER_DESIGNS } from "@/apollo/queries/designs";
 import { GET_USER_BY_USERNAME } from "@/apollo/queries/user";
 import ProfilePageContainer from "@/components/ProfilePageContainer";
 import ProfileWork from "@/components/ProfileWork";
@@ -12,7 +12,7 @@ import { useQuery } from "@apollo/client";
 import { ImageList, ImageListItem } from "@mui/material";
 import React, { useContext } from "react";
 
-const Profile = ({ params }: { params: any }) => {
+const Bookmarks = ({ params }: { params: any }) => {
   const username = params?.index;
 
   const { appState } = useContext(MyContext);
@@ -26,47 +26,34 @@ const Profile = ({ params }: { params: any }) => {
 
   const user: User = userData?.getUserByUsername;
 
-  const { loading: artLoading, data: artData } = useQuery(GET_USER_ARTS, {
-    variables: { userId: user?._id },
-  });
+
+  const { data: savedData } = useQuery(GET_SAVED_DESIGNS);
 
   const { loading, data } = useQuery(GET_USER_DESIGNS, {
     variables: { userId: user?._id },
   });
 
+  const savedDesigns = savedData?.getSavedDesigns
+
+  console.log("saved desigsns?? >>", savedDesigns)
+
   const userDesigns = data?.getUserDesigns;
 
   return (
     <ProfilePageContainer username={username}>
-    <div className="pt-[4rem] ">
-      {user?.userType === "ARTIST" ? (
-        <>
-          {appState?.session?.username === user?.username && <UploadButton />}
-          <ImageList variant="masonry" cols={3} gap={8}>
-            {[...(artData?.getUserArtWorks || [])].map(
-              (item: ArtPiece, idx) => (
-                <ImageListItem key={item._id}>
-                  <ArtCard art={item} />
-                </ImageListItem>
-              )
-            )}
-          </ImageList>
-        </>
-      ) : (
+      <div className="pt-[4rem]">
         <div className={`grid grid-cols-4`}>
-          {appState?.session?.username === user?.username && <UploadButton />}
-          {userDesigns?.map((design: Design, idx: number) => (
+          {savedDesigns?.map((design:any, idx: number) => (
             <ProfileWork
-              design={design}
+              design={design.design}
               key={design._id}
-              isUsersProfile={appState?.session?.username === user?.username}
+              isUsersProfile={false}
             />
           ))}
         </div>
-      )}
-    </div>
-  </ProfilePageContainer>
+      </div>
+    </ProfilePageContainer>
   );
 };
 
-export default Profile;
+export default Bookmarks;

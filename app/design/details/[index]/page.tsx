@@ -48,6 +48,7 @@ import { FaBookmark } from "react-icons/fa";
 import Link from "next/link";
 import { FOLLOW_USER, UNFOLLOW_USER } from "@/apollo/mutations/user";
 import { GET_FOLLOWERS } from "@/apollo/queries/user";
+import CommentItem from "@/components/CommentItem";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
@@ -198,16 +199,23 @@ const DesignDetails = ({ params }: { params: any }) => {
                 <h3 className="font-medium text-xl">{designDetails?.title}</h3>
                 <div className="flex items-center space-x-1">
                   <Link href={`/profile/${designDetails?.designer.username}`}>
-                    <p className="text-[#595862] text-xs cursor-pointer ">{designDetails?.designer.fullName}</p>
+                    <p className="text-[#595862] text-xs cursor-pointer ">
+                      {designDetails?.designer.fullName}
+                    </p>
                   </Link>
                   <p className="text-[#595862] text-xs">·</p>
-                  <p onClick={()=>handleFollowUser(
-                    alreadyFollowed,
-                    unfollow,
-                    designDetails?.designer._id,
-                    session?._id,
-                    follow,
-                  )} className="text-[#595862] text-xs cursor-pointer">
+                  <p
+                    onClick={() =>
+                      handleFollowUser(
+                        alreadyFollowed,
+                        unfollow,
+                        designDetails?.designer._id,
+                        session?._id,
+                        follow
+                      )
+                    }
+                    className="text-[#595862] text-xs cursor-pointer"
+                  >
                     {alreadyFollowed ? "Unfollow" : "Follow"}
                   </p>
                 </div>
@@ -325,7 +333,7 @@ const DesignDetails = ({ params }: { params: any }) => {
               <p className="text-[#595862] ">{designDetails?.description}</p>
             </div>
 
-            {allUserDesigns?.length > 1 && (
+            {allUserDesigns?.length >= 1 && (
               <>
                 <p className="font-medium text-sm mb-[2rem] ">
                   More by {designDetails?.designer.fullName}
@@ -352,6 +360,26 @@ const DesignDetails = ({ params }: { params: any }) => {
                 </div>
               </>
             )}
+
+            <div className="mt-[6rem]">
+              <p className="font-medium">Comments</p>
+
+              <div className="my-[2rem] w-full h-[6rem] border rounded-md flex items-center overflow-hidden ">
+                <textarea
+                  className="flex-1 p-2 resize-none h-full border-none outline-none"
+                  placeholder="Leave a feedback on this design "
+                />
+
+                <div className="relative h-[1.8rem] w-[1.8rem] mx-4 cursor-pointer " >
+                  <Image fill src={"/icons/send.svg"} alt="" className="hover:scale-110 duration-150" />
+                </div>
+              </div>
+
+              <div className="w-full border rounded-lg mt-[2rem] p-[1.5rem] " >
+                <CommentItem />
+                <CommentItem />
+              </div>
+            </div>
 
             <UserFooter
               designerUsername={designDetails?.designer.username}
