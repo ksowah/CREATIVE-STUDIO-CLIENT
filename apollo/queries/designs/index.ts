@@ -114,34 +114,68 @@ export const GET_DESIGN_LIKES = gql`
 `;
 
 export const GET_SAVED_DESIGNS = gql`
-query Query {
-  getSavedDesigns {
-    _id
-    design {
+  query Query {
+    getSavedDesigns {
       _id
-      designer
-      preview
-      views
-      saves
-      description
-      designSubscription
-      designFile
-      designFileRef
-      designImages
-      createdAt
-      tags
-      category
-      title
-      previewImageRef
-      designImagesRef
-    }
-    savedBy
-    savedAt
-    designer {
-      _id
-      avatar
-      fullName
+      design {
+        _id
+        designer
+        preview
+        views
+        saves
+        description
+        designSubscription
+        designFile
+        designFileRef
+        designImages
+        createdAt
+        tags
+        category
+        title
+        previewImageRef
+        designImagesRef
+      }
+      savedBy
+      savedAt
+      designer {
+        _id
+        avatar
+        fullName
+      }
     }
   }
-}
+`;
+
+export const GET_DESIGN_COMMENTS = gql`
+  query Query($designId: String!) {
+    getDesignComments(designId: $designId) {
+      _id
+      comment
+      commentedBy {
+        avatar
+        _id
+        email
+        fullName
+        username
+      }
+      commentedAt
+      designId
+    }
+  }
+`;
+
+export const GET_COMMENT_REPLIES = gql`
+  query Query($commentId: String!) {
+    getCommentReplies(commentId: $commentId) {
+      reply
+      commentId
+      repliedBy {
+        avatar
+        email
+        fullName
+        username
+      }
+      repliedAt
+    }
+  }
 `;
