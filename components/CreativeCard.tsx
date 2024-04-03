@@ -153,7 +153,7 @@ const CreativeCard = ({ designDetails }: { designDetails: Design }) => {
                     className="hover:scale-110 duration-200"
                   />
                 )}
-                <p className="text-[10px] text-[#595862] ">
+                <p className={`text-[10px] ${alreadyLiked ? "text-pink-500" : "text-[#595862]"}`}>
                   {designLikes?.length.toString()}
                 </p>
               </>

@@ -17,7 +17,32 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
     variables: { commentId: comment?._id },
   });
 
-  console.log("comment repliess >>>", data);
+  function getTimeDifference(timestamp: number) {
+    const currentTime = new Date().getTime();
+    const timeDifference = currentTime - timestamp;
+
+    const minute = 60 * 1000;
+    const hour = minute * 60;
+    const day = hour * 24;
+
+    if (timeDifference < minute) {
+      return "Just now";
+    } else if (timeDifference < hour) {
+      const minutes = Math.floor(timeDifference / minute);
+      return `${minutes} mins ago`;
+    } else if (timeDifference < day) {
+      const hours = Math.floor(timeDifference / hour);
+      return `${hours} hours ago`;
+    } else {
+      const date = new Date(timestamp);
+      const formattedDate = `${date.getDate()}/${
+        date.getMonth() + 1
+      }/${date.getFullYear()}`;
+      return formattedDate;
+    }
+  }
+
+  console.log("comment timeeee >>>", comment?.commentedAt);
 
   const [reply, setReply] = useState("");
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -89,7 +114,9 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
         <div className="p-2">
           <div className="flex items-center space-x-4">
             <p className="text-sm font-medium">{reply.repliedBy.username}</p>
-            <p className="text-xs text-[#8c8c8c]">30 min. ago</p>
+            <p className="text-xs text-[#8c8c8c]">{`${getTimeDifference(
+              parseInt(reply?.repliedAt)
+            )}`}</p>
           </div>
 
           <div className="my-4">
@@ -120,7 +147,9 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
             <p className="text-sm font-medium">
               {comment?.commentedBy.username}
             </p>
-            <p className="text-xs text-[#8c8c8c]">30 min. ago</p>
+            <p className="text-xs text-[#8c8c8c]">{`${getTimeDifference(
+              parseInt(comment?.commentedAt)
+            )}`}</p>
           </div>
           <IoIosMore size={20} className="cursor-pointer" />
         </div>
@@ -144,7 +173,7 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
           <div className="w-full flex items-center my-4 rounded-lg bg-[#f4f4f4]">
             <CssTextField
               value={reply}
-              onChange={(e:any) => setReply(e.target.value)}
+              onChange={(e: any) => setReply(e.target.value)}
               placeholder={`You are replying to ${userBeingReplied}`}
               id="input-with-icon-textfield"
               className="flex-1 text-sm bg-transparent"
