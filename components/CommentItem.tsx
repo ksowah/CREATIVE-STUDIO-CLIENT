@@ -16,7 +16,7 @@ const CommentItem = () => {
 
         <div className="my-4">
           <p className="text-sm">
-            Wow, I stumbled upon this design, and I'm absolutely blown away! The
+            Wow, I stumbled upon this design, and I&apos;m absolutely blown away! The
             attention to detail and the overall aesthetic are just phenomenal.
             The color scheme is so soothing yet engaging, and the layout is
             incredibly intuitive. I love how everything flows seamlessly, making
