@@ -144,7 +144,7 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
           <div className="w-full flex items-center my-4 rounded-lg bg-[#f4f4f4]">
             <CssTextField
               value={reply}
-              onChange={(e) => setReply(e.target.value)}
+              onChange={(e:any) => setReply(e.target.value)}
               placeholder={`You are replying to ${userBeingReplied}`}
               id="input-with-icon-textfield"
               className="flex-1 text-sm bg-transparent"

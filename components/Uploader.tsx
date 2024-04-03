@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { HiMiniPhoto } from "react-icons/hi2";
 
 interface Props {
-    selectImage: (e: any) => void;
+    selectImage: (e) => void;
     selectedImage: any;
     isArt?: boolean;
 }

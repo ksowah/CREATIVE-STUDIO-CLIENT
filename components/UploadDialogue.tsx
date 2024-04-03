@@ -18,7 +18,6 @@ import {
   Radio,
   RadioGroup,
   Select,
-  TextField,
 } from "@mui/material";
 import ButtonOutlined from "./ButtonOutlined";
 import ButtonSolid from "./ButtonSolid";
@@ -28,8 +27,6 @@ import { LiaTimesSolid } from "react-icons/lia";
 import { GET_ALL_DESIGNS, GET_USER_DESIGNS } from "@/apollo/queries/designs";
 import { useRouter } from "next/navigation";
 import { MyContext } from "@/context/Context";
-import { uploadFileToFB } from "@/helpers/functions";
-import { getDesignFileReference } from "@/helpers/firebaseFileReferences";
 import CssTextField from "./CSSTextField";
 
 const Transition = React.forwardRef(function Transition(
@@ -49,7 +46,7 @@ interface Props {
   getPreviewImage: () => Promise<SingleFileUpload | undefined>;
   getDesignImagesURLs: () => Promise<MultipleImageUpload>;
   getDesignFile: () => Promise<SingleFileUpload | undefined>;
-  selectDesignFile: (e: any) => void;
+  selectDesignFile: (e:any) => void;
   designFilePickerRef: any;
   designFileSelected: any;
   selectedDesignFileName: string;
@@ -339,7 +336,7 @@ export default function UploadDialogue({
                     className="w-full"
                     error={designUploadDataEmptyState.tags}
                     value={designUploadData.tags}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setDesignUploadData({
                         ...designUploadData,
                         tags: e.target.value,
@@ -366,7 +363,7 @@ export default function UploadDialogue({
                     className="w-full"
                     error={designUploadDataEmptyState.description}
                     value={designUploadData.description}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setDesignUploadData({
                         ...designUploadData,
                         description: e.target.value,

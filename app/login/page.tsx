@@ -62,7 +62,7 @@ const Login = () => {
               type="email"
               variant="outlined"
               className="w-full"
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setLoginData({ ...loginData, email: e.target.value })
               }
             />
@@ -73,7 +73,7 @@ const Login = () => {
               type="password"
               variant="outlined"
               className="w-full"
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setLoginData({ ...loginData, password: e.target.value })
               }
             />

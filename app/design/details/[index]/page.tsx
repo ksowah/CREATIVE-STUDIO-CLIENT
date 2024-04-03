@@ -411,7 +411,7 @@ const DesignDetails = ({ params }: { params: any }) => {
               <p className="font-medium">Comments</p>
               <CssTextField
                 value={comment}
-                onChange={(e) => setComment(e.target.value)}
+                onChange={(e:any) => setComment(e.target.value)}
                 rows={3}
                 color="primary"
                 id="input-with-icon-textfield"

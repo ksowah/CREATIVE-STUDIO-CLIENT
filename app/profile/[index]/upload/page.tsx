@@ -38,7 +38,7 @@ const UploadDesign = () => {
 
   const fileId = new Date().getTime();
 
-  const selectImage = (e: any) => {
+  const selectImage = (e) => {
     const reader = new FileReader();
     if (e.target.files[0]) {
       reader.readAsDataURL(e.target.files[0]);
@@ -48,7 +48,7 @@ const UploadDesign = () => {
     };
   };
 
-  const selectDesignFile = (e: any) => {
+  const selectDesignFile = (e) => {
     const reader = new FileReader();
     if (e.target.files[0]) {
       reader.readAsDataURL(e.target.files[0]);

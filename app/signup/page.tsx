@@ -71,7 +71,7 @@ const SignUp = () => {
               type="text"
               variant="outlined"
               className="w-full h-[2.5rem] "
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setRegisterData({ ...registerData, fullName: e.target.value })
               }
             />
@@ -82,7 +82,7 @@ const SignUp = () => {
               type="text"
               variant="outlined"
               className="w-full h-[2.5rem] "
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setRegisterData({ ...registerData, username: e.target.value })
               }
             />
@@ -93,7 +93,7 @@ const SignUp = () => {
               type="email"
               variant="outlined"
               className="w-full h-[2.5rem] "
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setRegisterData({ ...registerData, email: e.target.value })
               }
             />
@@ -104,7 +104,7 @@ const SignUp = () => {
               type="password"
               variant="outlined"
               className="w-full h-[2.5rem] "
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setRegisterData({ ...registerData, password: e.target.value })
               }
             />

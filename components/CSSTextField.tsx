@@ -1,9 +1,9 @@
-import { TextField } from "@mui/material";
-import { withStyles } from "@mui/styles";
+import TextField from "@mui/material/TextField";
 
-
-const CssTextField = withStyles({
-    root: {
+const CssTextField = (props: any) => (
+  <TextField
+    {...props}
+    sx={{
       '& label': {
         color: '#808080',
       },
@@ -24,7 +24,8 @@ const CssTextField = withStyles({
           borderColor: '#000',
         },
       },
-    },
-  })(TextField);
+    }}
+  />
+);
 
-  export default CssTextField
+export default CssTextField;

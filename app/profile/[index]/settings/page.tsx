@@ -171,7 +171,7 @@ const Settings = () => {
                     className="w-full"
                     placeholder="Kelvin Sowah"
                     value={editProfileData?.fullName || ""}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setEditProfileData({
                         ...editProfileData,
                         fullName: e.target.value,
@@ -187,7 +187,7 @@ const Settings = () => {
                     className="w-full"
                     placeholder="Product Designer"
                     value={editProfileData?.specialization || ""}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setEditProfileData({
                         ...editProfileData,
                         specialization: e.target.value,
@@ -218,7 +218,7 @@ const Settings = () => {
                     className="w-full"
                     placeholder="I am a..."
                     value={editProfileData?.bio || ""}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setEditProfileData({
                         ...editProfileData,
                         bio: e.target.value,
@@ -238,7 +238,7 @@ const Settings = () => {
                       className="w-full"
                       type="tel"
                       value={editProfileData?.phoneNumber || ""}
-                      onChange={(e) =>
+                      onChange={(e:any) =>
                         setEditProfileData({
                           ...editProfileData,
                           phoneNumber: e.target.value,
@@ -275,7 +275,7 @@ const Settings = () => {
                       className="w-full"
                       type="url"
                       value={editProfileData?.website || ""}
-                      onChange={(e) =>
+                      onChange={(e:any) =>
                         setEditProfileData({
                           ...editProfileData,
                           website: e.target.value,

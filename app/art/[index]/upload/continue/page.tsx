@@ -316,7 +316,7 @@ const ContinueArtUpload = () => {
                     className="w-full"
                     value={artUploadData.title}
                     error={errorOccured}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setArtUploadData({
                         ...artUploadData,
                         title: e.target.value,
@@ -336,7 +336,7 @@ const ContinueArtUpload = () => {
                     rows={4}
                     value={artUploadData.story}
                     error={errorOccured}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setArtUploadData({
                         ...artUploadData,
                         story: e.target.value,
@@ -354,7 +354,7 @@ const ContinueArtUpload = () => {
                     placeholder="100*150"
                     value={artUploadData.dimensions}
                     error={errorOccured}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       setArtUploadData({
                         ...artUploadData,
                         dimensions: e.target.value,
@@ -471,7 +471,7 @@ const ContinueArtUpload = () => {
                       placeholder="150.00"
                       type="number"
                       value={artUploadData.price}
-                      onChange={(e) =>
+                      onChange={(e:any) =>
                         setArtUploadData({
                           ...artUploadData,
                           price: parseFloat(e.target.value),
@@ -496,7 +496,7 @@ const ContinueArtUpload = () => {
                           type="number"
                           error={errorOccured}
                           value={artUploadData.price}
-                          onChange={(e) =>
+                          onChange={(e:any) =>
                             setArtUploadData({
                               ...artUploadData,
                               price: parseFloat(e.target.value),

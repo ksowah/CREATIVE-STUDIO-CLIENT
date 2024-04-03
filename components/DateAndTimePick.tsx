@@ -11,7 +11,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 
 interface Props {
-    onChange: (e: any) => void;
+    onChange: (e) => void;
     value: any;
 }
 
