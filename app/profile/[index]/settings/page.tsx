@@ -18,6 +18,7 @@ import { Alert, TextField } from "@mui/material";
 import { getStorage } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
+import CssTextField from "@/components/CSSTextField";
 
 const Settings = () => {
   const { data: session } = useQuery(GET_ME);
@@ -163,7 +164,7 @@ const Settings = () => {
               <div className="py-[4rem] space-y-6 ">
                 <div>
                   <p className="text-md font-medium mb-2 "> Full Name </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     variant="outlined"
                     error={isErrorOccured}
@@ -180,7 +181,7 @@ const Settings = () => {
                 </div>
                 <div>
                   <p className="text-md font-medium mb-2">Specialization</p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     variant="outlined"
                     className="w-full"
@@ -198,7 +199,7 @@ const Settings = () => {
                   <p className="text-md font-medium mb-2 text-[#B1B1B1] ">
                     Username
                   </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     variant="outlined"
                     className="w-full"
@@ -209,7 +210,7 @@ const Settings = () => {
                 </div>
                 <div>
                   <p className="text-md font-medium mb-2">Bio</p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     multiline
                     rows={5}
@@ -231,7 +232,7 @@ const Settings = () => {
 
                   <div>
                     <p className="text-md font-medium mb-2">Phone Number</p>
-                    <TextField
+                    <CssTextField
                       id="outlined-basic"
                       variant="outlined"
                       className="w-full"
@@ -250,7 +251,7 @@ const Settings = () => {
                     <p className="text-md font-medium mb-2 text-[#B1B1B1]">
                       Email
                     </p>
-                    <TextField
+                    <CssTextField
                       id="outlined-basic"
                       variant="outlined"
                       className="w-full"
@@ -268,7 +269,7 @@ const Settings = () => {
                     <p className="text-md font-medium mb-2">
                       Portfolio Website
                     </p>
-                    <TextField
+                    <CssTextField
                       id="outlined-basic"
                       variant="outlined"
                       className="w-full"

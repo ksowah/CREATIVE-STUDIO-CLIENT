@@ -7,6 +7,8 @@ import Image from "next/image";
 import { GET_COMMENT_REPLIES } from "@/apollo/queries/designs";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
+import CssTextField from "./CSSTextField";
+import { InputAdornment } from "@mui/material";
 
 const CommentItem = ({ comment }: { comment: DesignComment }) => {
   const [replyToComment, { loading }] = useMutation(REPLY_TO_COMMENT);
@@ -139,31 +141,34 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
         ))}
 
         {showReplyInput && (
-          <form
-            onSubmit={addReplyToComment}
-            className="w-full flex items-center my-4 h-[3.5rem] rounded-lg bg-[#f4f4f4] p-2"
-          >
-            <textarea
+          <div className="w-full flex items-center my-4 rounded-lg bg-[#f4f4f4]">
+            <CssTextField
               value={reply}
               onChange={(e) => setReply(e.target.value)}
               placeholder={`You are replying to ${userBeingReplied}`}
-              className="flex-1 text-sm resize-none h-full border-none outline-none bg-transparent"
+              id="input-with-icon-textfield"
+              className="flex-1 text-sm bg-transparent"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <div className="relative h-[1.2rem] w-[1.2rem] mx-2 cursor-pointer ">
+                      {loading ? (
+                        <AiOutlineLoading3Quarters className="animate-spin" />
+                      ) : (
+                        <Image
+                          fill
+                          src={"/icons/send.svg"}
+                          alt=""
+                          className="hover:scale-110 duration-150"
+                          onClick={addReplyToComment}
+                        />
+                      )}
+                    </div>
+                  </InputAdornment>
+                ),
+              }}
             />
-
-            <div className="relative h-[1.2rem] w-[1.2rem] mx-2 cursor-pointer ">
-              {loading ? (
-                <AiOutlineLoading3Quarters className="animate-spin" />
-              ) : (
-                <Image
-                  fill
-                  src={"/icons/send.svg"}
-                  alt=""
-                  className="hover:scale-110 duration-150"
-                  onClick={addReplyToComment}
-                />
-              )}
-            </div>
-          </form>
+          </div>
         )}
       </div>
     </div>

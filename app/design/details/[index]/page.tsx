@@ -23,7 +23,7 @@ import {
   GET_USER_DESIGNS,
 } from "@/apollo/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
-import { Button, Skeleton } from "@mui/material";
+import { Button, InputAdornment, Skeleton, TextField } from "@mui/material";
 import { MyContext } from "@/context/Context";
 import { IoTrashOutline } from "react-icons/io5";
 import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
@@ -52,6 +52,7 @@ import { FOLLOW_USER, UNFOLLOW_USER } from "@/apollo/mutations/user";
 import { GET_FOLLOWERS } from "@/apollo/queries/user";
 import CommentItem from "@/components/CommentItem";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import CssTextField from "@/components/CSSTextField";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
@@ -408,34 +409,41 @@ const DesignDetails = ({ params }: { params: any }) => {
 
             <div className="mt-[6rem]">
               <p className="font-medium">Comments</p>
-
-              <div className="my-[2rem] w-full h-[6rem] border rounded-md flex items-center overflow-hidden ">
-                <textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  className="flex-1 p-2 resize-none h-full border-none outline-none"
-                  placeholder="Leave a feedback on this design "
-                />
-
-                <div
-                  onClick={addCommentToDesign}
-                  className="relative h-[1.8rem] w-[1.8rem] mx-4 cursor-pointer "
-                >
-                  {commentLoading ? (
-                    <AiOutlineLoading3Quarters
-                      size={25}
-                      className="animate-spin"
-                    />
-                  ) : (
-                    <Image
-                      fill
-                      src={"/icons/send.svg"}
-                      alt=""
-                      className="hover:scale-110 duration-150"
-                    />
-                  )}
-                </div>
-              </div>
+              <CssTextField
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                rows={3}
+                color="primary"
+                id="input-with-icon-textfield"
+                multiline
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <div
+                        onClick={addCommentToDesign}
+                        className="relative h-[1.8rem] w-[1.8rem] cursor-pointer "
+                      >
+                        {commentLoading ? (
+                          <AiOutlineLoading3Quarters
+                            size={25}
+                            className="animate-spin"
+                          />
+                        ) : (
+                          <Image
+                            fill
+                            src={"/icons/send.svg"}
+                            alt=""
+                            className="hover:scale-110 duration-150"
+                          />
+                        )}
+                      </div>
+                    </InputAdornment>
+                  ),
+                }}
+                className="w-full my-4 outline-none border-none"
+                label="Leave a feedback on this design"
+                variant="outlined"
+              />
 
               {commentsData?.getDesignComments.length > 0 && (
                 <div className="w-full border rounded-lg mt-[2rem] p-[1.5rem] ">

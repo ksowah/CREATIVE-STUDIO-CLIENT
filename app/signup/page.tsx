@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoCheckmark } from "react-icons/io5";
+import CssTextField from "@/components/CSSTextField";
 
 const SignUp = () => {
   const router = useRouter();
@@ -63,7 +64,7 @@ const SignUp = () => {
           </h2>
 
           <form className="mt-[2rem] w-full space-y-8">
-            <TextField
+            <CssTextField
               id="outlined-basic"
               error={registrationError}
               label="Full Name"
@@ -74,7 +75,7 @@ const SignUp = () => {
                 setRegisterData({ ...registerData, fullName: e.target.value })
               }
             />
-            <TextField
+            <CssTextField
               id="outlined-basic"
               error={registrationError}
               label="Username"
@@ -85,7 +86,7 @@ const SignUp = () => {
                 setRegisterData({ ...registerData, username: e.target.value })
               }
             />
-            <TextField
+            <CssTextField
               id="outlined-basic"
               error={registrationError}
               label="Email"
@@ -96,7 +97,7 @@ const SignUp = () => {
                 setRegisterData({ ...registerData, email: e.target.value })
               }
             />
-            <TextField
+            <CssTextField
               id="outlined-basic"
               error={registrationError}
               label="Password"

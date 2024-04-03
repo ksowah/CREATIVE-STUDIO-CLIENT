@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import { MyContext } from "@/context/Context";
 import { uploadFileToFB } from "@/helpers/functions";
 import { getDesignFileReference } from "@/helpers/firebaseFileReferences";
+import CssTextField from "./CSSTextField";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -331,7 +332,7 @@ export default function UploadDialogue({
                       separate each tag with a comma &quot;,&quot; (maximum 20)
                     </span>
                   </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     label="Add tags..."
                     variant="outlined"
@@ -356,7 +357,7 @@ export default function UploadDialogue({
 
                 <div>
                   <p className="text-sm font-medium mb-2"> Description </p>
-                  <TextField
+                  <CssTextField
                     id="outlined-basic"
                     multiline
                     rows={4}
@@ -432,11 +433,23 @@ export default function UploadDialogue({
 
                 <FormControl className="w-[20rem] ">
                   <InputLabel id="demo-simple-select-label">
-                    Design Subscription
+                  <p className='text-black'>Design Subscription</p>
                   </InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="select-filter-by-field-labe;"
+                    id="select-filter-by-field"
+                    sx={{
+                      color: "#000",
+                      '.MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#A6A6A6',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#808080',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#797979',
+                      },
+                    }}
                     error={designUploadDataEmptyState.subscription}
                     value={designUploadData.subscription}
                     label="Design Subscription"
