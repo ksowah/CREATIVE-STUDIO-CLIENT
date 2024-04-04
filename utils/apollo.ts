@@ -22,7 +22,7 @@ const wsLink = new GraphQLWsLink(
     url:
       process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
         ? "ws://localhost:8000/graphql"
-        : "ws://creative-studio-ksowahsoftwares.koyeb.app/graphql",
+        : "wss://creative-studio-ksowahsoftwares.koyeb.app/graphql",
   })
 );
 
