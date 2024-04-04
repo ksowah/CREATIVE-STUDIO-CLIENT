@@ -15,3 +15,20 @@ subscription NewLike($designId: ID!) {
   }
 }
 `;
+
+export const NEW_COMMENT_REPLY_SUBSCRIPTION =  gql`
+  subscription Subscription($commentId: ID!) {
+  newCommentReply(commentId: $commentId) {
+    reply
+    commentId
+    repliedBy {
+      _id
+      avatar
+      email
+      fullName
+      username
+    }
+    repliedAt
+  }
+}
+`

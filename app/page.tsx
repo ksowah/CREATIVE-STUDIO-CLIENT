@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { MyContext } from "@/context/Context";
 
+
 export default function Home() {
   const { loading, data } = useQuery(GET_ALL_DESIGNS);
 
