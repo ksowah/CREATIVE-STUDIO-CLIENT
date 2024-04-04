@@ -24,6 +24,7 @@ import { IoBookmarkOutline } from "react-icons/io5";
 import { FaRegBookmark } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import { handleLikeDesign, handleSaveDesign } from "@/helpers/functions";
+import PromptSigninPopup from "./PromptSigninPopup";
 
 const CreativeCard = ({ designDetails }: { designDetails: Design }) => {
   const router = useRouter();
@@ -48,7 +49,6 @@ const CreativeCard = ({ designDetails }: { designDetails: Design }) => {
   const [alreadySaved, setAlreadySaved] = useState<any>(false);
   const [saveCount, setSaveCount] = useState<any>(designDetails?.saves);
 
-
   const { appState } = useContext(MyContext);
 
   const user: User = appState?.session;
@@ -70,7 +70,6 @@ const CreativeCard = ({ designDetails }: { designDetails: Design }) => {
     );
   }, [savedDesigns]);
 
-
   const saveDesignToCollection = async () => {
     await handleSaveDesign(
       alreadySaved,
@@ -86,6 +85,32 @@ const CreativeCard = ({ designDetails }: { designDetails: Design }) => {
     } else {
       setSaveCount(saveCount + 1);
     }
+  };
+
+  const LikeButNotLoggedIn = () => {
+    return (
+      <div className="flex cursor-pointer items-center space-x-1">
+        <FaRegHeart
+          size={16}
+          color="#595862"
+          className="hover:scale-110 duration-200"
+        />
+
+        <p className={`text-[10px] text-[#595862]`}>
+          {designLikes?.length.toString()}
+        </p>
+      </div>
+    );
+  };
+
+  const BookmarkButNotLoggedIn = () => {
+    return (
+      <div className="flex cursor-pointer items-center space-x-1">
+        <FaRegBookmark size={16} color="#595862" />
+
+        <p className="text-[10px] text-[#595862] ">{saveCount.toString()}</p>
+      </div>
+    );
   };
 
   return (
@@ -122,43 +147,53 @@ const CreativeCard = ({ designDetails }: { designDetails: Design }) => {
         </div>
 
         <div className="flex items-center space-x-2">
-          <div
-            onClick={()=>handleLikeDesign(
-              alreadyLiked,
-              unlikeDesign,
-              designDetails?._id,
-              setLikeLoading,
-              likeDesign
-            )}
-            className="flex cursor-pointer items-center space-x-1"
-          >
-            {likeLoading ? (
-              <>
-                <FaHeart size={16} className="text-pink-200" />
-                <p className="text-[10px] text-[#595862] ">
-                  {designLikes?.length.toString()}
-                </p>
-              </>
-            ) : (
-              <>
-                {alreadyLiked ? (
-                  <FaHeart
-                    size={16}
-                    className="text-pink-500 hover:scale-110 duration-200"
-                  />
-                ) : (
-                  <FaRegHeart
-                    size={16}
-                    color="#595862"
-                    className="hover:scale-110 duration-200"
-                  />
-                )}
-                <p className={`text-[10px] ${alreadyLiked ? "text-pink-500" : "text-[#595862]"}`}>
-                  {designLikes?.length.toString()}
-                </p>
-              </>
-            )}
-          </div>
+          {user ? (
+            <div
+              onClick={() =>
+                handleLikeDesign(
+                  alreadyLiked,
+                  unlikeDesign,
+                  designDetails?._id,
+                  setLikeLoading,
+                  likeDesign
+                )
+              }
+              className="flex cursor-pointer items-center space-x-1"
+            >
+              {likeLoading ? (
+                <>
+                  <FaHeart size={16} className="text-pink-200" />
+                  <p className="text-[10px] text-[#595862] ">
+                    {designLikes?.length.toString()}
+                  </p>
+                </>
+              ) : (
+                <>
+                  {alreadyLiked ? (
+                    <FaHeart
+                      size={16}
+                      className="text-pink-500 hover:scale-110 duration-200"
+                    />
+                  ) : (
+                    <FaRegHeart
+                      size={16}
+                      color="#595862"
+                      className="hover:scale-110 duration-200"
+                    />
+                  )}
+                  <p
+                    className={`text-[10px] ${
+                      alreadyLiked ? "text-pink-500" : "text-[#595862]"
+                    }`}
+                  >
+                    {designLikes?.length.toString()}
+                  </p>
+                </>
+              )}
+            </div>
+          ) : (
+            <PromptSigninPopup ActionButton={LikeButNotLoggedIn} />
+          )}
 
           <div className="flex cursor-pointer items-center space-x-1">
             <FaRegEye size={16} color="#595862" />
@@ -167,33 +202,34 @@ const CreativeCard = ({ designDetails }: { designDetails: Design }) => {
             </p>
           </div>
 
-          <div
-            onClick={saveDesignToCollection}
-            className="flex cursor-pointer items-center space-x-1"
-          >
-            {saveLoading ? (
-              <FaBookmark
-                className="text-[#9d9da1]"
-                size={16}
-              />
-            ) : (
-              <>
-                {alreadySaved ? (
-                  <FaBookmark
-                    className="hover:scale-110 duration-200"
-                    size={16}
-                    color="#595862"
-                  />
-                ) : (
-                  <FaRegBookmark size={16} color="#595862" />
-                )}
-              </>
-            )}
+          {user ? (
+            <div
+              onClick={saveDesignToCollection}
+              className="flex cursor-pointer items-center space-x-1"
+            >
+              {saveLoading ? (
+                <FaBookmark className="text-[#9d9da1]" size={16} />
+              ) : (
+                <>
+                  {alreadySaved ? (
+                    <FaBookmark
+                      className="hover:scale-110 duration-200"
+                      size={16}
+                      color="#595862"
+                    />
+                  ) : (
+                    <FaRegBookmark size={16} color="#595862" />
+                  )}
+                </>
+              )}
 
-            <p className="text-[10px] text-[#595862] ">
-              {saveCount.toString()}
-            </p>
-          </div>
+              <p className="text-[10px] text-[#595862] ">
+                {saveCount.toString()}
+              </p>
+            </div>
+          ) : (
+            <PromptSigninPopup ActionButton={BookmarkButNotLoggedIn} />
+          )}
         </div>
       </div>
     </div>

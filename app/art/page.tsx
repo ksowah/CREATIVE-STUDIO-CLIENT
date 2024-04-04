@@ -14,6 +14,7 @@ import { ImageList, ImageListItem } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { MyContext } from "@/context/Context";
+import PromptSigninPopup from "@/components/PromptSigninPopup";
 
 const Art = () => {
   const { loading, error, data } = useQuery(GET_ALL_ARTS);

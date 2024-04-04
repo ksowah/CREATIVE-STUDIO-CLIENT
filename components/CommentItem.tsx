@@ -1,6 +1,6 @@
 import { IoIosMore } from "react-icons/io";
 import SessionAvatar from "./SessionAvatar";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { REPLY_TO_COMMENT } from "@/apollo/mutations/designs";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -9,6 +9,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
 import CssTextField from "./CSSTextField";
 import { InputAdornment } from "@mui/material";
+import { NEW_COMMENT_REPLY_SUBSCRIPTION } from "@/apollo/subscriptions";
 
 const CommentItem = ({ comment }: { comment: DesignComment }) => {
   const [replyToComment, { loading }] = useMutation(REPLY_TO_COMMENT);
@@ -16,6 +17,23 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
   const { data } = useQuery(GET_COMMENT_REPLIES, {
     variables: { commentId: comment?._id },
   });
+
+  const [commentReplies, setCommentReplies] = useState<any>([])
+
+  useSubscription(NEW_COMMENT_REPLY_SUBSCRIPTION, {
+    variables: { commentId: comment?._id },
+    onSubscriptionData: ({ subscriptionData }) => {
+      const newReply = subscriptionData.data.newCommentReply;
+      // Update state with the new reply
+      console.log("new subscription grr>>>", newReply)
+      setCommentReplies((prevReplies: [CommentReply]) => [...prevReplies, newReply]);
+    },
+  });
+
+ useEffect(() => {
+  setCommentReplies([...(data?.getCommentReplies || [])])
+ }, [data])
+ 
 
   function getTimeDifference(timestamp: number) {
     const currentTime = new Date().getTime();
@@ -42,8 +60,6 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
     }
   }
 
-  console.log("comment timeeee >>>", comment?.commentedAt);
-
   const [reply, setReply] = useState("");
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [userBeingReplied, setUserBeingReplied] = useState("");
@@ -55,23 +71,6 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
           variables: {
             commentId: comment?._id,
             reply: `@${userBeingReplied} ${reply}`,
-          },
-          update: (cache, { data: { replyToComment } }) => {
-            const existingReplies = cache.readQuery<any>({
-              query: GET_COMMENT_REPLIES,
-              variables: { commentId: comment?._id },
-            });
-
-            cache.writeQuery({
-              query: GET_COMMENT_REPLIES,
-              variables: { commentId: comment?._id },
-              data: {
-                getCommentReplies: [
-                  replyToComment,
-                  ...(existingReplies?.getCommentReplies || []),
-                ],
-              },
-            });
           },
         });
 
@@ -165,7 +164,7 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
         </div>
 
         {/* REPLY ====== */}
-        {data?.getCommentReplies.map((reply: CommentReply, _: any) => (
+        {commentReplies?.map((reply: CommentReply, _: any) => (
           <ReplyItem key={reply._id} reply={reply} />
         ))}
 
