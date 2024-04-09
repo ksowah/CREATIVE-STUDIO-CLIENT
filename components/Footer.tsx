@@ -3,7 +3,7 @@ import React from "react";
 const Footer = ({noborder}:{noborder?:boolean}) => {
   return (
     <div className={`w-full mt-[12rem] ${noborder ? "border-0" : "border-t"}`}>
-      <div className="w-full space-x-16 flex items-center justify-center py-[4rem]" >
+      <div className="w-full space-y-6 lg:space-y-0 lg:space-x-16 flex flex-col lg:flex-row lg:items-center lg:justify-center py-[2rem] lg:py-[4rem]" >
         <ul className="space-y-1">
           <li className="font-medium text-sm text-[#53525C] mb-2">ABOUT US</li>
           <li className="text-xs text-[#53525C] cursor-pointer ">

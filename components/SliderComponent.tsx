@@ -12,7 +12,7 @@ const SliderComponent = ({ sliderImages }: { sliderImages: [string] }) => {
   const NextBtn = () => {
     return (
       <div
-        className={`text-xl z-50 bg-white h-[3.1rem] w-[3.1rem] rounded-full cursor-pointer shadow-xl flex items-center justify-center`}
+        className={`text-xl z-50 bg-white h-[2.5rem] w-[2.5rem] lg:h-[3.1rem] lg:w-[3.1rem] rounded-full cursor-pointer shadow-xl flex items-center justify-center`}
         onClick={() => ref?.current?.slickNext()}
       >
         <IoChevronForward />
@@ -23,7 +23,7 @@ const SliderComponent = ({ sliderImages }: { sliderImages: [string] }) => {
   const PrevBtn = () => {
     return (
       <div
-        className={` text-xl bg-white h-[3.1rem] w-[3.1rem] rounded-full cursor-pointer shadow-2xl flex items-center justify-center`}
+        className={` text-xl bg-white h-[2.5rem] w-[2.5rem] lg:h-[3.1rem] lg:w-[3.1rem] rounded-full cursor-pointer shadow-2xl flex items-center justify-center`}
         onClick={() => ref?.current?.slickPrev()}
       >
         <IoChevronBack />

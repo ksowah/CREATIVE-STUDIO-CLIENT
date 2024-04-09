@@ -3,9 +3,7 @@
 import Container from "@/components/Container";
 import Header from "@/components/Header";
 import Image from "next/image";
-import React, { cache, useContext, useEffect, useState } from "react";
-import { GoThumbsup } from "react-icons/go";
-import { TfiSave } from "react-icons/tfi";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FaHeart,
   FaRegBookmark,
@@ -14,7 +12,7 @@ import {
 } from "react-icons/fa";
 import SliderComponent from "@/components/SliderComponent";
 import UserFooter from "@/components/UserFooter";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import {
   GET_DESIGN_BY_ID,
   GET_DESIGN_COMMENTS,
@@ -23,7 +21,7 @@ import {
   GET_USER_DESIGNS,
 } from "@/apollo/queries/designs";
 import SessionAvatar from "@/components/SessionAvatar";
-import { Button, InputAdornment, Skeleton, TextField } from "@mui/material";
+import { Button, InputAdornment, Skeleton } from "@mui/material";
 import { MyContext } from "@/context/Context";
 import { IoTrashOutline } from "react-icons/io5";
 import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
@@ -53,6 +51,7 @@ import { GET_FOLLOWERS } from "@/apollo/queries/user";
 import CommentItem from "@/components/CommentItem";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import CssTextField from "@/components/CSSTextField";
+import { NEW_COMMENT_SUSCRIPTION } from "@/apollo/subscriptions";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
@@ -72,7 +71,11 @@ const DesignDetails = ({ params }: { params: any }) => {
     }
   );
 
-  console.log("comments ?>>>>", commentsData);
+  const [allComments, setAllComments] = useState<any>([]);
+
+  useEffect(() => {
+    setAllComments([...(commentsData?.getDesignComments || [])]);
+  }, [commentsData]);
 
   const designDetails: Design = data?.getDesignById;
 
@@ -90,10 +93,9 @@ const DesignDetails = ({ params }: { params: any }) => {
 
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const [countDesignViews, { data: viewCountData }] = useMutation(
-    COUNT_DESIGN_VIEWS,
-    { variables: { designId } }
-  );
+  const [countDesignViews] = useMutation(COUNT_DESIGN_VIEWS, {
+    variables: { designId },
+  });
 
   const [saveDesign] = useMutation(SAVE_DESIGN);
   const [unsaveDesign] = useMutation(UNSAVE_DESIGN);
@@ -151,8 +153,11 @@ const DesignDetails = ({ params }: { params: any }) => {
 
   const OpenDialogueButton = () => {
     return (
-      <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
-        <IoTrashOutline size={18} color="#595862" />
+      <button className="h-[2rem] w-[2rem] lg:h-[3rem] lg:w-[3rem] rounded-full border flex items-center justify-center ">
+        <IoTrashOutline
+          className="text-[16px] lg:text-[18px] "
+          color="#595862"
+        />
       </button>
     );
   };
@@ -190,28 +195,22 @@ const DesignDetails = ({ params }: { params: any }) => {
     );
   }, [savedDesigns]);
 
+  useSubscription(NEW_COMMENT_SUSCRIPTION, {
+    variables: { designId },
+    onSubscriptionData: ({ subscriptionData }) => {
+      const newComment = subscriptionData.data.newComment;
+      setAllComments((prevComments: [Comment]) => [
+        newComment,
+        ...prevComments,
+      ]);
+    },
+  });
+
   const addCommentToDesign = async () => {
     try {
       if (comment !== "") {
         await createComment({
           variables: { designId, comment },
-          update: (cache, { data: { createComment } }) => {
-            const existingComments = cache.readQuery<any>({
-              query: GET_DESIGN_COMMENTS,
-              variables: { designId },
-            });
-
-            cache.writeQuery({
-              query: GET_DESIGN_COMMENTS,
-              variables: { designId },
-              data: {
-                getDesignComments: [
-                  createComment,
-                  ...(existingComments?.getDesignComments || []),
-                ],
-              },
-            });
-          },
         });
         setComment("");
       }
@@ -238,42 +237,46 @@ const DesignDetails = ({ params }: { params: any }) => {
           </div>
         ) : (
           <div>
-            <div className="w-full flex space-x-6 items-center mt-[4rem] py-[6rem] ">
-              <SessionAvatar image={designDetails?.designer.avatar} size={70} />
+            <div className="w-full flex flex-col space-y-6 lg:space-y-0 lg:flex-row lg:items-center mt-[4rem] py-[6rem] ">
+              <div className="flex items-center space-x-6 flex-1">
+                <SessionAvatar
+                  image={designDetails?.designer.avatar}
+                  size={60}
+                />
 
-              <div className="flex-1">
-                <h3 className="font-medium text-xl">{designDetails?.title}</h3>
-                <div className="flex items-center space-x-1">
-                  <Link href={`/profile/${designDetails?.designer.username}`}>
-                    <p className="text-[#595862] text-xs cursor-pointer ">
-                      {designDetails?.designer.fullName}
+                <div className="flex-1">
+                  <h3 className="font-medium text-lg md:text-xl">
+                    {designDetails?.title}
+                  </h3>
+                  <div className="flex items-center space-x-1">
+                    <Link href={`/profile/${designDetails?.designer.username}`}>
+                      <p className="text-[#595862] text-xs cursor-pointer ">
+                        {designDetails?.designer.fullName}
+                      </p>
+                    </Link>
+                    <p className="text-[#595862] text-xs">·</p>
+                    <p
+                      onClick={() =>
+                        handleFollowUser(
+                          alreadyFollowed,
+                          unfollow,
+                          designDetails?.designer._id,
+                          session?._id,
+                          follow
+                        )
+                      }
+                      className="text-[#595862] text-xs cursor-pointer"
+                    >
+                      {alreadyFollowed ? "Unfollow" : "Follow"}
                     </p>
-                  </Link>
-                  <p className="text-[#595862] text-xs">·</p>
-                  <p
-                    onClick={() =>
-                      handleFollowUser(
-                        alreadyFollowed,
-                        unfollow,
-                        designDetails?.designer._id,
-                        session?._id,
-                        follow
-                      )
-                    }
-                    className="text-[#595862] text-xs cursor-pointer"
-                  >
-                    {alreadyFollowed ? "Unfollow" : "Follow"}
-                  </p>
+                  </div>
                 </div>
               </div>
 
               <div className="flex items-center space-x-4">
                 {likeLoading ? (
-                  <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
-                    <FaHeart
-                      size={22}
-                      className="text-pink-200 hover:scale-110 duration-200"
-                    />
+                  <button className="h-[2rem] w-[2rem] lg:h-[3rem] lg:w-[3rem] rounded-full border flex items-center justify-center ">
+                    <FaHeart className="text-pink-200 text-[16px] lg:text-[22px] hover:scale-110 duration-200" />
                   </button>
                 ) : (
                   <button
@@ -286,25 +289,24 @@ const DesignDetails = ({ params }: { params: any }) => {
                         likeDesign
                       )
                     }
-                    className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center "
+                    className="h-[2rem] w-[2rem] lg:h-[3rem] lg:w-[3rem] rounded-full border flex items-center justify-center "
                   >
                     {alreadyLiked ? (
-                      <FaHeart
-                        size={22}
-                        className="text-pink-500 hover:scale-110 duration-200"
-                      />
+                      <FaHeart className="text-pink-500 text-[16px] lg:text-[22px] hover:scale-110 duration-200" />
                     ) : (
                       <FaRegHeart
-                        size={22}
                         color="#595862"
-                        className="hover:scale-110 duration-200"
+                        className="hover:scale-110 text-[16px] lg:text-[22px] duration-200"
                       />
                     )}
                   </button>
                 )}
 
-                <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
-                  <FaRegComment size={22} color="#595862" />
+                <button className="h-[2rem] w-[2rem] lg:h-[3rem] lg:w-[3rem] rounded-full border flex items-center justify-center ">
+                  <FaRegComment
+                    className="text-[16px] lg:text-[22px]"
+                    color="#595862"
+                  />
                 </button>
                 {designDetails?.designer._id === session?._id ? (
                   <ActionConfirmationDialogue
@@ -326,18 +328,18 @@ const DesignDetails = ({ params }: { params: any }) => {
                         saveDesign
                       )
                     }
-                    className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center "
+                    className="h-[2rem] w-[2rem] lg:h-[3rem] lg:w-[3rem] rounded-full border flex items-center justify-center "
                   >
                     {saveLoading ? (
-                      <FaBookmark className="text-[#9d9da1]" size={18} />
+                      <FaBookmark className="text-[#9d9da1]" size={16} />
                     ) : alreadySaved ? (
                       <FaBookmark
                         className="hover:scale-110 duration-200"
-                        size={18}
+                        size={16}
                         color="#000"
                       />
                     ) : (
-                      <FaRegBookmark size={18} color="#595862" />
+                      <FaRegBookmark size={16} color="#595862" />
                     )}
                   </button>
                 )}
@@ -346,11 +348,11 @@ const DesignDetails = ({ params }: { params: any }) => {
 
             <SliderComponent sliderImages={designImages} />
 
-            <div className="w-full flex items-center justify-center mt-[6rem] space-x-4 ">
+            <div className="w-full flex flex-col lg:flex-row items-center justify-center mt-[6rem] space-y-4 lg:space-y-0 lg:space-x-4 ">
               <Button
                 variant="contained"
                 style={{ backgroundColor: "#000" }}
-                className="h-[3.5rem] w-[12rem] rounded-lg"
+                className="h-[3rem] w-[10rem] lg:h-[3.5rem] lg:w-[12rem] rounded-lg"
                 startIcon={<GoDownload color="#fff" />}
                 onClick={() => router.push(designDetails?.designFile)}
               >
@@ -373,10 +375,10 @@ const DesignDetails = ({ params }: { params: any }) => {
             </div>
 
             <div className="my-[8rem] ">
-              <h2 className="font-medium text-[2.5rem] mb-[2rem] ">
+              <h2 className="font-medium text-[1.5rem] lg:text-[2.5rem] lg:mb-[2rem] ">
                 {designDetails?.title}
               </h2>
-              <p className="text-[#595862] ">{designDetails?.description}</p>
+              <p className="text-[#595862] text-sm md:text-[1rem] ">{designDetails?.description}</p>
             </div>
 
             {allUserDesigns?.length >= 1 && (
@@ -385,13 +387,13 @@ const DesignDetails = ({ params }: { params: any }) => {
                   More by {designDetails?.designer.fullName}
                 </p>
 
-                <div className="w-full flex items-center space-x-4">
+                <div className="w-full flex-1 flex items-center space-x-4 overflow-x-auto scrollbar-hide">
                   {allUserDesigns?.map((design: Design, idx: number) => (
                     <div
                       onClick={() =>
                         router.push(`/design/details/${design?._id}`)
                       }
-                      className="relative cursor-pointer overflow-hidden h-[32rem] w-[22rem] rounded-xl "
+                      className="relative cursor-pointer flex-shrink-0 overflow-hidden h-[20rem] w-[16rem] lg:h-[32rem] lg:w-[22rem] rounded-xl "
                       key={design._id}
                     >
                       <Image
@@ -411,18 +413,15 @@ const DesignDetails = ({ params }: { params: any }) => {
               <p className="font-medium">Comments</p>
               <CssTextField
                 value={comment}
-                onChange={(e:any) => setComment(e.target.value)}
-                rows={3}
+                onChange={(e: any) => setComment(e.target.value)}
+                rows={2}
                 color="primary"
                 id="input-with-icon-textfield"
                 multiline
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <div
-                        onClick={addCommentToDesign}
-                        className="relative h-[1.8rem] w-[1.8rem] cursor-pointer "
-                      >
+                      <div className="relative h-[1.2rem] w-[1.2rem] md:h-[1.8rem] md:w-[1.8rem] cursor-pointer ">
                         {commentLoading ? (
                           <AiOutlineLoading3Quarters
                             size={25}
@@ -430,6 +429,7 @@ const DesignDetails = ({ params }: { params: any }) => {
                           />
                         ) : (
                           <Image
+                            onClick={addCommentToDesign}
                             fill
                             src={"/icons/send.svg"}
                             alt=""
@@ -440,18 +440,16 @@ const DesignDetails = ({ params }: { params: any }) => {
                     </InputAdornment>
                   ),
                 }}
-                className="w-full my-4 outline-none border-none"
-                label="Leave a feedback on this design"
+                className="w-full my-4 text-xs outline-none border-none"
+                label="Leave a feedback..."
                 variant="outlined"
               />
 
-              {commentsData?.getDesignComments.length > 0 && (
-                <div className="w-full border rounded-lg mt-[2rem] p-[1.5rem] ">
-                  {commentsData?.getDesignComments.map(
-                    (comment: DesignComment, _: any) => (
-                      <CommentItem comment={comment} key={comment._id} />
-                    )
-                  )}
+              {allComments?.length > 0 && (
+                <div className="w-full border rounded-lg mt-[2rem] p-[.8rem] md:p-[1.5rem] ">
+                  {allComments?.map((comment: DesignComment, _: any) => (
+                    <CommentItem comment={comment} key={comment._id} />
+                  ))}
                 </div>
               )}
             </div>

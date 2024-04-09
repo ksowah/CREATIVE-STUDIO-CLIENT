@@ -35,30 +35,36 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
  }, [data])
  
 
-  function getTimeDifference(timestamp: number) {
-    const currentTime = new Date().getTime();
-    const timeDifference = currentTime - timestamp;
+ function getTimeDifference(timestamp: number) {
+  const currentTime = new Date().getTime();
+  const timeDifference = currentTime - timestamp;
 
-    const minute = 60 * 1000;
-    const hour = minute * 60;
-    const day = hour * 24;
+  const minute = 60 * 1000;
+  const hour = minute * 60;
+  const day = hour * 24;
+  const month = day * 30;
+  const year = day * 365;
 
-    if (timeDifference < minute) {
-      return "Just now";
-    } else if (timeDifference < hour) {
-      const minutes = Math.floor(timeDifference / minute);
-      return `${minutes} mins ago`;
-    } else if (timeDifference < day) {
-      const hours = Math.floor(timeDifference / hour);
-      return `${hours} hours ago`;
-    } else {
-      const date = new Date(timestamp);
-      const formattedDate = `${date.getDate()}/${
-        date.getMonth() + 1
-      }/${date.getFullYear()}`;
-      return formattedDate;
-    }
+  if (timeDifference < minute) {
+    return "Just now";
+  } else if (timeDifference < hour) {
+    const minutes = Math.floor(timeDifference / minute);
+    return `${minutes} mins ago`;
+  } else if (timeDifference < day) {
+    const hours = Math.floor(timeDifference / hour);
+    return `${hours} hours ago`;
+  } else if (timeDifference < month) {
+    const days = Math.floor(timeDifference / day);
+    return `${days} day${days > 1 ? 's' : ''} ago`;
+  } else if (timeDifference < year) {
+    const months = Math.floor(timeDifference / month);
+    return `${months} month${months > 1 ? 's' : ''} ago`;
+  } else {
+    const years = Math.floor(timeDifference / year);
+    return `${years} year${years > 1 ? 's' : ''} ago`;
   }
+}
+
 
   const [reply, setReply] = useState("");
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -108,18 +114,18 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
     }, []);
 
     return (
-      <div className="flex pl-[2rem] ">
+      <div className="flex md:pl-[2rem]">
         <SessionAvatar image={reply.repliedBy.avatar} size={30} />
-        <div className="p-2">
+        <div className="pb-1 md:p-3">
           <div className="flex items-center space-x-4">
             <p className="text-sm font-medium">{reply.repliedBy.username}</p>
-            <p className="text-xs text-[#8c8c8c]">{`${getTimeDifference(
+            <p className="md:text-xs text-[#8c8c8c]">{`${getTimeDifference(
               parseInt(reply?.repliedAt)
             )}`}</p>
           </div>
 
           <div className="my-4">
-            <p className="text-sm">
+            <p className="text-[13px] md:text-[15px]">
               <span className="text-sky-700 cursor-pointer">
                 <Link href={`/profile/${username}`}>{"@" + username}</Link>{" "}
               </span>{" "}
@@ -127,7 +133,7 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
             </p>
             <p
               onClick={() => openReplyInput(reply?.repliedBy.username)}
-              className="text-sm text-[#666666] cursor-pointer my-2 "
+              className="text-xs md:text-sm text-[#666666] cursor-pointer my-2 "
             >
               Reply
             </p>
@@ -140,10 +146,10 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
   return (
     <div className="flex mb-[2rem] ">
       <SessionAvatar image={comment?.commentedBy.avatar} size={40} />
-      <div className="p-3  flex-1">
+      <div className="p-3 flex-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <p className="text-sm font-medium">
+            <p className="text-[15px] font-medium">
               {comment?.commentedBy.username}
             </p>
             <p className="text-xs text-[#8c8c8c]">{`${getTimeDifference(
@@ -154,10 +160,10 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
         </div>
 
         <div className="my-4">
-          <p className="text-sm">{comment?.comment}</p>
+          <p className="text-[13px] md:text-[15px]">{comment?.comment}</p>
           <p
             onClick={() => openReplyInput(comment?.commentedBy.username)}
-            className="text-sm text-[#666666] cursor-pointer my-2 "
+            className="text-xs md:text-sm text-[#666666] cursor-pointer my-2 "
           >
             Reply
           </p>
@@ -175,7 +181,7 @@ const CommentItem = ({ comment }: { comment: DesignComment }) => {
               onChange={(e: any) => setReply(e.target.value)}
               placeholder={`You are replying to ${userBeingReplied}`}
               id="input-with-icon-textfield"
-              className="flex-1 text-sm bg-transparent"
+              className="flex-1 text-xs bg-transparent"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

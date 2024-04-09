@@ -14,6 +14,7 @@ import { Tooltip } from "@mui/material";
 import { useQuery } from "@apollo/client";
 import { GET_CART_ITEMS } from "@/apollo/queries/cart";
 import Image from "next/image";
+import { RiMenu2Line } from "react-icons/ri";
 
 const Header = () => {
   const pathname = usePathname();
@@ -33,14 +34,17 @@ const Header = () => {
   return (
     <div className="absolute w-full h-[5rem] bg-white z-40">
       <Container>
-        <div className="w-full h-full flex items-center">
-          <Link href={"/"}>
-            <p className="font-medium text-2xl cursor-pointer">
-              CreativeStudio
-            </p>
-          </Link>
+        <div className="w-full h-full flex items-center justify-between">
+          <div className="flex space-x-2 items-center" >
+            <RiMenu2Line className="xl:hidden" size={20} />
+            <Link href={"/"}>
+              <p className="font-medium text-xl lg:text-2xl cursor-pointer">
+                CreativeStudio
+              </p>
+            </Link>
+          </div>
 
-          <div className="flex flex-1 px-[4rem] space-x-6">
+          <div className="hidden xl:flex flex-1 px-[4rem] space-x-6">
             <ul className="flex items-center space-x-6 text-sm ">
               <Link href={"/art"}>
                 <li
@@ -87,7 +91,7 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <Tooltip title="Auction room">
               <Link href={"/art/auctionroom"}>
-                <div className="h-[2.6rem] w-[2.6rem] cursor-pointer border rounded-md flex items-center justify-center  ">
+                <div className="hidden lg:flex h-[2.6rem] w-[2.6rem] cursor-pointer border rounded-md items-center justify-center  ">
                   <Image
                     src={"/icons/hammer.svg"}
                     alt=""
@@ -102,7 +106,7 @@ const Header = () => {
             <Tooltip title="Your cart">
               <Link
                 href={"/art/cart"}
-                className="relative h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center"
+                className="hidden lg:flex relative h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md items-center justify-center"
               >
                 {user && data?.getCartItems.length > 0 && (
                   <div className="absolute -top-2 -right-2 px-[6px]  flex items-center justify-center rounded-full bg-black ">
@@ -123,13 +127,13 @@ const Header = () => {
               <div className="flex items-center space-x-4">
                 <Link href={"/login"}>
                   <ButtonOutlined
-                    className="w-[7rem] h-[2.8rem]"
+                    className="hidden md:flex lg:w-[7rem] lg:h-[2.8rem]"
                     title="Log in"
                   />
                 </Link>
 
                 <Link href={"/signup"}>
-                  <ButtonSolid title="Join" className="w-[7rem] h-[2.8rem] " />
+                  <ButtonSolid title="Join" className="lg:w-[7rem] lg:h-[2.8rem] " />
                 </Link>
               </div>
             )}

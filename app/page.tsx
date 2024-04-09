@@ -7,16 +7,24 @@ import DropDown from "@/components/Dropdown";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import SkeletonLoader from "@/components/SkeletonLoader";
-import { GET_ALL_DESIGNS } from "@/apollo/queries/designs";
+import {
+  GET_ALL_DESIGNS,
+  GET_DESIGNS_BY_CATEGORY,
+} from "@/apollo/queries/designs";
 import { useQuery } from "@apollo/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { MyContext } from "@/context/Context";
 
-
 export default function Home() {
+  const [category, setCategory] = useState("");
+
   const { loading, data } = useQuery(GET_ALL_DESIGNS);
+
+  const { data: byCategoryData, loading: byCategoryLoading } = useQuery(GET_DESIGNS_BY_CATEGORY, {
+    variables: { category },
+  });
 
   const router = useRouter();
 
@@ -27,7 +35,7 @@ export default function Home() {
   return (
     <main className="flex-1">
       <Header />
-      <div className="relative h-[50rem] w-screen">
+      <div className="relative h-[30rem] lg:h-[50rem] w-screen">
         <Image
           src={"/images/designoverlay.png"}
           fill
@@ -36,12 +44,12 @@ export default function Home() {
         />
 
         <div className="absolute flex flex-col top-0 left-0 right-0 bottom-0 z-10 bg-overlay items-center justify-center ">
-          <h2 className="text-white font-medium text-3xl mb-[4rem] ">
+          <h2 className="text-white font-medium text-xl lg:text-3xl mb-[4rem] text-center ">
             Unveil your creative brilliance to the world.
           </h2>
           {session?.subscription === "FREE" && (
             <ButtonSolid
-              className="w-[12.6rem] h-[4rem]"
+              className="w-[11rem] h-[3rem] lg:w-[12.6rem] lg:h-[4rem]"
               title="Become a Designer"
               onClick={() => router.push("/subscription")}
             />
@@ -50,10 +58,11 @@ export default function Home() {
       </div>
 
       <Container>
-        <div className="flex-1 flex justify-between w-full py-[4rem] ">
-          <DropDown />
-
-          <ul className="flex items-center space-x-8">
+        <div className="w-full flex flex-col items-center justify-center xl:flex-row xl:justify-between py-[4rem] ">
+          {session && (
+            <DropDown selected={category} setSelected={setCategory} />
+          )}
+          <ul className="flex w-full items-center md:justify-center mt-4 space-x-4 xl:space-x-8 xl:flex-1 xl:justify-end xl:mt-0 whitespace-nowrap overflow-x-scroll scrollbar-hide">
             <li className="text-sm text-[#5C5B66] cursor-pointer">
               3D Designs
             </li>
@@ -73,16 +82,21 @@ export default function Home() {
           </ul>
         </div>
 
-        {loading ? (
+        {loading || byCategoryLoading ? (
           <SkeletonLoader />
         ) : (
-          <div className="grid grid-cols-4 ">
-            {[...(data?.getAllDesigns || [])].map((item:Design, idx) => (
-              <CreativeCard
-                key={item._id}
-                designDetails={item}
-              />
-            ))}
+          <div className="flex items-center justify-center flex-wrap xl:grid grid-cols-4 ">
+            {
+              category ? (
+                [...(byCategoryData?.getDesignsByCategory || [])].map((item: Design, idx) => (
+                  <CreativeCard key={item._id} designDetails={item} />
+                ))
+              ) : (
+                [...(data?.getAllDesigns || [])].map((item: Design, idx) => (
+                  <CreativeCard key={item._id} designDetails={item} />
+                ))
+              )
+            }
           </div>
         )}
 

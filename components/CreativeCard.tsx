@@ -114,7 +114,7 @@ const CreativeCard = ({ designDetails }: { designDetails: Design }) => {
   };
 
   return (
-    <div className="group h-[18rem] cursor-pointer w-[20rem] rounded-md border shadow-md overflow-hidden mb-12">
+    <div className="group h-[18rem] md:mr-[1rem] cursor-pointer w-[20rem] rounded-md border shadow-md overflow-hidden mb-12">
       <div
         onClick={() => router.push(`/design/details/${designDetails?._id}`)}
         className="relative overflow-hidden w-full h-[14rem]"
@@ -141,7 +141,7 @@ const CreativeCard = ({ designDetails }: { designDetails: Design }) => {
         >
           <SessionAvatar image={designDetails?.designer.avatar} size={40} />
 
-          <p className="text-[13px] text-[#595862] line-clamp-1 ">
+          <p className="text-[11px] lg:text-[13px] text-[#595862] line-clamp-1 ">
             {designDetails?.designer.fullName}
           </p>
         </div>
