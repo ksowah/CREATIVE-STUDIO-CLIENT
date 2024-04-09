@@ -179,3 +179,31 @@ export const GET_COMMENT_REPLIES = gql`
     }
   }
 `;
+
+export const GET_DESIGNS_BY_CATEGORY = gql`
+  query Query($category: String!) {
+    getDesignsByCategory(category: $category) {
+      _id
+      designer {
+        _id
+        avatar
+        fullName
+        username
+      }
+      preview
+      views
+      saves
+      description
+      designSubscription
+      designFile
+      designFileRef
+      designImages
+      createdAt
+      tags
+      category
+      title
+      previewImageRef
+      designImagesRef
+    }
+  }
+`;

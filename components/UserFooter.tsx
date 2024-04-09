@@ -22,11 +22,11 @@ const UserFooter = ({
 }: Props) => {
   return (
     <div className="w-full border-t mt-[18rem] flex flex-col items-center ">
-      <div className="w-[16rem] h-[10rem] bg-white -mt-[5rem] flex items-center justify-center ">
-        <SessionAvatar image={image} size={135} />
+      <div className="w-[14rem] h-[8rem] md:w-[16rem] md:h-[10rem] bg-white -mt-[5rem] flex items-center justify-center ">
+        <SessionAvatar image={image} size={120} />
       </div>
 
-      <p className="font-medium text-[2rem] mt-8 ">{name}</p>
+      <p className="font-medium text-[1.2rem] md:text-[2rem] mt-8 text-center ">{name}</p>
       <p className="text-[#595862] text-center my-4 ">
         {specialization || "Product Designer"}
       </p>

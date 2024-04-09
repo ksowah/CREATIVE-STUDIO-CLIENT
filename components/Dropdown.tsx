@@ -3,10 +3,15 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { useState } from "react";
 
-export default function SelectLabels() {
-  const [selected, setSelected] = useState("");
+
+
+interface Props {
+  selected?: string,
+  setSelected?: any
+}
+
+export default function SelectLabels({selected, setSelected}:Props) {
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelected(event.target.value);
@@ -37,8 +42,8 @@ export default function SelectLabels() {
             },
           }}
         >
-          <MenuItem value={"Designs"}>Designs</MenuItem>
-          <MenuItem value={"Arts"}>Arts</MenuItem>
+          <MenuItem value={"All"}>All</MenuItem>
+          <MenuItem value={"Popular"}>Popular</MenuItem>
           <MenuItem value={"Following"}>Following</MenuItem>
         </Select>
       </FormControl>
