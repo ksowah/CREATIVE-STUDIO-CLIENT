@@ -17,6 +17,8 @@ const httpLink = createHttpLink({
       : "https://creative-studio-ksowahsoftwares.koyeb.app/graphql",
 });
 
+let activeSocket: any, timedOut: any;
+
 const wsLink = new GraphQLWsLink(
   createClient({
     url:

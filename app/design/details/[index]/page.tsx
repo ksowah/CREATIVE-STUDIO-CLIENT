@@ -447,8 +447,8 @@ const DesignDetails = ({ params }: { params: any }) => {
 
               {allComments?.length > 0 && (
                 <div className="w-full border rounded-lg mt-[2rem] p-[.8rem] md:p-[1.5rem] ">
-                  {allComments?.map((comment: DesignComment, _: any) => (
-                    <CommentItem comment={comment} key={comment._id} />
+                  {allComments?.map((comment: DesignComment, idx: number) => (
+                    <CommentItem comment={comment} key={idx} />
                   ))}
                 </div>
               )}
