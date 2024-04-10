@@ -1,52 +1,53 @@
 import { gql } from "@apollo/client";
 
 export const NEW_LIKE_SUBSCRIPTION = gql`
-subscription NewLike($designId: ID!) {
-  newLike(designId: $designId) {
-    _id
-    designId
-    likedBy {
-      avatar
-      email
-      fullName
-      username
+  subscription NewLike($designId: ID!) {
+    newLike(designId: $designId) {
+      _id
+      designId
+      likedBy {
+        avatar
+        email
+        fullName
+        username
+      }
+      likedAt
     }
-    likedAt
   }
-}
 `;
 
-export const NEW_COMMENT_REPLY_SUBSCRIPTION =  gql`
+export const NEW_COMMENT_REPLY_SUBSCRIPTION = gql`
   subscription Subscription($commentId: ID!) {
-  newCommentReply(commentId: $commentId) {
-    reply
-    commentId
-    repliedBy {
+    newCommentReply(commentId: $commentId) {
       _id
-      avatar
-      email
-      fullName
-      username
+      reply
+      commentId
+      repliedBy {
+        avatar
+        _id
+        fullName
+        username
+        email
+      }
+      repliedAt
     }
-    repliedAt
   }
-}
-`
+`;
 
 export const NEW_COMMENT_SUSCRIPTION = gql`
   subscription Subscription($designId: ID!) {
-  newComment(designId: $designId) {
-    _id
-    comment
-    commentedBy {
+    newComment(designId: $designId) {
       _id
-      avatar
-      email
-      fullName
-      username
+      comment
+      commentedBy {
+        _id
+        avatar
+        email
+        fullName
+        username
+      }
+      commentedAt
+      designId
     }
-    commentedAt
-    designId
   }
-}
-`
+`;

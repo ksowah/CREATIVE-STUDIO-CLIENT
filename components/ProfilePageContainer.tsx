@@ -181,7 +181,7 @@ const ProfilePageContainer = ({
                 <li className="text-sm font-medium h-[2rem] px-3 flex items-center justify-center cursor-pointer mb-4 ">
                   Liked Designs
                 </li>
-                {appState?.session.username === username && (
+                {appState?.session?.username === username && (
                   <Link
                     href={`/profile/${username}/bookmarks`}
                     className={`text-sm font-medium h-[2rem] ${
