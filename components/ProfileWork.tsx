@@ -109,13 +109,13 @@ const ProfileWork = ({
     <div
       className={`group ${
         deleteLoading && "opacity-60"
-      } relative h-[16rem] w-[18rem] mb-6`}
+      } relative h-[16rem] w-[18rem] mb-6 md:mr-[1.5rem] overflow-hidden`}
     >
       {deleteLoading && (
         <div className="absolute top-0 left-0 right-0 bottom-0 z-30"></div>
       )}
 
-      <div className="relative cursor-pointer h-[16rem] w-[18rem] mb-8 rounded-lg overflow-hidden ">
+      <div className="relative cursor-pointer h-[16rem] w-full mb-8 rounded-lg overflow-hidden ">
         <Image
           src={design?.preview}
           className="group-hover:scale-125 duration-500"

@@ -13,14 +13,14 @@ const MultiImageUploader = ({ selectedImages, setSelectedImages }: Props) => {
   const filePickerRef = useRef<any>(null);
 
   const selectImages = (e:any) => {
-    const selectedImagesArray = [...selectedImages]; // Create a copy of the existing images array
+    const selectedImagesArray = [...selectedImages];
 
     // Loop through each selected file
     for (let i = 0; i < e.target.files.length; i++) {
       const file = e.target.files[i];
-      const reader = new FileReader(); // Create a new FileReader instance for each file
+      const reader = new FileReader();
 
-      // Read each file as data URL
+      
       reader.readAsDataURL(file);
 
       // Push the data URL to the selected images array
@@ -50,9 +50,9 @@ const MultiImageUploader = ({ selectedImages, setSelectedImages }: Props) => {
 
   return (
     <div className="w-full flex flex-col items-center justify-center">
-      <div className="w-full my-8 md:grid grid-cols-6 flex items-center justify-center flex-wrap">
+      <div className="w-full my-8 md:grid md:grid-cols-4 lg:grid-cols-6 flex items-center justify-center flex-wrap">
         {selectedImages?.map((image: any, idx: any) => (
-          <div key={idx} className="relative w-[12rem] h-[12rem] mt-6 mr-4">
+          <div key={idx} className="relative w-[8rem] h-[8rem] md:w-[12rem] md:h-[12rem] mt-6 mr-4">
             <div
               onClick={() => removeImage(idx)}
               className="absolute z-10 h-[2rem] w-[2rem] rounded-full bg-[#D9D9D9] cursor-pointer flex items-center justify-center -right-4 -top-3 "

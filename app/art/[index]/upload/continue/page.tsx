@@ -260,10 +260,10 @@ const ContinueArtUpload = () => {
             More about your Artwork
           </h2>
 
-          <div className="w-full flex items-start mt-8 space-x-6">
-            <div className="">
+          <div className="w-full flex flex-col lg:flex-row items-center lg:items-start mt-8 lg:space-x-6">
+            <div className="w-full lg:w-fit flex flex-col items-center">
               <p className="font-medium text-sm mb-2 ">Thumbnail preview</p>
-              <div className="relative h-[16rem] w-[16rem] mb-6">
+              <div className="relative h-[20rem] w-full lg:h-[16rem] lg:w-[16rem] mb-6">
                 <Image
                   src={
                     artUpload.selectedImage
@@ -276,9 +276,9 @@ const ContinueArtUpload = () => {
                 />
               </div>
 
-              <div className="w-[16rem] h-5 md:grid grid-cols-3 flex flex-wrap items-center justify-center">
+              <div className="w-fit md:grid md:grid-cols-4 lg:grid-cols-3 flex flex-wrap items-center justify-center mb-[1rem]">
                 {artImages.map((image: any, idx: number) => (
-                  <div key={idx} className="relative h-[5rem] w-[5rem] mb-1">
+                  <div key={idx} className="relative h-[5rem] w-[5rem] mb-1 mr-2">
                     <div
                       onClick={() => removeImage(idx)}
                       className="absolute z-10 h-[1.4rem] w-[1.4rem] rounded-full bg-white cursor-pointer flex items-center justify-center right-1 top-1 "
@@ -296,7 +296,7 @@ const ContinueArtUpload = () => {
               </div>
             </div>
 
-            <div className={`relative flex-1 border`}>
+            <div className={`relative w-full flex-1 border`}>
               {loading && <LinearProgress color="inherit" />}
               {loading && (
                 <div className="absolute top-0 left-0 right-0 bottom-0 z-10"></div>
@@ -383,8 +383,8 @@ const ContinueArtUpload = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <FormControl className="w-[20rem] mt-[1rem]">
+                <div className="flex flex-col lg:flex-row items-center justify-between">
+                  <FormControl className="w-full lg:w-[20rem] mt-[1rem]">
                     <InputLabel id="select-filter-by-field">
                     <p className='text-black'>Category</p>
                     </InputLabel>
@@ -423,7 +423,7 @@ const ContinueArtUpload = () => {
                       <MenuItem value={"textileArt"}>Textile Art</MenuItem>
                     </Select>
                   </FormControl>
-                  <FormControl className="w-[20rem] mt-[1rem]">
+                  <FormControl className="w-full lg:w-[20rem] mt-[1rem]">
                     <InputLabel id="demo-simple-select-label">
                     <p className='text-black'>Art Type</p>
                     </InputLabel>
@@ -505,7 +505,7 @@ const ContinueArtUpload = () => {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row items-center justify-between">
                         <div>
                           <p className="text-sm font-medium mb-2">
                             {" "}
@@ -539,21 +539,21 @@ const ContinueArtUpload = () => {
                   </>
                 )}
 
-                <div className="flex items-center justify-between pt-20 ">
+                <div className="flex flex-col-reverse sm:flex-row items-center justify-between pt-20 ">
                   <ButtonOutlined
                     onClick={cancelUpload}
-                    className="w-[8rem] h-[3rem]"
+                    className="sm:w-[8rem] sm:h-[3rem]"
                     title="Cancel"
                   />
 
-                  <div className="flex items-center space-x-4">
+                  <div className="flex flex-col-reverse sm:flex-row items-center sm:space-x-4 mb-4 sm:mb-0">
                     <ButtonOutlined
-                      className="w-[8rem] h-[3rem]"
+                      className="sm:w-[8rem] sm:h-[3rem]"
                       title="Save as draft"
                     />
                     <ButtonSolid
                       onClick={createNewArt}
-                      className="w-[8rem] h-[3rem]"
+                      className="sm:w-[8rem] sm:h-[3rem] mb-4 sm:mb-0"
                       title="Publish now"
                     />
                   </div>

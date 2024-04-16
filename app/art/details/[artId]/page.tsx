@@ -35,8 +35,16 @@ const Meeting: React.FC<MeetingProps> = ({
   price,
 }) => {
   return (
-    <div className="w-[280px] h-[450px]">
-      <img src={picture} alt="profile picture" />
+    <div className="cursor-pointer w-[16rem] sm:w-[20rem] mb-10 sm:mr-6">
+      <div className="relative w-full overflow-hidden ">
+        <Image
+          height={288}
+          width={320}
+          style={{ objectFit: "contain" }}
+          src={picture}
+          alt="profile picture"
+        />
+      </div>
       <p className="text-[18px] font-semibold py-2">{name}</p>
       <p className="">{description}</p>
       <p>{price}</p>
@@ -59,9 +67,7 @@ const ArtDetails = ({ params }: { params: any }) => {
 
   const artDetails: ArtPiece = data?.getArtById;
 
-  const [addToCart] = useMutation(ADD_TO_CART, {
-   
-  });
+  const [addToCart] = useMutation(ADD_TO_CART, {});
 
   const router = useRouter();
 
@@ -69,19 +75,22 @@ const ArtDetails = ({ params }: { params: any }) => {
     try {
       await addToCart({
         variables: { itemId: artId, artist: artDetails?.artist._id },
-        update: (cache, { data: {addToCart} }) => {
+        update: (cache, { data: { addToCart } }) => {
           const existingItemsInCart = cache.readQuery<any>({
             query: GET_CART_ITEMS,
-          })
+          });
 
           cache.writeQuery({
             query: GET_CART_ITEMS,
             data: {
-              getCartItems: [addToCart, ...(existingItemsInCart?.getCartItems || [])]
-            }
-          })
-        }
-      })
+              getCartItems: [
+                addToCart,
+                ...(existingItemsInCart?.getCartItems || []),
+              ],
+            },
+          });
+        },
+      });
       toast.success(`${artDetails?.title} added to cart`);
     } catch (error: any) {
       console.error("error", error);
@@ -184,9 +193,9 @@ const ArtDetails = ({ params }: { params: any }) => {
               )}
             </div>
             <div className="pt-[1rem] ">
-              <div className="flex justify-between">
+              <div className="flex flex-col justify-center lg:flex-row lg:justify-between">
                 <div className="flex-1 flex flex-col items-center justify-center">
-                  <div className="relative flex justify-start w-[700px] h-[500px]">
+                  <div className="relative flex justify-start w-full lg:w-[700px] h-[500px]">
                     <Image
                       src={artDetails?.artPreview}
                       fill
@@ -211,8 +220,10 @@ const ArtDetails = ({ params }: { params: any }) => {
                   </div>
                 </div>
 
-                <div className="flex-1 pl-[2rem]">
-                  <p className="font-medium text-[30px]">{artDetails?.title}</p>
+                <div className="flex-1 w-full lg:pl-[2rem] mt-6">
+                  <p className="font-medium text-[20px] md:text-[30px]">
+                    {artDetails?.title}
+                  </p>
 
                   <div className=" mt-6 text-[13px]">
                     <p>Size: {artDetails?.dimensions}</p>
@@ -221,7 +232,7 @@ const ArtDetails = ({ params }: { params: any }) => {
                     <p>Year: 2022</p>
                   </div>
 
-                  <div className="w-[80%] p-[1rem] mt-8 bg-[#f0f0f0]">
+                  <div className="w-full lg:w-[80%] p-[1rem] mt-8 bg-[#f0f0f0]">
                     <div className="text-[13px] flex justify-between">
                       <div>
                         <p>Get to know the artist :</p>
@@ -237,7 +248,7 @@ const ArtDetails = ({ params }: { params: any }) => {
                     </div>
 
                     <div className="flex items-center justify-between mt-8 pr-3">
-                      <p className="text-[25px] font-medium">
+                      <p className="text-[1rem] md:text-[25px] font-medium">
                         ${artDetails?.price}
                       </p>
 
@@ -252,27 +263,31 @@ const ArtDetails = ({ params }: { params: any }) => {
               </div>
 
               {/* Text underneath */}
-              <div className="w-[40rem] my-[4rem] ">
-                <h2 className=" mb-3 text-[23px] font-medium">Story</h2>
-                <p className="text-[1rem]">{artDetails?.description}</p>
+              <div className="w-full lg:w-[40rem] my-[4rem] ">
+                <h2 className=" mb-3 text-[18px] md:text-[23px] font-medium">
+                  Story
+                </h2>
+                <p className="text-[14px] md:text-[1rem]">
+                  {artDetails?.description}
+                </p>
               </div>
 
-              <div className="border-t">
-                <p className="mt-[2rem] text-center text-[22px] font-medium">
+              <div className="border-t flex flex-col items-center justify-center ">
+                <p className="mt-[2rem] text-center text-[18px] md:text-[22px] font-medium">
                   You May Also Like
                 </p>
 
-                <div className=" mx-[83px] mt-[3rem] flex justify-between">
+                <div className="mt-[3rem] w-fit flex items-center justify-center flex-wrap lg:grid grid-cols-3">
                   <Meeting
                     picture="/images/drawings.png"
                     name="Amber Haze"
-                    description="Annet Loginova | Paintings"
+                    description="Annet Loginova | Paintings"
                     price="$350"
                   />
                   <Meeting
                     picture="/images/drawings2.png"
                     name="Little ballerina"
-                    description="Annet Loginova | Paintings"
+                    description="Annet Loginova | Paintings"
                     price="$350"
                   />
                   <Meeting
@@ -281,25 +296,23 @@ const ArtDetails = ({ params }: { params: any }) => {
                     description="Annet Loginova | Paintings"
                     price="$350"
                   />
-                </div>
 
-                <div className="flex justify-between mx-[83px] mt-[3.5rem]">
                   <Meeting
                     picture="/images/drawings2.png"
                     name="Little ballerina"
-                    description="Annet Loginova | Paintings"
+                    description="Annet Loginova | Paintings"
                     price="$350"
                   />
                   <Meeting
                     picture="/images/drawings.png"
                     name="Amber Haze"
-                    description="Annet Loginova | Paintings"
+                    description="Annet Loginova | Paintings"
                     price="$350"
                   />
                   <Meeting
                     picture="/images/drawings2.png"
                     name="Little ballerina"
-                    description="Annet Loginova | Paintings"
+                    description="Annet Loginova | Paintings"
                     price="$350"
                   />
                 </div>

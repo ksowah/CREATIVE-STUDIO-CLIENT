@@ -77,20 +77,20 @@ const UploadArtWork = () => {
               />
             )}
 
-            <div className="w-full mt-6 flex items-center justify-between">
+            <div className="w-full mt-6 flex flex-col-reverse md:flex-row items-center justify-between">
               <ButtonOutlined
                 onClick={cancelUpload}
-                className="h-[2.8rem] w-[9rem] "
+                className="md:h-[2.8rem] md:w-[9rem] "
                 title="Cancel"
               />
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center mb-4 md:mb-0 space-x-4">
                 <ButtonSolid
-                  className="h-[2.8rem] w-[9rem]"
+                  className="md:h-[2.8rem] md:w-[9rem]"
                   title="save as draft"
                 />
                 <Button
-                  className="h-[2.8rem] w-[9rem]"
+                  className="md:h-[2.8rem] md:w-[9rem]"
                   color="inherit"
                   variant="outlined"
                   sx={{
