@@ -101,23 +101,23 @@ const ProfilePageContainer = ({
         <>
           <section className="h-[38rem] w-full pt-[6rem] ">
             <Container>
-              <div className="flex items-center w-full h-full ">
-                <SessionAvatar size={200} image={user?.avatar} />
+              <div className="flex flex-col sm:flex-row items-start sm:items-center  w-full h-full ">
+                <SessionAvatar size={180} image={user?.avatar} />
 
-                <div className="space-y-2 ml-8">
-                  <p className="font-medium text-3xl ">{user?.fullName}</p>
+                <div className="space-y-2 flex flex-col items-start ml-8 mt-[1rem] md:mt-0 ">
+                  <p className="font-medium text-xl md:text-3xl ">{user?.fullName}</p>
                   <p className="text-sm font-medium">{user?.specialization}</p>
 
-                  <div className="flex items-center cursor-default text-sm text-[#595862] space-x-4">
+                  <div className="flex items-center justify-center md:justify-start cursor-default text-sm text-[#595862] space-x-4">
                     <p>{getUserFollowers?.length} followers</p>
                     <p>{userFollowing?.length} following</p>
                   </div>
 
                   {appState?.session?.username === username ? (
-                    <div className="flex items-center space-x-4">
+                    <div className="flex flex-col sm:flex-row items-center sm:space-x-4">
                       <Link href={`/profile/${appState?.session?.username}/settings`}>
                         <ButtonSolid
-                          className="h-[3rem] w-[8rem] "
+                          className="h-[3rem] w-[8rem] mb-4 sm:mb-0 "
                           title="Edit Profile"
                         />
                       </Link>
@@ -127,7 +127,7 @@ const ProfilePageContainer = ({
                       />
                     </div>
                   ) : (
-                    <div className="flex items-center space-x-4">
+                    <div className="flex flex-col sm:flex-row items-center sm:space-x-4">
                       <ButtonSolid
                         Icon={
                           followLoading ? (
@@ -153,7 +153,7 @@ const ProfilePageContainer = ({
                             follow
                           )
                         }
-                        className="h-[3rem] w-[8rem] "
+                        className="h-[3rem] w-[8rem] mb-4 sm:mb-0 "
                         title={`${alreadyFollowed ? "Unfollow" : "Follow"}`}
                       />
                       <ButtonOutlined
@@ -169,7 +169,7 @@ const ProfilePageContainer = ({
 
           <section className="w-full">
             <Container>
-              <ul className="flex items-center space-x-8 ">
+              <ul className="flex items-center space-x-8 whitespace-nowrap overflow-x-scroll scrollbar-hide ">
                 <Link
                   href={`/profile/${username}`}
                   className={`text-sm font-medium h-[2rem] ${

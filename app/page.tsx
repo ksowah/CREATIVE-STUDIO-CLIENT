@@ -44,16 +44,14 @@ export default function Home() {
         />
 
         <div className="absolute flex flex-col top-0 left-0 right-0 bottom-0 z-10 bg-overlay items-center justify-center ">
-          <h2 className="text-white font-medium text-xl lg:text-3xl mb-[4rem] text-center ">
+          <h2 className="text-white font-medium text-xl lg:text-3xl mb-[4rem] text-center">
             Unveil your creative brilliance to the world.
           </h2>
-          {session?.subscription === "FREE" && (
             <ButtonSolid
               className="w-[11rem] h-[3rem] lg:w-[12.6rem] lg:h-[4rem]"
               title="Become a Designer"
               onClick={() => router.push("/subscription")}
             />
-          )}
         </div>
       </div>
 

@@ -57,7 +57,7 @@ const Profile = ({ params }: { params: any }) => {
             </ImageList>
           </>
         ) : (
-          <div className={`grid grid-cols-4`}>
+          <div className={`flex items-center justify-center flex-wrap xl:grid grid-cols-4 `}>
             {appState?.session?.username === user?.username && <UploadButton />}
             {userDesigns?.map((design: Design, idx: number) => (
               <ProfileWork

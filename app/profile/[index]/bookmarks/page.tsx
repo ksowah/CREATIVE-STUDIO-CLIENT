@@ -42,7 +42,7 @@ const Bookmarks = ({ params }: { params: any }) => {
   return (
     <ProfilePageContainer username={username}>
       <div className="pt-[4rem]">
-        <div className={`grid grid-cols-4`}>
+        <div className={`flex items-center justify-center flex-wrap xl:grid grid-cols-4 `}>
           {savedDesigns?.map((design:any, idx: number) => (
             <ProfileWork
               design={design.design}

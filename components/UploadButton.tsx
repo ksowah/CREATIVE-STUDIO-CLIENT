@@ -14,10 +14,10 @@ const UploadButton = () => {
 
 
   return (
-    <div className="flex flex-col items-center justify-center h-[16rem] w-[18rem] border mb-6 rounded-lg p-6">
+    <div className="flex flex-col items-center justify-center md:mr-[1.5rem] h-[16rem] w-[18rem] border mb-6 rounded-lg p-6">
       <IoCloudUploadSharp size={50} color="#85B6FF" />
 
-      <p className="font-bold text-[.8rem] mt-4 ">
+      <p className="font-bold text-center text-[.8rem] mt-4 ">
         upload your masterpiece
       </p>
       <p className="text-xs text-[#595862] text-center mt-2">
