@@ -9,10 +9,26 @@ import UploadButton from "@/components/UploadButton";
 import ArtCard from "@/components/art/ArtCard";
 import { MyContext } from "@/context/Context";
 import { useQuery } from "@apollo/client";
-import { ImageList, ImageListItem } from "@mui/material";
-import React, { useContext } from "react";
+import { ImageList, ImageListItem, useMediaQuery, useTheme } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
 
 const Profile = ({ params }: { params: any }) => {
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const [cols, setCols] = useState(3);
+
+  useEffect(() => {
+    if (isMobile) {
+      setCols(1);
+    } else if (isTablet) {
+      setCols(2);
+    } else {
+      setCols(3);
+    }
+  }, [isMobile, isTablet]);
+
   const username = params?.index;
 
   const { appState } = useContext(MyContext);
@@ -41,15 +57,27 @@ const Profile = ({ params }: { params: any }) => {
       <div className="pt-[4rem] ">
         {user?.userType === "ARTIST" ? (
           <>
-            <ImageList variant="masonry" cols={3} gap={8}>
+            <ImageList variant="masonry" cols={cols} gap={8}>
               {appState?.session?.username === user?.username && (
-                <ImageListItem>
+                <ImageListItem
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                >
                   <UploadButton />
                 </ImageListItem>
               )}
               {[...(artData?.getUserArtWorks || [])].map(
                 (item: ArtPiece, idx) => (
-                  <ImageListItem key={item._id}>
+                  <ImageListItem
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  key={item._id}>
                     <ArtCard art={item} />
                   </ImageListItem>
                 )

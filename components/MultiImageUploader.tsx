@@ -7,9 +7,10 @@ import { LiaTimesSolid } from "react-icons/lia";
 interface Props {
   selectedImages: any;
   setSelectedImages: any;
+  setImagesRef:  any;
 }
 
-const MultiImageUploader = ({ selectedImages, setSelectedImages }: Props) => {
+const MultiImageUploader = ({ selectedImages, setSelectedImages, setImagesRef }: Props) => {
   const filePickerRef = useRef<any>(null);
 
   const selectImages = (e:any) => {
@@ -46,7 +47,15 @@ const MultiImageUploader = ({ selectedImages, setSelectedImages }: Props) => {
     setSelectedImages((prevSelectedImages: any) =>
       prevSelectedImages.filter((_: any, index: number) => index !== idx)
     );
+
+    if (selectedImages[idx].startsWith("https://")){
+      setImagesRef((prevImageRefs:any)=> 
+      prevImageRefs.filter((_:any, index:number)=> index !== idx)
+      )
+    }
+
   };
+
 
   return (
     <div className="w-full flex flex-col items-center justify-center">

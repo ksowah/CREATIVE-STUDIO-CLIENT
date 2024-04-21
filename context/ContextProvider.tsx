@@ -14,6 +14,9 @@ const ContextProvider = ({children}:{children:ReactNode}) => {
           selectedImage: "",
           selectedImages: [],
           tile: ""
+        },
+        artEdit: {
+          imageRefs: []
         }
     })
 

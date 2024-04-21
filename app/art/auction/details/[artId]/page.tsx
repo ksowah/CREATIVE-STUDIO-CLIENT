@@ -37,8 +37,8 @@ const AuctionDetails = ({ params }: { params: any }) => {
   const [isAuctionLive, setIsAuctionLive] = useState(false);
   const [dateStatus, setDateStatus] = useState("");
   const [timeStatus, setTimeStatus] = useState("");
-  const [userAgreementOne, setUserAgreementOne] = useState(false)
-  const [userAgreementTwo, setUserAgreementTwo] = useState(false)
+  const [userAgreementOne, setUserAgreementOne] = useState(false);
+  const [userAgreementTwo, setUserAgreementTwo] = useState(false);
 
   const { data, loading } = useQuery(GET_ART_BY_ID, {
     variables: { artId },
@@ -60,9 +60,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
 
   const artDetails: ArtPiece = data?.getArtById;
 
-
   const placeidPromise = async () => {
-
     await placeBid({
       variables: {
         bidAmount: parseFloat(bidAmount),
@@ -72,33 +70,29 @@ const AuctionDetails = ({ params }: { params: any }) => {
     refetchArtBiddings();
     setIsErrorOccured(false);
     setIsSuccess(true);
-  }
+  };
 
   const placeBidOnArt = async () => {
-
-    if(!userAgreementOne || !userAgreementTwo){
-      toast.error("Please agree to the terms and conditions")
-      return
+    if (!userAgreementOne || !userAgreementTwo) {
+      toast.error("Please agree to the terms and conditions");
+      return;
     }
-  
+
     if (highestBid && bidAmount <= highestBid) {
       toast.error("Bid amount must be greater than the highest bid");
       return;
     }
 
     try {
-      toast.promise(
-        placeidPromise,
-        {
-          pending: "Placing bid...",
-          success: "Bid placed successfully",
-          error: {
-            render: ({ data }:any) => {
-              return data.message;
-            },
-          }
-        }
-      );
+      toast.promise(placeidPromise, {
+        pending: "Placing bid...",
+        success: "Bid placed successfully",
+        error: {
+          render: ({ data }: any) => {
+            return data.message;
+          },
+        },
+      });
     } catch (error: any) {
       setIsSuccess(false);
       setIsErrorOccured(true);
@@ -146,7 +140,6 @@ const AuctionDetails = ({ params }: { params: any }) => {
       }
     };
 
-    console.log(">>>>", auctionStartDate, auctionEndDate);
 
     checkArtDateStatus();
   }, [auctionStartDate, auctionEndDate]);
@@ -208,7 +201,10 @@ const AuctionDetails = ({ params }: { params: any }) => {
                     OpenDialogueButton={OpenDialogueButton}
                   />
 
-                  <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+                  <button
+                    onClick={() => router.push(`/art/${artDetails?._id}/edit`)}
+                    className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center "
+                  >
                     <CiEdit size={22} color="#595862" />
                   </button>
                 </>
@@ -216,20 +212,20 @@ const AuctionDetails = ({ params }: { params: any }) => {
             </div>
 
             <div className="pt-[1rem]">
-              <div className="border rounded-lg w-full flex text-[#595862]">
+              <div className="border rounded-lg w-full flex flex-col lg:flex-row text-[#595862]">
                 <div className="flex-1">
                   {/* header part */}
-                  <div className="h-[4rem] border-b px-[2rem] flex items-center justify-between ">
-                    <h3 className="font-medium text-[1.3rem] ">Auction</h3>
+                  <div className="h-[4rem] border-b px-[2rem] flex flex-col sm:flex-row items-center justify-between ">
+                    <h3 className="font-medium sm:text-[1.3rem] ">Auction</h3>
 
-                    <p className="text-[.9rem]">{dateStatus}</p>
+                    <p className="text-[.8rem] sm:text-[.9rem]">{dateStatus}</p>
 
-                    <p className="text-[.9rem]">{timeStatus}</p>
+                    <p className="text-[.8rem] sm:text-[.9rem]">{timeStatus}</p>
                   </div>
 
                   {/* content */}
-                  <div className="flex items-center space-x-8 p-[1.5rem] ">
-                    <div className="relative h-[18rem] w-[18rem]">
+                  <div className="flex flex-col sm:flex-row items-center space-x-2 sm:space-x-8 p-[1rem] sm:p-[1.5rem] ">
+                    <div className="relative w-full h-[18rem] sm:w-[18rem]">
                       <Image
                         className="group-hover:scale-105 duration-500"
                         src={artDetails?.artPreview}
@@ -239,9 +235,9 @@ const AuctionDetails = ({ params }: { params: any }) => {
                       />
                     </div>
 
-                    <div className="flex w-full items-end justify-between">
+                    <div className="flex flex-col items-center sm:flex-row w-full sm:items-end justify-between">
                       <div className="flex-1 flex flex-col space-y-2 ">
-                        <p className="font-medium text-[1.3rem] ">
+                        <p className="font-medium sm:text-[1.3rem] ">
                           {artDetails?.title}
                         </p>
                         <p className="text-sm">
@@ -253,10 +249,10 @@ const AuctionDetails = ({ params }: { params: any }) => {
                         <p className="text-sm">Country: Ghana</p>
                       </div>
 
-                      <div className="space-y-2 flex flex-col items-end">
+                      <div className="space-y-2 flex flex-col mt-4 sm:mt-0 sm:items-end">
                         <p className="text-sm ">
                           Starting price:{" "}
-                          <span className="text-lg font-bold">{`$${
+                          <span className="sm:text-lg font-bold">{`$${
                             artDetails?.auctionStartPrice || ""
                           }`}</span>
                         </p>
@@ -284,55 +280,54 @@ const AuctionDetails = ({ params }: { params: any }) => {
                 />
               </div>
 
-              <div className="w-full my-[4rem] ">
-                <div className="flex items-center space-x-10 ">
-                  <div className="flex-1 ">
-                    <div className="relative  h-[40rem] w-full">
-                      <Image
-                        className="group-hover:scale-105 duration-500"
-                        src={artDetails?.artPreview}
-                        fill
-                        style={{ objectFit: "contain" }}
-                        alt="art image"
-                      />
+              <div className="w-full my-[4rem] flex flex-col lg:flex-row items-center ">
+                  <div className="w-full sm:w-[50%]">
+                    <div className="w-full flex-1">
+                      <div className="relative h-[30rem] w-full">
+                        <Image
+                          className="group-hover:scale-105 duration-500"
+                          src={artDetails?.artPreview}
+                          fill
+                          style={{ objectFit: "contain" }}
+                          alt="art image"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="md:grid grid-cols-4 flex flex-wrap items-center justify-center mb-[4rem] w-full flex-1  mt-1 sm:mt-4 ">
+                      {[...(artDetails?.artImages || [])].map((image, idx) => (
+                        <div
+                          key={idx}
+                          className="relative h-[10rem] w-[10rem] mr-4 "
+                        >
+                          <Image
+                            src={image}
+                            fill
+                            style={{ objectFit: "contain" }}
+                            alt="other images"
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
-
-                  <div className="flex-1 ">
-                    <div className="flex items-center h-[2.6rem] w-[6rem] border-[#000] border-0 border-l-[4px] border-t-[4px] px-4 overflow-visible ">
-                      <h2 className="font-medium text-[1.2rem] text-nowrap ">
-                        {artDetails?.title}
-                      </h2>
-                    </div>
-
-                    <div className="ml-[2.4rem] ">
-                      <p className="text-lg">{artDetails?.description}</p>
-                    </div>
-
-                    <div className="w-full flex justify-end">
-                      <div className="h-[2.6rem] w-[6rem] border-[#000] border-0 border-r-[4px] border-b-[4px] "></div>
-                    </div>
+                <div className="flex-1 ">
+                  <div className="flex items-center h-[2.6rem] w-fit border-[#000] border-0 border-l-[4px] border-t-[4px] px-4 overflow-visible ">
+                    <h2 className="font-medium text-[1.2rem] ">
+                      {artDetails?.title}
+                    </h2>
                   </div>
-                </div>
 
-                <div className="md:grid grid-cols-4 flex flex-wrap mb-[4rem] w-[50%] mt-4 ">
-                  {[...(artDetails?.artImages || [])].map((image, idx) => (
-                    <div
-                      key={idx}
-                      className="relative h-[10rem] w-[10rem] mr-4 "
-                    >
-                      <Image
-                        src={image}
-                        fill
-                        style={{ objectFit: "contain" }}
-                        alt="other images"
-                      />
-                    </div>
-                  ))}
+                  <div className="sm:ml-[2.4rem] ">
+                    <p className=" sm:text-lg">{artDetails?.description}</p>
+                  </div>
+
+                  <div className="w-full flex justify-end">
+                    <div className="h-[2.6rem] w-[6rem] border-[#000] border-0 border-r-[4px] border-b-[4px] "></div>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-center sm:justify-start space-x-2">
                 <div className="h-[3rem] w-[9rem] rounded-md bg-black flex items-center justify-center ">
                   <p className="text-white">BIDS PLACED</p>
                 </div>

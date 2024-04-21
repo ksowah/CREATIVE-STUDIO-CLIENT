@@ -24,8 +24,7 @@ const ArtCard = ({ art }: Props) => {
 
   return (
     <div
-      onClick={navigateToArtDetails}
-      className="relative group cursor-pointer mb-12 w-[20rem] "
+      className="relative group mb-12 w-[20rem] "
     >
       {art?.artState === "onSale" ? (
         <Image
@@ -48,9 +47,14 @@ const ArtCard = ({ art }: Props) => {
       ) : (
         <></>
       )}
-      <div className="relative w-full overflow-hidden flex flex-col items-end">
+      <div onClick={navigateToArtDetails} className="relative w-full overflow-hidden flex flex-col items-end cursor-pointer">
         {imageLoading && (
-          <Skeleton className="absolute top-0 bottom-0 left-0 right-0" variant="rectangular" width={"100%"} height={320} />
+          <Skeleton
+            className="absolute top-0 bottom-0 left-0 right-0"
+            variant="rectangular"
+            width={"100%"}
+            height={320}
+          />
         )}
         <Image
           onLoad={() => setImageLoading(false)}
@@ -64,7 +68,7 @@ const ArtCard = ({ art }: Props) => {
       </div>
 
       <div className="w-full mt-2 flex items-center justify-between">
-        <div className="">
+        <div className="cursor-default">
           <p className="font-medium text-[.9rem] line-clamp-1 ">
             {art?.title} | {art?.dimensions}
           </p>
@@ -94,7 +98,9 @@ const ArtCard = ({ art }: Props) => {
             </div>
           )}
         </div>
-        <SessionAvatar image={art?.artist.avatar} size={50} />
+        <button onClick={()=>router.push(`/profile/${art?.artist.username}`)} >
+          <SessionAvatar image={art?.artist.avatar} size={50} />
+        </button>
       </div>
     </div>
   );

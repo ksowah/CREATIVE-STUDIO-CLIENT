@@ -186,7 +186,7 @@ const ArtDetails = ({ params }: { params: any }) => {
                     OpenDialogueButton={OpenDialogueButton}
                   />
 
-                  <button className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+                  <button onClick={()=> router.push(`/art/${artDetails?._id}/edit`)} className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
                     <CiEdit size={22} color="#595862" />
                   </button>
                 </>
