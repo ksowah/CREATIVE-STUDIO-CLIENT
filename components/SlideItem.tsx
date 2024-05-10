@@ -6,12 +6,11 @@ import { useState } from "react";
 
 interface Props {
   image: string;
-  ref: any;
   NextBtn: () => JSX.Element;
   PrevBtn: () => JSX.Element;
 }
 
-const SlideItem = ({ image, ref, NextBtn, PrevBtn }: Props) => {
+const SlideItem = ({ image, NextBtn, PrevBtn }: Props) => {
   const [imageLoading, setImageLoading] = useState(true);
 
   return (

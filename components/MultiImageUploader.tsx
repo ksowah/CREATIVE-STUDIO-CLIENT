@@ -7,7 +7,7 @@ import { LiaTimesSolid } from "react-icons/lia";
 interface Props {
   selectedImages: any;
   setSelectedImages: any;
-  setImagesRef:  any;
+  setImagesRef?:  any;
 }
 
 const MultiImageUploader = ({ selectedImages, setSelectedImages, setImagesRef }: Props) => {

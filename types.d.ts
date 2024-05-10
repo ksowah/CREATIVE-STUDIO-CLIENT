@@ -51,6 +51,7 @@ type ArtPiece = {
   auctionStartPrice: Float;
   auctionStartDate: string;
   auctionEndDate: string;
+  highestBid: Float;
 };
 
 type MultipleImageUpload = {
@@ -77,4 +78,11 @@ type CommentReply = {
   commentId: string
   repliedBy: User
   repliedAt: string
+}
+
+type Wallet = {
+  _id: string;
+  user: string;
+  balance: Float;
+  auctionBidsPlacedAmount: Float;
 }

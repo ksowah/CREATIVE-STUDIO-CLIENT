@@ -2,7 +2,7 @@
 
 import Container from "@/components/Container";
 import Header from "@/components/Header";
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { BsCart4 } from "react-icons/bs";
 import Footer from "@/components/Footer";
 import Image from "next/image";
@@ -11,7 +11,7 @@ import { GET_ART_BY_ID } from "@/apollo/queries/arts";
 import { Skeleton } from "@mui/material";
 import { MyContext } from "@/context/Context";
 import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
-import { deleteArtData } from "@/helpers/functions";
+import { deleteArtData, formatAmount } from "@/helpers/functions";
 import { DELETE_ART } from "@/apollo/mutations/arts";
 import { useRouter } from "next/navigation";
 import { IoTrashOutline } from "react-icons/io5";
@@ -20,6 +20,7 @@ import ButtonSolid from "@/components/ButtonSolid";
 import { ADD_TO_CART } from "@/apollo/mutations/cart";
 import { ToastContainer, toast } from "react-toastify";
 import { GET_CART_ITEMS } from "@/apollo/queries/cart";
+import DetailSlider from "@/components/art/DetailSlider";
 
 interface MeetingProps {
   picture: string;
@@ -62,6 +63,10 @@ const ArtDetails = ({ params }: { params: any }) => {
   const { loading, data } = useQuery(GET_ART_BY_ID, {
     variables: { artId },
   });
+
+  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [showArtImage, setShowArtImage] = useState(false);
+  const [initialSlide, setInitialSlide] = useState(0);
 
   const [deleteArt] = useMutation(DELETE_ART);
 
@@ -121,6 +126,10 @@ const ArtDetails = ({ params }: { params: any }) => {
 
   return (
     <main>
+      {showArtImage && (
+        <DetailSlider setShowArtImage={setShowArtImage} initialSlide={initialSlide} artDetails={artDetails} />
+      )}
+
       <Header />
 
       <Container>
@@ -186,7 +195,10 @@ const ArtDetails = ({ params }: { params: any }) => {
                     OpenDialogueButton={OpenDialogueButton}
                   />
 
-                  <button onClick={()=> router.push(`/art/${artDetails?._id}/edit`)} className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center ">
+                  <button
+                    onClick={() => router.push(`/art/${artDetails?._id}/edit`)}
+                    className="h-[3rem] w-[3rem] rounded-full border flex items-center justify-center "
+                  >
                     <CiEdit size={22} color="#595862" />
                   </button>
                 </>
@@ -195,7 +207,12 @@ const ArtDetails = ({ params }: { params: any }) => {
             <div className="pt-[1rem] ">
               <div className="flex flex-col justify-center lg:flex-row lg:justify-between">
                 <div className="flex-1 flex flex-col items-center justify-center">
-                  <div className="relative flex justify-start w-full lg:w-[700px] h-[500px]">
+                  <div
+                    onClick={() => {
+                      setShowArtImage(true)
+                      setInitialSlide(0)}}
+                    className="relative flex justify-start w-full lg:w-[700px] h-[500px] cursor-pointer"
+                  >
                     <Image
                       src={artDetails?.artPreview}
                       fill
@@ -207,12 +224,24 @@ const ArtDetails = ({ params }: { params: any }) => {
                     {[...(artDetails?.artImages || [])].map((image, idx) => (
                       <div
                         key={idx}
-                        className="relative h-[10rem] w-[10rem] mr-4 "
+                        className="relative h-[10rem] w-[10rem] mr-4"
                       >
+                        {isImageLoading && (
+                          <Skeleton
+                            variant="rectangular"
+                            width={160}
+                            height={160}
+                          />
+                        )}
                         <Image
+                          onClick={() => {
+                            setShowArtImage(true);
+                            setInitialSlide(idx + 1);
+                          }}
+                          onLoad={() => setIsImageLoading(false)}
                           src={image}
                           fill
-                          style={{ objectFit: "contain" }}
+                          style={{ objectFit: "contain", cursor: "pointer"}}
                           alt="other images"
                         />
                       </div>
@@ -249,7 +278,7 @@ const ArtDetails = ({ params }: { params: any }) => {
 
                     <div className="flex items-center justify-between mt-8 pr-3">
                       <p className="text-[1rem] md:text-[25px] font-medium">
-                        ${artDetails?.price}
+                        ${formatAmount(artDetails?.price)}
                       </p>
 
                       <ButtonSolid

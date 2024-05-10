@@ -52,6 +52,7 @@ import CommentItem from "@/components/CommentItem";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import CssTextField from "@/components/CSSTextField";
 import { NEW_COMMENT_SUSCRIPTION } from "@/apollo/subscriptions";
+import { CiEdit } from "react-icons/ci";
 
 const DesignDetails = ({ params }: { params: any }) => {
   const designId = params?.index;
@@ -302,12 +303,14 @@ const DesignDetails = ({ params }: { params: any }) => {
                   </button>
                 )}
 
-                <button className="h-[2rem] w-[2rem] lg:h-[3rem] lg:w-[3rem] rounded-full border flex items-center justify-center ">
-                  <FaRegComment
-                    className="text-[16px] lg:text-[22px]"
-                    color="#595862"
-                  />
-                </button>
+                {session?._id === designDetails?.designer._id && (
+                  <button className="h-[2rem] w-[2rem] lg:h-[3rem] lg:w-[3rem] rounded-full border flex items-center justify-center ">
+                    <CiEdit
+                      className="text-[16px] lg:text-[22px]"
+                      color="#595862"
+                    />
+                  </button>
+                )}
                 {designDetails?.designer._id === session?._id ? (
                   <ActionConfirmationDialogue
                     action={handleDeleteDesign}
@@ -378,7 +381,9 @@ const DesignDetails = ({ params }: { params: any }) => {
               <h2 className="font-medium text-[1.5rem] lg:text-[2.5rem] lg:mb-[2rem] ">
                 {designDetails?.title}
               </h2>
-              <p className="text-[#595862] text-sm md:text-[1rem] ">{designDetails?.description}</p>
+              <p className="text-[#595862] text-sm md:text-[1rem] ">
+                {designDetails?.description}
+              </p>
             </div>
 
             {allUserDesigns?.length >= 1 && (

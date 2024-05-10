@@ -391,36 +391,36 @@ export default function UploadDialogue({
                       <div className="flex flex-col">
                         <FormControlLabel
                           value="Mobile"
-                          control={<Radio />}
+                          control={<Radio style={{ color: "black" }}/>}
                           label="Mobile"
                         />
                         <FormControlLabel
                           value="Web"
-                          control={<Radio />}
+                          control={<Radio style={{ color: "black" }}/>}
                           label="Web"
                         />
                       </div>
                       <div className="flex flex-col">
                         <FormControlLabel
                           value="Typography"
-                          control={<Radio />}
+                          control={<Radio style={{ color: "black" }}/>}
                           label="Typography"
                         />
                         <FormControlLabel
                           value="Photography"
-                          control={<Radio />}
+                          control={<Radio style={{ color: "black" }}/>}
                           label="Photography"
                         />
                       </div>
                       <div className="flex flex-col">
                         <FormControlLabel
                           value="Illustration"
-                          control={<Radio />}
+                          control={<Radio style={{ color: "black" }}/>}
                           label="Illustration"
                         />
                         <FormControlLabel
                           value="Animation"
-                          control={<Radio />}
+                          control={<Radio style={{ color: "black" }}/>}
                           label="Animation"
                         />
                       </div>

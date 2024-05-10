@@ -609,15 +609,11 @@ const ContinueArtEdit = ({ params }: { params: any }) => {
                     title="Cancel"
                   />
 
-                  <div className="flex flex-col-reverse sm:flex-row items-center sm:space-x-4 mb-4 sm:mb-0">
-                    <ButtonOutlined
-                      className="sm:w-[8rem] sm:h-[3rem]"
-                      title="Save as draft"
-                    />
+                  <div className="flex items-center mb-4">
                     <ButtonSolid
                       onClick={UPDATE_ART}
                       className="sm:w-[8rem] sm:h-[3rem] mb-4 sm:mb-0"
-                      title="Publish now"
+                      title="Update now"
                     />
                   </div>
                 </div>

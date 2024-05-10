@@ -62,7 +62,6 @@ const SliderComponent = ({ sliderImages }: { sliderImages: [string] }) => {
       <Slider ref={ref} {...settings}>
         {sliderImages.map((image, idx) => (
           <SlideItem
-            ref={ref}
             NextBtn={NextBtn}
             PrevBtn={PrevBtn}
             image={image}

@@ -1,5 +1,6 @@
 import React from "react";
 import SessionAvatar from "../SessionAvatar";
+import { formatAmount } from "@/helpers/functions";
 
 const BidRank = ({bid, position}:{bid:any, position:number}) => {
 
@@ -17,7 +18,7 @@ const BidRank = ({bid, position}:{bid:any, position:number}) => {
           <p>BID AMOUNT</p>
         </div>
         <div className="h-[2.5rem] sm:h-[3rem] px-2 sm:px-4 rounded-md border flex items-center justify-center ">
-          <p>${bid?.bidAmount}</p>
+          <p>${formatAmount(bid?.bidAmount)}</p>
         </div>
         <div className="h-[2.5rem] sm:h-[3rem] px-2 sm:px-4 rounded-md border flex items-center justify-center ">
           <p>{rankPosition}{`${rankPosition === 1 ? "st" : rankPosition === 2 ? "nd" : rankPosition === 3 ? "rd" : "th"}`}</p>

@@ -4,6 +4,7 @@ import SessionAvatar from "../SessionAvatar";
 import { useRouter } from "next/navigation";
 import { IoEyeOutline } from "react-icons/io5";
 import { Skeleton } from "@mui/material";
+import { formatAmount } from "@/helpers/functions";
 
 interface Props {
   art: ArtPiece;
@@ -77,7 +78,7 @@ const ArtCard = ({ art }: Props) => {
           </p>
 
           {art?.artState === "onSale" ? (
-            <p className="text-[14px] text-[#595862] ">${art?.price}</p>
+            <p className="text-[14px] text-[#595862] ">${formatAmount(art?.price)}</p>
           ) : art?.artState === "auction" ? (
             <div className="flex items-center space-x-1">
               <Image
@@ -88,7 +89,7 @@ const ArtCard = ({ art }: Props) => {
                 style={{ objectFit: "contain" }}
               />
               <p className="text-[14px] text-[#595862] ">
-                ${art?.auctionStartPrice}
+                ${formatAmount(art?.auctionStartPrice)}
               </p>
             </div>
           ) : (

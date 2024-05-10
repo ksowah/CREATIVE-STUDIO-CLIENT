@@ -16,10 +16,12 @@ import { IoTrashOutline } from "react-icons/io5";
 import { CiEdit } from "react-icons/ci";
 import ActionConfirmationDialogue from "@/components/ActionConfirmationDialogue";
 import { DELETE_ART } from "@/apollo/mutations/arts";
-import { deleteArtData } from "@/helpers/functions";
+import { deleteArtData, formatAmount } from "@/helpers/functions";
 import { MyContext } from "@/context/Context";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
+import DetailSlider from "@/components/art/DetailSlider";
+import { GET_WALLET_BALLANCE } from "@/apollo/queries/wallet";
 
 const AuctionDetails = ({ params }: { params: any }) => {
   const { artId } = params;
@@ -39,6 +41,8 @@ const AuctionDetails = ({ params }: { params: any }) => {
   const [timeStatus, setTimeStatus] = useState("");
   const [userAgreementOne, setUserAgreementOne] = useState(false);
   const [userAgreementTwo, setUserAgreementTwo] = useState(false);
+  const [showArtImage, setShowArtImage] = useState(false);
+  const [initialSlide, setInitialSlide] = useState(0);
 
   const { data, loading } = useQuery(GET_ART_BY_ID, {
     variables: { artId },
@@ -65,7 +69,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
       variables: {
         bidAmount: parseFloat(bidAmount),
         artId,
-      },
+      }
     });
     refetchArtBiddings();
     setIsErrorOccured(false);
@@ -78,10 +82,6 @@ const AuctionDetails = ({ params }: { params: any }) => {
       return;
     }
 
-    if (highestBid && bidAmount <= highestBid) {
-      toast.error("Bid amount must be greater than the highest bid");
-      return;
-    }
 
     try {
       toast.promise(placeidPromise, {
@@ -93,6 +93,8 @@ const AuctionDetails = ({ params }: { params: any }) => {
           },
         },
       });
+
+      setBidAmount("");
     } catch (error: any) {
       setIsSuccess(false);
       setIsErrorOccured(true);
@@ -140,7 +142,6 @@ const AuctionDetails = ({ params }: { params: any }) => {
       }
     };
 
-
     checkArtDateStatus();
   }, [auctionStartDate, auctionEndDate]);
 
@@ -168,6 +169,13 @@ const AuctionDetails = ({ params }: { params: any }) => {
 
   return (
     <main>
+      {showArtImage && (
+        <DetailSlider
+          setShowArtImage={setShowArtImage}
+          initialSlide={initialSlide}
+          artDetails={artDetails}
+        />
+      )}
       <Header />
 
       <ToastContainer />
@@ -253,14 +261,14 @@ const AuctionDetails = ({ params }: { params: any }) => {
                         <p className="text-sm ">
                           Starting price:{" "}
                           <span className="sm:text-lg font-bold">{`$${
-                            artDetails?.auctionStartPrice || ""
+                            formatAmount(artDetails?.auctionStartPrice) || ""
                           }`}</span>
                         </p>
 
                         {artBiddings?.length > 0 && (
                           <p className="text-sm ">
                             Highest Bid:{" "}
-                            <span className="text-lg font-bold">{`$${highestBid}`}</span>
+                            <span className="text-lg font-bold">{`$${formatAmount(highestBid)}`}</span>
                           </p>
                         )}
                       </div>
@@ -280,36 +288,44 @@ const AuctionDetails = ({ params }: { params: any }) => {
                 />
               </div>
 
-              <div className="w-full my-[4rem] flex flex-col lg:flex-row items-center ">
-                  <div className="w-full sm:w-[50%]">
-                    <div className="w-full flex-1">
-                      <div className="relative h-[30rem] w-full">
-                        <Image
-                          className="group-hover:scale-105 duration-500"
-                          src={artDetails?.artPreview}
-                          fill
-                          style={{ objectFit: "contain" }}
-                          alt="art image"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="md:grid grid-cols-4 flex flex-wrap items-center justify-center mb-[4rem] w-full flex-1  mt-1 sm:mt-4 ">
-                      {[...(artDetails?.artImages || [])].map((image, idx) => (
-                        <div
-                          key={idx}
-                          className="relative h-[10rem] w-[10rem] mr-4 "
-                        >
-                          <Image
-                            src={image}
-                            fill
-                            style={{ objectFit: "contain" }}
-                            alt="other images"
-                          />
-                        </div>
-                      ))}
+              <div className="w-full my-[4rem] flex flex-col lg:flex-row items-center lg:space-x-4 ">
+                <div className="w-full sm:w-[50%]">
+                  <div className="w-full flex-1">
+                    <div className="relative h-[30rem] w-full">
+                      <Image
+                        onClick={() => {
+                          setShowArtImage(true);
+                          setInitialSlide(0);
+                        }}
+                        className="group-hover:scale-105 duration-500 cursor-pointer"
+                        src={artDetails?.artPreview}
+                        fill
+                        style={{ objectFit: "contain" }}
+                        alt="art image"
+                      />
                     </div>
                   </div>
+
+                  <div className="md:grid grid-cols-4 flex flex-wrap items-center justify-center mb-[4rem] w-full flex-1  mt-1 sm:mt-4 ">
+                    {[...(artDetails?.artImages || [])].map((image, idx) => (
+                      <div
+                        key={idx}
+                        className="relative h-[10rem] w-[10rem] mr-4 cursor-pointer"
+                      >
+                        <Image
+                          onClick={() => {
+                            setShowArtImage(true);
+                            setInitialSlide(idx + 1);
+                          }}
+                          src={image}
+                          fill
+                          style={{ objectFit: "contain" }}
+                          alt="other images"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <div className="flex-1 ">
                   <div className="flex items-center h-[2.6rem] w-fit border-[#000] border-0 border-l-[4px] border-t-[4px] px-4 overflow-visible ">
                     <h2 className="font-medium text-[1.2rem] ">
