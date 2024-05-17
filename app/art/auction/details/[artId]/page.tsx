@@ -37,6 +37,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
   const [isErrorOccured, setIsErrorOccured] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isAuctionLive, setIsAuctionLive] = useState(false);
+  const [isAuctionEnd, setIsAuctionEnd] = useState(false);
   const [dateStatus, setDateStatus] = useState("");
   const [timeStatus, setTimeStatus] = useState("");
   const [userAgreementOne, setUserAgreementOne] = useState(false);
@@ -62,14 +63,15 @@ const AuctionDetails = ({ params }: { params: any }) => {
   const artBiddings = biddingsData?.getArtBiddings;
   let highestBid = artBiddings?.[0]?.bidAmount;
 
+
   const artDetails: ArtPiece = data?.getArtById;
 
-  const placeidPromise = async () => {
+  const placeBidPromise = async ()=> {
     await placeBid({
       variables: {
         bidAmount: parseFloat(bidAmount),
         artId,
-      }
+      },
     });
     refetchArtBiddings();
     setIsErrorOccured(false);
@@ -82,13 +84,13 @@ const AuctionDetails = ({ params }: { params: any }) => {
       return;
     }
 
-
     try {
-      toast.promise(placeidPromise, {
+      toast.promise(placeBidPromise, {
         pending: "Placing bid...",
         success: "Bid placed successfully",
         error: {
           render: ({ data }: any) => {
+            console.log(data)
             return data.message;
           },
         },
@@ -144,6 +146,16 @@ const AuctionDetails = ({ params }: { params: any }) => {
 
     checkArtDateStatus();
   }, [auctionStartDate, auctionEndDate]);
+
+  useEffect(() => {
+    const checkIfAuctionEnd = () => {
+      if (auctionEndDate < currentDate && artBiddings?.length > 0) {
+        setIsAuctionEnd(true);
+      }
+    };
+
+    checkIfAuctionEnd();
+  }, [auctionStartDate, auctionEndDate, artBiddings]);
 
   const handleDeleteArt = async () => {
     try {
@@ -268,7 +280,9 @@ const AuctionDetails = ({ params }: { params: any }) => {
                         {artBiddings?.length > 0 && (
                           <p className="text-sm ">
                             Highest Bid:{" "}
-                            <span className="text-lg font-bold">{`$${formatAmount(highestBid)}`}</span>
+                            <span className="text-lg font-bold">{`$${formatAmount(
+                              highestBid
+                            )}`}</span>
                           </p>
                         )}
                       </div>
@@ -285,13 +299,23 @@ const AuctionDetails = ({ params }: { params: any }) => {
                   checkedTwo={userAgreementTwo}
                   setCheckedOne={setUserAgreementOne}
                   setCheckedTwo={setUserAgreementTwo}
+                  isAuctionEnd={isAuctionEnd}
                 />
               </div>
 
               <div className="w-full my-[4rem] flex flex-col lg:flex-row items-center lg:space-x-4 ">
                 <div className="w-full sm:w-[50%]">
-                  <div className="w-full flex-1">
-                    <div className="relative h-[30rem] w-full">
+                  <div className="relative w-[600px] flex-1 ">
+                    {isAuctionEnd && (
+                      <Image
+                        className="absolute z-30"
+                        src={"/images/sold.svg"}
+                        alt=""
+                        height={300}
+                        width={300}
+                      />
+                    )}
+                    <div className="relative w-full">
                       <Image
                         onClick={() => {
                           setShowArtImage(true);
@@ -299,7 +323,8 @@ const AuctionDetails = ({ params }: { params: any }) => {
                         }}
                         className="group-hover:scale-105 duration-500 cursor-pointer"
                         src={artDetails?.artPreview}
-                        fill
+                        width={600}
+                        height={480}
                         style={{ objectFit: "contain" }}
                         alt="art image"
                       />
@@ -353,6 +378,32 @@ const AuctionDetails = ({ params }: { params: any }) => {
                   </p>
                 </div>
               </div>
+
+              {isAuctionEnd && (
+                <div className="w-full flex flex-col items-center justify-center my-[2rem] space-y-3 ">
+                  <p className="font-medium text-[1.2rem]">WINNER</p>
+                  <div className="relative">
+                    <Image
+                      src={"/images/winner.svg"}
+                      alt=""
+                      width={200}
+                      height={200}
+                    />
+                    <div className="absolute top-[17.5px] right-[50px] h-[100px] w-[100px] overflow-hidden rounded-full ">
+                      <div className="relative h-full w-full rounded-full">
+                        <Image
+                          src={artBiddings[0]?.bidBy?.avatar}
+                          alt=""
+                          fill
+                          style={{ objectFit: "cover" }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <p className="font-medium text-[1.2rem]">${artBiddings?.[0].bidAmount}</p>
+                  <p className="font-medium text-[1.2rem]">{artBiddings[0]?.bidBy?.fullName}</p>
+                </div>
+              )}
 
               <div className="mt-[2rem] space-y-4 ">
                 {[...(artBiddings || [])].map((bid, idx) => (

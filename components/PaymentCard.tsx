@@ -6,6 +6,19 @@ import { FaRegClock } from "react-icons/fa6";
 import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
 import { MdOutlineShoppingCart } from "react-icons/md";
 
+interface Props {
+  setBidAmount?: any;
+  onClick?: any;
+  isAuctionLive?: boolean;
+  isAuctionPage?: boolean;
+  subtotal?: number;
+  checkedOne?: boolean;
+  checkedTwo?: boolean;
+  setCheckedOne?: any;
+  setCheckedTwo?: any;
+  isAuctionEnd?: boolean;
+}
+
 const PaymentCard = ({
   setBidAmount,
   onClick,
@@ -15,18 +28,9 @@ const PaymentCard = ({
   checkedOne,
   checkedTwo,
   setCheckedOne,
-  setCheckedTwo
-}: {
-  setBidAmount?: any;
-  onClick?: any;
-  isAuctionLive?: boolean;
-  isAuctionPage?: boolean;
-  subtotal?:number
-  checkedOne?: boolean;
-  checkedTwo?:boolean
-  setCheckedOne?:any
-  setCheckedTwo?:any
-}) => {
+  setCheckedTwo,
+  isAuctionEnd,
+}: Props) => {
   const OpenDialogueButton = () => {
     return <ButtonSolid className="my-4" title="PLACE BID" />;
   };
@@ -39,14 +43,14 @@ const PaymentCard = ({
         {isAuctionPage && (
           <>
             {isAuctionLive ? (
-              <div className="flex items-center h-fit space-x-2" >
+              <div className="flex items-center h-fit space-x-2">
                 <p>LIVE</p>
                 <div className="h-[1.2rem] w-[1.2rem] rounded-full bg-[#D9D9D9] animate-pulse flex items-center justify-center ">
                   <div className="h-[.75rem] w-[.75rem] rounded-full bg-[#000000] "></div>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center h-fit space-x-2" >
+              <div className="flex items-center h-fit space-x-2">
                 <p>Upcoming</p>
                 <FaRegClock size={16} />
               </div>
@@ -98,42 +102,62 @@ const PaymentCard = ({
 
         <div className="flex items-center justify-between w-full">
           {isAuctionPage ? (
-            <>
-              <p className="text-[.8rem] sm:text-[1rem] font-medium " >BID AMOUNT</p>
-              <div className="h-[2rem] w-[8rem] border flex items-center px-1 ">
-                <input
-                  onChange={(e) => setBidAmount(e.target.value)}
-                  type="number"
-                  className="w-full border-none outline-none"
-                />
+            isAuctionEnd ? (
+              <div className="w-full mt-[3rem] ">
+                <p className="text-[.8rem] sm:text-[1rem] text-center font-medium text-red-700 ">
+                  Auction Closed
+                </p>
               </div>
-            </>
+            ) : (
+              <>
+                <p className="text-[.8rem] sm:text-[1rem] font-medium ">
+                  BID AMOUNT
+                </p>
+                <div className="h-[2rem] w-[8rem] border flex items-center px-1 ">
+                  <input
+                    onChange={(e) => setBidAmount(e.target.value)}
+                    type="number"
+                    className="w-full border-none outline-none"
+                  />
+                </div>
+              </>
+            )
           ) : (
             <>
-              <p className="text-[.8rem] sm:text-[1rem]" >SUBTOTAL</p>
+              <p className="text-[.8rem] sm:text-[1rem]">SUBTOTAL</p>
 
-              <p className="text-[.9rem] sm:text-[1.1rem] font-medium " >${subtotal}</p>
+              <p className="text-[.9rem] sm:text-[1.1rem] font-medium ">
+                ${subtotal}
+              </p>
             </>
           )}
         </div>
 
-        <FormGroup className="w-full flex flex-col items-start my-4">
-          <div className="flex items-center">
-            <Checkbox checked={checkedOne} onChange={() => setCheckedOne(!checkedOne)} />
-            <p className="text-[.8rem] sm:text-sm">
-              I have read and agreed to the Privacy Policy
-            </p>
-          </div>
-          <div className="flex ">
-            <Checkbox checked={checkedTwo} onChange={() => setCheckedTwo(!checkedTwo)} />
-            <p className="text-[.8rem] sm:text-sm">
-              I have read and agreed to the Refund and Cancellation policy
-            </p>
-          </div>
-        </FormGroup>
+        {!isAuctionEnd && (
+          <FormGroup className="w-full flex flex-col items-start my-4">
+            <div className="flex items-center">
+              <Checkbox
+                checked={checkedOne}
+                onChange={() => setCheckedOne(!checkedOne)}
+              />
+              <p className="text-[.8rem] sm:text-sm">
+                I have read and agreed to the Privacy Policy
+              </p>
+            </div>
+            <div className="flex ">
+              <Checkbox
+                checked={checkedTwo}
+                onChange={() => setCheckedTwo(!checkedTwo)}
+              />
+              <p className="text-[.8rem] sm:text-sm">
+                I have read and agreed to the Refund and Cancellation policy
+              </p>
+            </div>
+          </FormGroup>
+        )}
 
-        {
-          isAuctionPage ? (
+        {isAuctionPage ? (
+          !isAuctionEnd && (
             <ActionConfirmationDialogue
               action={onClick}
               actionBodyText="Are you sure you want to place this bid? this action can not be undone."
@@ -142,12 +166,10 @@ const PaymentCard = ({
               OpenDialogueButton={OpenDialogueButton}
               isNotDelete
             />
-          ) : (
-            <ButtonSolid className="mt-6" title="CHECKOUT" />
           )
-        }
-
-
+        ) : (
+          <ButtonSolid className="mt-6" title="CHECKOUT" />
+        )}
       </div>
     </div>
   );
