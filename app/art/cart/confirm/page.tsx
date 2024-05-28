@@ -42,8 +42,6 @@ const ConfirmOrder = () => {
 
   const deliveryFees = 10;
 
-  console.log("address >>>", address);
-
   return (
     <main>
       <Header />
