@@ -19,6 +19,7 @@ export const CREATE_ART = gql`
       auctionStartDate
       auctionEndDate
       highestBid
+      artSold
     }
   }
 `;
@@ -42,6 +43,7 @@ export const EDIT_ART = gql`
       auctionStartDate
       auctionEndDate
       highestBid
+      artSold
     }
   }
 `;

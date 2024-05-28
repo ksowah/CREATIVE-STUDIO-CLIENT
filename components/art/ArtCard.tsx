@@ -1,10 +1,12 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SessionAvatar from "../SessionAvatar";
 import { useRouter } from "next/navigation";
 import { IoEyeOutline } from "react-icons/io5";
 import { Skeleton } from "@mui/material";
 import { formatAmount } from "@/helpers/functions";
+import { useMutation } from "@apollo/client";
+import { EXPIRE_AUCTION } from "@/apollo/mutations/auction";
 
 interface Props {
   art: ArtPiece;
@@ -15,6 +17,10 @@ const ArtCard = ({ art }: Props) => {
 
   const [imageLoading, setImageLoading] = useState(true);
 
+  const [expireAuction] = useMutation(EXPIRE_AUCTION, {
+    variables: { artId: art?._id },
+  });
+
   const navigateToArtDetails = () => {
     if (art?.artState === "auction") {
       router.push(`/art/auction/details/${art?._id}`);
@@ -23,10 +29,19 @@ const ArtCard = ({ art }: Props) => {
     }
   };
 
+  useEffect(() => {
+    const checkIfAuctionExpired = async () => {
+      try {
+        await expireAuction();
+      } catch (error) {
+        
+      }
+    };
+    checkIfAuctionExpired()
+  }, []);
+
   return (
-    <div
-      className="relative group mb-12 w-[20rem] "
-    >
+    <div className="relative group mb-12 w-[20rem] ">
       {art?.artState === "onSale" ? (
         <Image
           src={"/icons/buy.svg"}
@@ -48,7 +63,10 @@ const ArtCard = ({ art }: Props) => {
       ) : (
         <></>
       )}
-      <div onClick={navigateToArtDetails} className="relative w-full overflow-hidden flex flex-col items-end cursor-pointer">
+      <div
+        onClick={navigateToArtDetails}
+        className="relative w-full overflow-hidden flex flex-col items-end cursor-pointer"
+      >
         {imageLoading && (
           <Skeleton
             className="absolute top-0 bottom-0 left-0 right-0"
@@ -78,7 +96,9 @@ const ArtCard = ({ art }: Props) => {
           </p>
 
           {art?.artState === "onSale" ? (
-            <p className="text-[14px] text-[#595862] ">${formatAmount(art?.price)}</p>
+            <p className="text-[14px] text-[#595862] ">
+              ${formatAmount(art?.price)}
+            </p>
           ) : art?.artState === "auction" ? (
             <div className="flex items-center space-x-1">
               <Image
@@ -99,7 +119,7 @@ const ArtCard = ({ art }: Props) => {
             </div>
           )}
         </div>
-        <button onClick={()=>router.push(`/profile/${art?.artist.username}`)} >
+        <button onClick={() => router.push(`/profile/${art?.artist.username}`)}>
           <SessionAvatar image={art?.artist.avatar} size={50} />
         </button>
       </div>

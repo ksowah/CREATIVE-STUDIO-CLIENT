@@ -5,6 +5,7 @@ import ButtonSolid from "./ButtonSolid";
 import { FaRegClock } from "react-icons/fa6";
 import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
 import { MdOutlineShoppingCart } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 interface Props {
   setBidAmount?: any;
@@ -34,6 +35,8 @@ const PaymentCard = ({
   const OpenDialogueButton = () => {
     return <ButtonSolid className="my-4" title="PLACE BID" />;
   };
+
+  const router = useRouter()
 
   return (
     <div className="w-full lg:w-[24rem] border h-[28rem] rounded-lg mb:mb-[4rem] text-[#595862] ">
@@ -168,7 +171,7 @@ const PaymentCard = ({
             />
           )
         ) : (
-          <ButtonSolid className="mt-6" title="CHECKOUT" />
+          <ButtonSolid onClick={()=>router.push("/art/cart/confirm")} className="mt-6" title="CHECKOUT" />
         )}
       </div>
     </div>

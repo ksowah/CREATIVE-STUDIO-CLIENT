@@ -23,7 +23,7 @@ import React, { useContext, useRef, useState } from "react";
 const UploadDesign = () => {
   const { appState, setAppState } = useContext(MyContext);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedImages, d] = useState([]);
   const [projectTitle, setProjectTitle] = useState("");
 
   const [designFileSelected, setDesignFileSelected] = React.useState(null);

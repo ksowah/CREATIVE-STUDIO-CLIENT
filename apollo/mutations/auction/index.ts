@@ -11,3 +11,9 @@ export const PLACE_BID = gql`
     }
   }
 `;
+
+export const EXPIRE_AUCTION = gql`
+  mutation Mutation($artId: ID!) {
+    expireAuction(artId: $artId)
+  }
+`;

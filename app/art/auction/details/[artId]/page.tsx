@@ -21,9 +21,11 @@ import { MyContext } from "@/context/Context";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import DetailSlider from "@/components/art/DetailSlider";
-import { GET_WALLET_BALLANCE } from "@/apollo/queries/wallet";
+
 
 const AuctionDetails = ({ params }: { params: any }) => {
+
+
   const { artId } = params;
 
   const { appState } = useContext(MyContext);
@@ -37,7 +39,6 @@ const AuctionDetails = ({ params }: { params: any }) => {
   const [isErrorOccured, setIsErrorOccured] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isAuctionLive, setIsAuctionLive] = useState(false);
-  const [isAuctionEnd, setIsAuctionEnd] = useState(false);
   const [dateStatus, setDateStatus] = useState("");
   const [timeStatus, setTimeStatus] = useState("");
   const [userAgreementOne, setUserAgreementOne] = useState(false);
@@ -65,6 +66,8 @@ const AuctionDetails = ({ params }: { params: any }) => {
 
 
   const artDetails: ArtPiece = data?.getArtById;
+
+  console.log("art details sold >>>", artDetails?.artSold)
 
   const placeBidPromise = async ()=> {
     await placeBid({
@@ -147,15 +150,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
     checkArtDateStatus();
   }, [auctionStartDate, auctionEndDate]);
 
-  useEffect(() => {
-    const checkIfAuctionEnd = () => {
-      if (auctionEndDate < currentDate && artBiddings?.length > 0) {
-        setIsAuctionEnd(true);
-      }
-    };
-
-    checkIfAuctionEnd();
-  }, [auctionStartDate, auctionEndDate, artBiddings]);
+ 
 
   const handleDeleteArt = async () => {
     try {
@@ -299,14 +294,14 @@ const AuctionDetails = ({ params }: { params: any }) => {
                   checkedTwo={userAgreementTwo}
                   setCheckedOne={setUserAgreementOne}
                   setCheckedTwo={setUserAgreementTwo}
-                  isAuctionEnd={isAuctionEnd}
+                  isAuctionEnd={artDetails?.artSold}
                 />
               </div>
 
               <div className="w-full my-[4rem] flex flex-col lg:flex-row items-center lg:space-x-4 ">
                 <div className="w-full sm:w-[50%]">
                   <div className="relative w-[600px] flex-1 ">
-                    {isAuctionEnd && (
+                    {artDetails?.artSold && (
                       <Image
                         className="absolute z-30"
                         src={"/images/sold.svg"}
@@ -379,7 +374,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                 </div>
               </div>
 
-              {isAuctionEnd && (
+              {artDetails?.artSold && (
                 <div className="w-full flex flex-col items-center justify-center my-[2rem] space-y-3 ">
                   <p className="font-medium text-[1.2rem]">WINNER</p>
                   <div className="relative">
@@ -392,7 +387,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                     <div className="absolute top-[17.5px] right-[50px] h-[100px] w-[100px] overflow-hidden rounded-full ">
                       <div className="relative h-full w-full rounded-full">
                         <Image
-                          src={artBiddings[0]?.bidBy?.avatar}
+                          src={artBiddings?.[0].bidBy?.avatar}
                           alt=""
                           fill
                           style={{ objectFit: "cover" }}
@@ -401,7 +396,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                     </div>
                   </div>
                   <p className="font-medium text-[1.2rem]">${artBiddings?.[0].bidAmount}</p>
-                  <p className="font-medium text-[1.2rem]">{artBiddings[0]?.bidBy?.fullName}</p>
+                  <p className="font-medium text-[1.2rem]">{artBiddings?.[0].bidBy?.fullName}</p>
                 </div>
               )}
 

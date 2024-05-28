@@ -26,6 +26,7 @@ export const GET_ALL_ARTS = gql`
       auctionEndDate
       auctionStartDate
       highestBid
+      artSold
     }
   }
 `;
@@ -54,6 +55,7 @@ export const GET_USER_ARTS = gql`
       artState
       auctionStartPrice
       highestBid
+      artSold
     }
   }
 `;
@@ -84,6 +86,7 @@ export const GET_ART_BY_ID = gql`
       auctionStartDate
       auctionEndDate
       highestBid
+      artSold
     }
   }
 `;

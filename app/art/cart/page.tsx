@@ -55,15 +55,9 @@ const CartPage = () => {
                     <div className="w-full p-[1rem]">
                       {cartItems?.map((art: any, idx: any) => (
                         <CartItem
+                          cartItem={art?.item}
                           key={art?.item._id}
-                          artPreview={art?.item.artPreview}
-                          artist={art?.artist.fullName}
-                          category={art?.item.category}
-                          dimension={art?.item.dimensions}
-                          price={art?.item.price}
-                          title={art?.item.title}
-                          itemId={art?.item._id}
-                          id={art?.item._id}
+                          removable
                         />
                       ))}
                     </div>

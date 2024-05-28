@@ -52,6 +52,7 @@ type ArtPiece = {
   auctionStartDate: string;
   auctionEndDate: string;
   highestBid: Float;
+  artSold: boolean;
 };
 
 type MultipleImageUpload = {
@@ -85,4 +86,14 @@ type Wallet = {
   user: string;
   balance: Float;
   auctionBidsPlacedAmount: Float;
+}
+
+type Address = {
+    _id: string;
+    user: string;
+    city: string;
+    street: string;
+    postalCode: string;
+    houseNumber: string;
+    telephone: string;
 }

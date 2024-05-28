@@ -53,9 +53,7 @@ const MultiImageUploader = ({ selectedImages, setSelectedImages, setImagesRef }:
       prevImageRefs.filter((_:any, index:number)=> index !== idx)
       )
     }
-
   };
-
 
   return (
     <div className="w-full flex flex-col items-center justify-center">
