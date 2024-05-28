@@ -14,7 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 const MobileMoney = () => {
   const [selected, setSelected] = useState("");
 
-  const [depositAmount, setDepositAmount] = useState(0);
+  const [depositAmount, setDepositAmount] = useState<any>("");
 
   const [deposit, { loading }] = useMutation(DEPOSIT_TO_WALLET);
 
@@ -30,7 +30,7 @@ const MobileMoney = () => {
           amount: depositAmount,
         },
       });
-      setDepositAmount(0);
+      setDepositAmount("");
       toast.success("Deposit successful");
     } catch (error: any) {
       console.log(error);
@@ -106,7 +106,8 @@ const MobileMoney = () => {
             onChange={(e) => setDepositAmount(parseFloat(e.target.value))}
             placeholder="min. 10.00"
             type="number"
-            className="border-0 outline-none w-full  "
+            className="border-0 outline-none w-full"
+            value={depositAmount}
           />
         </div>
       </div>

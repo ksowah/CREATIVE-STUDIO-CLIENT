@@ -9,9 +9,13 @@ import {
   getArtMultipleImagesReference,
   getArtPreviewImageReference,
 } from "@/helpers/firebaseFileReferences";
-import { uploadFileToFB, uploadMultipleImagesToFB } from "@/helpers/functions";
-import { CREATE_ART } from "@/apollo/mutations/arts";
-import { useMutation } from "@apollo/client";
+import {
+  deleteImageFromFB,
+  uploadFileToFB,
+  uploadMultipleImagesToFB,
+} from "@/helpers/functions";
+import { CREATE_ART, EDIT_ART } from "@/apollo/mutations/arts";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Alert,
   FormControl,
@@ -26,28 +30,44 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { LiaTimesSolid } from "react-icons/lia";
-import { GET_ALL_ARTS, GET_USER_ARTS } from "@/apollo/queries/arts";
+import {
+  GET_ALL_ARTS,
+  GET_ART_BY_ID,
+  GET_USER_ARTS,
+} from "@/apollo/queries/arts";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CssTextField from "@/components/CSSTextField";
+import dayjs, { Dayjs } from 'dayjs';
 
-const ContinueArtUpload = () => {
+
+const ContinueArtEdit = ({ params }: { params: any }) => {
+  const { index: artId } = params;
+
+  const { data, loading: artLoading } = useQuery(GET_ART_BY_ID, {
+    variables: { artId },
+  });
+
+  const [updateArt] = useMutation(EDIT_ART);
+
+  const artDetails: ArtPiece = data?.getArtById;
+
   const { appState } = useContext(MyContext);
 
-  const { artUpload, session } = appState;
+  const { artUpload, session, artEdit } = appState;
 
   const fileId = new Date().getTime();
 
   const [artImages, setArtImages] = useState([...artUpload.selectedImages]);
   const [artUploadData, setArtUploadData] = useState({
-    title: artUpload.title,
-    story: "",
-    dimensions: "",
-    price: 1,
-    category: "",
-    artType: "",
+    title: artUpload?.title,
+    story: artDetails?.description,
+    dimensions: artDetails?.dimensions,
+    price: artDetails?.price,
+    category: artDetails?.category,
+    artType: artDetails?.artState,
   });
 
   const [loading, setLoading] = useState(false);
@@ -57,11 +77,37 @@ const ContinueArtUpload = () => {
   const [auctionStartDate, setAuctionStartDate] = useState<any>("");
   const [auctionEndDate, setAuctionEndDate] = useState<any>("");
 
+  useEffect(() => {
+
+    const getDimensions = (dimension:any) => {
+      const regex = /\d+\*\d+/; 
+      const match = dimension?.match(regex);
+      if (match) { return match[0] } else { return null }
+    };
+    setArtUploadData({
+      title: artUpload?.title,
+      story: artDetails?.description,
+      dimensions: getDimensions(artDetails?.dimensions),
+      price: artDetails?.price,
+      category: artDetails?.category,
+      artType: artDetails?.artState,
+    });
+
+    const artDimentioinRegex = /[a-zA-Z]+$/;
+    const match = artDetails?.dimensions.match(artDimentioinRegex);
+
+    if (match) { setDimenssionSelected(match[0]) }
+
+    setAuctionStartDate(dayjs(new Date(parseInt(artDetails?.auctionStartDate))));
+    setAuctionEndDate(dayjs(new Date(parseInt(artDetails?.auctionEndDate))));
+  }, [data]);
+  
+
   const router = useRouter();
 
-  const [createArt] = useMutation(CREATE_ART);
+  console.log("art imagess>>>>", artImages)
 
-  const createNewArt = async () => {
+  const UPDATE_ART = async () => {
     setLoading(true);
 
     if (!artUpload.selectedImage) {
@@ -99,14 +145,14 @@ const ContinueArtUpload = () => {
       setLoading(false);
       return;
     }
-    
+
     if (session?.userType !== "ARTIST" && session?.userType !== "CREATOR") {
       setErrorOccured(true);
       setErrorMessage("You are not authorized to publish designs");
       setLoading(false);
       return;
     }
-    
+
     if (artUploadData.artType === "auction" && artUploadData.price < 1) {
       setErrorOccured(true);
       setErrorMessage("Set a price for the art");
@@ -126,7 +172,7 @@ const ContinueArtUpload = () => {
       setLoading(false);
       return;
     }
-    
+
     if (
       artUploadData.artType === "auction" &&
       auctionStartDate > auctionEndDate
@@ -137,32 +183,68 @@ const ContinueArtUpload = () => {
       return;
     }
 
-
-
     try {
       setErrorOccured(false);
-      let previewImage: SingleFileUpload | undefined = await uploadFileToFB(
-        artUpload.selectedImage,
-        getArtPreviewImageReference(session?._id, fileId.toString())
+      let newArtPreviewImage = "";
+      let newArtPreviewImageRef = "";
+      if (artUpload.selectedImage.startsWith("data:image")) {
+        const newPreviewImage: SingleFileUpload | undefined =
+          await uploadFileToFB(
+            artUpload.selectedImage,
+            getArtPreviewImageReference(session?._id, fileId.toString())
+          );
+
+        await deleteImageFromFB([artDetails?.previewImageRef]);
+        console.log("database preview imagee deleted from fb!!...");
+        newArtPreviewImage = newPreviewImage?.file;
+        newArtPreviewImageRef = newPreviewImage?.reference;
+      }
+
+      const remainingImageRefFromArtDetails = [...artEdit.imageRefs];
+      let artDetailsImageRef: any = [...artDetails?.artImagesRef];
+      let newImagesUploaded: any = [];
+      let allArtimagesAlreadyUploaded = [...artImages].filter((image: string) =>
+        image.startsWith("https://" || "localhost:")
       );
 
-      console.log("preview image", previewImage);
+      if (remainingImageRefFromArtDetails.length < artDetailsImageRef.length) {
+        let allArtImagesToUpload = [...artImages].filter((image: string) =>
+          image.startsWith("data:image")
+        );
+        if (allArtImagesToUpload.length > 0) {
+          newImagesUploaded = await uploadMultipleImagesToFB(
+            allArtImagesToUpload,
+            getArtMultipleImagesReference(session?._id, fileId.toString())
+          );
+          console.log("new images added  and uploaded!!...");
+        }
+        artDetailsImageRef = artDetailsImageRef.filter(
+          (ref: string) => !remainingImageRefFromArtDetails.includes(ref)
+        );
+        if (artDetailsImageRef.length > 0) {
+          await deleteImageFromFB(artDetailsImageRef);
+        }
+        console.log("database art image deleted!!...");
+      }
 
-      let artImagesToUpload: any =
-        artImages.length > 0
-          ? await uploadMultipleImagesToFB(
-              artImages,
-              getArtMultipleImagesReference(session?._id, fileId.toString())
-            )
-          : [];
+      const finalImagesTobePublished = [
+        ...allArtimagesAlreadyUploaded,
+        ...(newImagesUploaded?.images || []),
+      ];
+      const finalImagesRefs = [
+        ...artEdit.imageRefs,
+        ...(newImagesUploaded?.references || []),
+      ];
+      console.log("finalImagesTobePublished >>>", finalImagesTobePublished);
 
       let artInput = {
+        artId,
         title: artUploadData.title,
         description: artUploadData.story,
-        artPreview: previewImage?.file,
-        previewImageRef: previewImage?.reference,
-        artImages: artImagesToUpload?.images,
-        artImagesRef: artImagesToUpload?.references,
+        artPreview: newArtPreviewImage || artDetails?.artPreview,
+        previewImageRef: newArtPreviewImageRef || artDetails?.previewImageRef,
+        artImages: finalImagesTobePublished,
+        artImagesRef: finalImagesRefs,
         category: artUploadData.category,
         dimensions: `${artUploadData.dimensions}${dimenssionSelected}`,
         price: artUploadData.price,
@@ -177,53 +259,34 @@ const ContinueArtUpload = () => {
 
       console.log("art input >>>>", artInput);
 
-      const { data } = await createArt({
-        variables: {
-          artInput,
-        },
-        update: (cache, { data: { createArt } }) => {
-          const existingArts = cache.readQuery<any>({
-            query: GET_ALL_ARTS,
-          });
+      const { data: artEditData } = await updateArt({
+        variables: { artInput },
+        update: (cache, { data: { updateArt } }) => {
+          const existingArtDetails = cache.readQuery<any>({
+            query: GET_ART_BY_ID,
+            variables: {artId}
+          })
 
           cache.writeQuery({
-            query: GET_ALL_ARTS,
+            query: GET_ART_BY_ID,
+            variables: {artId},
             data: {
-              getAllArtWorks: [
-                createArt,
-                ...(existingArts?.getAllArtWorks || []),
-              ],
-            },
-          });
-
-          const existingUserArts = cache.readQuery<any>({
-            query: GET_USER_ARTS,
-            variables: {
-              userId: session?._id,
-            },
-          });
-
-          cache.writeQuery({
-            query: GET_USER_ARTS,
-            variables: {
-              userId: session?._id,
-            },
-            data: {
-              getUserArtWorks: [
-                createArt,
-                ...(existingUserArts?.getUserArtWorks || []),
-              ],
-            },
-          });
-        },
+              getArtById: updateArt
+            }
+          })
+        }
       });
+      
 
-      console.log("uploaded art", data);
-      router.push("/art");
+      if (artUploadData.artType === "auction") {
+        router.push(`/art/auction/details/${artDetails?._id}`);
+      } else {
+        router.push(`/art/details/${artDetails?._id}`);
+      }
     } catch (error: any) {
       setErrorOccured(true);
       setErrorMessage(error?.message);
-      console.log("error uploading art", error);
+      console.log("error updating art", error);
     }
     setLoading(false);
   };
@@ -275,7 +338,10 @@ const ContinueArtUpload = () => {
 
               <div className="w-fit md:grid md:grid-cols-4 lg:grid-cols-3 flex flex-wrap items-center justify-center mb-[1rem]">
                 {artImages.map((image: any, idx: number) => (
-                  <div key={idx} className="relative h-[5rem] w-[5rem] mb-1 mr-2">
+                  <div
+                    key={idx}
+                    className="relative h-[5rem] w-[5rem] mb-1 mr-2"
+                  >
                     <div
                       onClick={() => removeImage(idx)}
                       className="absolute z-10 h-[1.4rem] w-[1.4rem] rounded-full bg-white cursor-pointer flex items-center justify-center right-1 top-1 "
@@ -313,7 +379,7 @@ const ContinueArtUpload = () => {
                     className="w-full"
                     value={artUploadData.title}
                     error={errorOccured}
-                    onChange={(e:any) =>
+                    onChange={(e: any) =>
                       setArtUploadData({
                         ...artUploadData,
                         title: e.target.value,
@@ -333,7 +399,7 @@ const ContinueArtUpload = () => {
                     rows={4}
                     value={artUploadData.story}
                     error={errorOccured}
-                    onChange={(e:any) =>
+                    onChange={(e: any) =>
                       setArtUploadData({
                         ...artUploadData,
                         story: e.target.value,
@@ -351,7 +417,7 @@ const ContinueArtUpload = () => {
                     placeholder="100*150"
                     value={artUploadData.dimensions}
                     error={errorOccured}
-                    onChange={(e:any) =>
+                    onChange={(e: any) =>
                       setArtUploadData({
                         ...artUploadData,
                         dimensions: e.target.value,
@@ -383,21 +449,21 @@ const ContinueArtUpload = () => {
                 <div className="flex flex-col lg:flex-row items-center justify-between">
                   <FormControl className="w-full lg:w-[20rem] mt-[1rem]">
                     <InputLabel id="select-filter-by-field">
-                    <p className='text-black'>Category</p>
+                      <p className="text-black">Category</p>
                     </InputLabel>
                     <Select
                       labelId="select-filter-by-field-labe;"
                       id="select-filter-by-field"
                       sx={{
                         color: "#000",
-                        '.MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#A6A6A6',
+                        ".MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#A6A6A6",
                         },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#808080',
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#808080",
                         },
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#797979',
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#797979",
                         },
                       }}
                       value={artUploadData.category}
@@ -422,21 +488,21 @@ const ContinueArtUpload = () => {
                   </FormControl>
                   <FormControl className="w-full lg:w-[20rem] mt-[1rem]">
                     <InputLabel id="demo-simple-select-label">
-                    <p className='text-black'>Art Type</p>
+                      <p className="text-black">Art Type</p>
                     </InputLabel>
                     <Select
                       labelId="select-filter-by-field-labe;"
                       id="select-filter-by-field"
                       sx={{
                         color: "#000",
-                        '.MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#A6A6A6',
+                        ".MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#A6A6A6",
                         },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#808080',
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#808080",
                         },
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#797979',
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#797979",
                         },
                       }}
                       value={artUploadData.artType}
@@ -445,7 +511,7 @@ const ContinueArtUpload = () => {
                         setArtUploadData({
                           ...artUploadData,
                           artType: e.target.value,
-                        })
+                        });
                         setAuctionStartDate("");
                         setAuctionEndDate("");
                       }}
@@ -468,7 +534,7 @@ const ContinueArtUpload = () => {
                       placeholder="150.00"
                       type="number"
                       value={artUploadData.price}
-                      onChange={(e:any) =>
+                      onChange={(e: any) =>
                         setArtUploadData({
                           ...artUploadData,
                           price: parseFloat(e.target.value),
@@ -493,7 +559,7 @@ const ContinueArtUpload = () => {
                           type="number"
                           error={errorOccured}
                           value={artUploadData.price}
-                          onChange={(e:any) =>
+                          onChange={(e: any) =>
                             setArtUploadData({
                               ...artUploadData,
                               price: parseFloat(e.target.value),
@@ -543,15 +609,11 @@ const ContinueArtUpload = () => {
                     title="Cancel"
                   />
 
-                  <div className="flex flex-col-reverse sm:flex-row items-center sm:space-x-4 mb-4 sm:mb-0">
-                    <ButtonOutlined
-                      className="sm:w-[8rem] sm:h-[3rem]"
-                      title="Save as draft"
-                    />
+                  <div className="flex items-center mb-4">
                     <ButtonSolid
-                      onClick={createNewArt}
+                      onClick={UPDATE_ART}
                       className="sm:w-[8rem] sm:h-[3rem] mb-4 sm:mb-0"
-                      title="Publish now"
+                      title="Update now"
                     />
                   </div>
                 </div>
@@ -566,4 +628,4 @@ const ContinueArtUpload = () => {
   );
 };
 
-export default ContinueArtUpload;
+export default ContinueArtEdit;

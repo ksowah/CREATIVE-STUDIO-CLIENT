@@ -38,31 +38,26 @@ const CartPage = () => {
           <>
             <div className="pt-[7rem] ">
               {cartItems?.length > 0 ? (
-                <div className="w-full border rounded-lg flex ">
+                <div className="w-full border rounded-lg flex flex-col lg:flex-row ">
                   <div className="flex-1 text-[#595862] ">
                     {/* Header */}
-                    <div className="h-[4rem] w-full border-b flex items-center justify-between px-[1rem] ">
-                      <div className="flex items-center space-x-8">
-                        <h3 className="text-[1.2rem] font-medium ">
+                    <div className="h-[4rem] w-full border-b flex items-center justify-between px-[.5rem] sm:px-[1rem] ">
+                      <div className="flex items-center space-x-2 sm:space-x-8">
+                        <h3 className="text-[.8rem] sm:text-[1.2rem] font-medium ">
                           Your Gallery
                         </h3>
-                        <p className="text-sm">{numberOfCartItems} ITEMS</p>
+                        <p className="text-[.7rem] sm:text-sm">{numberOfCartItems} ITEMS</p>
                       </div>
 
-                      <p className="font-medium text-sm">Keep Shopping</p>
+                      <p className="font-medium text-[.8rem] sm:text-sm">Keep Shopping</p>
                     </div>
 
                     <div className="w-full p-[1rem]">
                       {cartItems?.map((art: any, idx: any) => (
                         <CartItem
+                          cartItem={art?.item}
                           key={art?.item._id}
-                          artPreview={art?.item.artPreview}
-                          artist={art?.artist.fullName}
-                          category={art?.item.category}
-                          dimension={art?.item.dimensions}
-                          price={art?.item.price}
-                          title={art?.item.title}
-                          itemId={art?.item._id}
+                          removable
                         />
                       ))}
                     </div>

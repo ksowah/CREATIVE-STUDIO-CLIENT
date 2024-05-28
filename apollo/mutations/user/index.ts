@@ -76,3 +76,17 @@ export const UNFOLLOW_USER = gql`
     }
   }
 `;
+
+export const ADD_DELIVERY_ADDRESS = gql`
+  mutation Mutation($addressInput: AddressInput) {
+  addDeliveryAddress(addressInput: $addressInput) {
+    _id
+    user
+    city
+    street
+    postalCode
+    houseNumber
+    telephone
+  }
+}
+`

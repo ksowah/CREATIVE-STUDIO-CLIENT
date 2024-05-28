@@ -53,13 +53,19 @@ export const handleLogin = async (
       },
     });
 
-    if (data?.login) {
+    const session = data?.login
+
+    if (session) {
       localStorage.setItem("cstoken", data?.login?.token);
       setRegistrationError(false);
       setSuccess(true);
-      setAppState((prev: any) => ({ ...prev, session: data?.login.user }));
+      setAppState((prev: any) => ({ ...prev, session: session.user }));
 
-      router.push("/");
+      if (session.user?.userType === "ARTIST"){
+        router.push("/art");
+      } else {
+        router.push("/")
+      }
     }
   } catch (error: any) {
     setSuccess(false);
@@ -438,3 +444,32 @@ export const handleFollowUser = async (
   }
 };
 
+
+export const formatAmount = (amount: number) => {
+  // Convert amount to a number
+  const numericAmount = Number(amount);
+
+  // Check if the amount is a valid number
+  if (isNaN(numericAmount)) {
+    return "Invalid amount";
+  }
+
+  if (numericAmount === 0) {
+    return "0.00";
+  }
+  // Check if the number has decimal places
+  const hasDecimalPlaces = numericAmount % 1 !== 0;
+
+  // Use toLocaleString() to add commas and format the number
+  let formattedAmount = numericAmount.toLocaleString();
+
+  // If the number has decimal places, format it with exactly 2 decimal places
+  if (hasDecimalPlaces) {
+    formattedAmount = numericAmount.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  return formattedAmount;
+};

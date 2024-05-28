@@ -7,6 +7,7 @@ export const GET_WALLET_BALLANCE = gql`
       _id
       user
       balance
+      auctionBidsPlacedAmount
     }
   }
 `;

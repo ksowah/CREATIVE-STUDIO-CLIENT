@@ -18,7 +18,6 @@ const Uploader = ({selectImage, selectedImage, isArt}:Props) => {
     }
   }
 
-
   return (
     <>
     <div

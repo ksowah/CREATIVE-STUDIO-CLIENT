@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const PLACE_BID = gql`
-  mutation Mutation($bidAmount: Float!, $artId: ID!) {
+  mutation PlaceBid($bidAmount: Float!, $artId: ID!) {
     placeBid(bidAmount: $bidAmount, artId: $artId) {
       _id
       bidBy
@@ -9,5 +9,11 @@ export const PLACE_BID = gql`
       bidAmount
       artId
     }
+  }
+`;
+
+export const EXPIRE_AUCTION = gql`
+  mutation Mutation($artId: ID!) {
+    expireAuction(artId: $artId)
   }
 `;

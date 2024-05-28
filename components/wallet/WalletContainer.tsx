@@ -1,17 +1,18 @@
-
 import { RiWallet3Fill } from "react-icons/ri";
 import { RiCashLine } from "react-icons/ri";
 import { PiHandCoinsBold } from "react-icons/pi";
 import { FaShieldHalved } from "react-icons/fa6";
 import Image from "next/image";
-
+import { formatAmount } from "@/helpers/functions";
 
 interface Props {
-  children: any
-  balance: number
+  children: any;
+  wallet: Wallet;
 }
 
-const WalletContainer = ({children, balance}:Props) => {
+const WalletContainer = ({ children, wallet }: Props) => {
+
+
   return (
     <div className="pt-[7rem] flex space-x-6 ">
       <div className="space-y-6 h-[27rem] ">
@@ -36,10 +37,27 @@ const WalletContainer = ({children, balance}:Props) => {
 
           <div className="border-b w-[70%] my-2 " />
 
-          <div className="w-full px-3 text-[#595862] space-y-2 text-[1.1rem] pb-2 ">
-            <p>Balance</p>
-            <p>$ {balance}</p>
-          </div>
+          {wallet?.auctionBidsPlacedAmount > 0 ? (
+            <>
+              <div className="flex items-center justify-between w-full text-[#595862] text-[1.1rem] px-2 pb-2 ">
+                <p className="text-[.9rem] " >Gross balance</p>
+                <p className="font-bold">${formatAmount(wallet?.balance + wallet?.auctionBidsPlacedAmount)}</p>
+              </div>
+              <div className="flex items-center justify-between w-full text-[#595862] text-[1.1rem] px-2 pb-2 ">
+                <p className="text-[.9rem] ">Auction bill</p>
+                <p className="font-bold">${formatAmount(wallet?.auctionBidsPlacedAmount)}</p>
+              </div>
+              <div className="flex items-center justify-between w-full text-[#595862] text-[1.1rem] px-2 pb-2 ">
+                <p className="text-[.9rem] ">Net balance</p>
+                <p className="font-bold">${formatAmount(wallet?.balance)}</p>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-between w-full text-[#595862] text-[1.1rem] px-2 pb-2 ">
+              <p className="text-[.9rem] ">Balance</p>
+              <p className="font-bold">${formatAmount(wallet?.balance)}</p>
+            </div>
+          )}
         </div>
 
         <div className="border w-[16rem] flex flex-col items-center ">
@@ -65,9 +83,7 @@ const WalletContainer = ({children, balance}:Props) => {
         </div>
       </div>
 
-      <div className="flex-1 border p-[2rem] ">
-        {children}
-      </div>
+      <div className="flex-1 border p-[2rem] ">{children}</div>
     </div>
   );
 };

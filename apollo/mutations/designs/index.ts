@@ -92,3 +92,26 @@ export const REPLY_TO_COMMENT = gql`
     }
   }
 `;
+
+export const UPDATE_DESIGN = gql`
+mutation Mutation($updateDesignInput: UpdateDesignInput) {
+  updateDesign(updateDesignInput: $updateDesignInput) {
+    _id
+    designer
+    preview
+    views
+    saves
+    description
+    designSubscription
+    designFile
+    designFileRef
+    designImages
+    createdAt
+    tags
+    category
+    title
+    previewImageRef
+    designImagesRef
+  }
+}
+`

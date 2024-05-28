@@ -70,7 +70,7 @@ const Art = () => {
       </div>
 
       <Container>
-        <div className="flex-1 flex justify-between w-full py-[4rem] ">
+        <div className="w-full flex flex-col items-center justify-center xl:flex-row xl:justify-between py-[4rem] ">
           {session && (
             <DropDown selected={category} setSelected={setCategory} />
           )}

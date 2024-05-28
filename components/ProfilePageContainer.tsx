@@ -104,7 +104,7 @@ const ProfilePageContainer = ({
               <div className="flex flex-col sm:flex-row items-start sm:items-center  w-full h-full ">
                 <SessionAvatar size={180} image={user?.avatar} />
 
-                <div className="space-y-2 flex flex-col items-start ml-8 mt-[1rem] md:mt-0 ">
+                <div className="space-y-2 flex flex-col items-start sm:ml-8 mt-[1rem] md:mt-0 ">
                   <p className="font-medium text-xl md:text-3xl ">{user?.fullName}</p>
                   <p className="text-sm font-medium">{user?.specialization}</p>
 
@@ -114,20 +114,20 @@ const ProfilePageContainer = ({
                   </div>
 
                   {appState?.session?.username === username ? (
-                    <div className="flex flex-col sm:flex-row items-center sm:space-x-4">
+                    <div className="flex items-center space-x-2 sm:space-x-4">
                       <Link href={`/profile/${appState?.session?.username}/settings`}>
                         <ButtonSolid
-                          className="h-[3rem] w-[8rem] mb-4 sm:mb-0 "
+                          className="sm:h-[3rem] sm:w-[8rem]"
                           title="Edit Profile"
                         />
                       </Link>
                       <ButtonOutlined
-                        className="h-[3rem] w-[8rem] "
+                        className="sm:h-[3rem] sm:w-[8rem] "
                         title="Go Premium"
                       />
                     </div>
                   ) : (
-                    <div className="flex flex-col sm:flex-row items-center sm:space-x-4">
+                    <div className="flex items-center space-x-4">
                       <ButtonSolid
                         Icon={
                           followLoading ? (
@@ -153,11 +153,11 @@ const ProfilePageContainer = ({
                             follow
                           )
                         }
-                        className="h-[3rem] w-[8rem] mb-4 sm:mb-0 "
+                        className="sm:h-[3rem] sm:w-[8rem]"
                         title={`${alreadyFollowed ? "Unfollow" : "Follow"}`}
                       />
                       <ButtonOutlined
-                        className="h-[3rem] w-[8rem] "
+                        className="sm:h-[3rem] sm:w-[8rem] "
                         title="Email"
                       />
                     </div>

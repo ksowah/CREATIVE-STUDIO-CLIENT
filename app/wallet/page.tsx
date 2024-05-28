@@ -7,14 +7,17 @@ import WalletContainer from "@/components/wallet/WalletContainer";
 import WalletTopTab from "@/components/wallet/WalletTopTab";
 import { useQuery } from "@apollo/client";
 import { Skeleton } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 
 const StudioWallet = () => {
-  const { data, loading, error } = useQuery(GET_WALLET_BALLANCE);
+  const { data, loading, error, refetch } = useQuery(GET_WALLET_BALLANCE);
 
-  const balance = data?.getWalletBallance.balance;
+  const wallet = data?.getWalletBallance;
 
-  console.log("data balanc >>", error);
+  useEffect(() => {
+    refetch();
+  }, [])
+  
 
   return (
     <main>
@@ -32,7 +35,7 @@ const StudioWallet = () => {
             </div>
           </div>
         ) : (
-          <WalletContainer balance={balance}>
+          <WalletContainer wallet={wallet}>
             <div>
               <WalletTopTab />
             </div>

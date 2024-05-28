@@ -8,16 +8,15 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import SessionAvatar from "@/components/SessionAvatar";
 import SettingsContainer from "@/components/SettingsContainer";
-import { MyContext } from "@/context/Context";
 import { appInitializer } from "@/firebase";
 import { selectImage, uploadFileToFB } from "@/helpers/functions";
 import { getProfileImageReference } from "@/helpers/firebaseFileReferences";
 import { EDIT_PROFILE, GET_ME, GET_USER_BY_USERNAME } from "@/apollo/queries/user";
 import { useMutation, useQuery } from "@apollo/client";
-import { Alert, TextField } from "@mui/material";
+import { Alert } from "@mui/material";
 import { getStorage } from "firebase/storage";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CssTextField from "@/components/CSSTextField";
 
 const Settings = () => {
@@ -118,7 +117,7 @@ const Settings = () => {
   }
 
   return (
-    <div className="bg-[#F3F3F3] ">
+    <div className="bg-[#F3F3F3] min-h-screen ">
       <Header />
       <Container>
         <SettingsContainer>
