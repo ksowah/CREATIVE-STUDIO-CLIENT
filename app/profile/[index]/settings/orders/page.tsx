@@ -23,7 +23,7 @@ const UserOrders = () => {
 
           <div className="w-full px-[2rem]">
             {orders?.map((order:any)=> (
-              <CartItem removable={false} cartItem={order} />
+              <CartItem key={order?._id} removable={false} cartItem={order} />
             ))}
           </div>
         </SettingsContainer>

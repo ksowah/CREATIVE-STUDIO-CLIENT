@@ -20,7 +20,7 @@ const BidPlacedDetails = ({
     <div className="w-full">
       <p className="text-[#8291A6] text-sm">
         Congratulations! We wanted to inform you that your bid on the artwork
-        "{artDetails?.title}" by {artDetails?.artist?.fullName} has been successful.
+        &quot;{artDetails?.title}&quot; by {artDetails?.artist?.fullName} has been successful.
       </p>
 
       <p className="text-[#8291A6] text-sm mb-2">
