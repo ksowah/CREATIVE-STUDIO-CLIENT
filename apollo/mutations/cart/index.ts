@@ -19,3 +19,9 @@ export const REMOVE_FROM_CART = gql`
     }
   }
 `;
+
+export const CONFIRM_ORDER = gql`
+mutation Mutation($items: [String!]) {
+  confirmOrder(items: $items)
+}
+`

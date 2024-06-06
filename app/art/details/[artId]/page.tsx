@@ -21,6 +21,7 @@ import { ADD_TO_CART } from "@/apollo/mutations/cart";
 import { ToastContainer, toast } from "react-toastify";
 import { GET_CART_ITEMS } from "@/apollo/queries/cart";
 import DetailSlider from "@/components/art/DetailSlider";
+import ArtImage from "@/components/art/ArtImage";
 
 interface MeetingProps {
   picture: string;
@@ -213,7 +214,7 @@ const ArtDetails = ({ params }: { params: any }) => {
                       setInitialSlide(0)}}
                     className="relative flex justify-start w-full lg:w-[700px] h-[500px] cursor-pointer"
                   >
-                    <Image
+                    <ArtImage
                       src={artDetails?.artPreview}
                       fill
                       style={{ objectFit: "contain" }}
@@ -233,7 +234,7 @@ const ArtDetails = ({ params }: { params: any }) => {
                             height={160}
                           />
                         )}
-                        <Image
+                        <ArtImage
                           onClick={() => {
                             setShowArtImage(true);
                             setInitialSlide(idx + 1);

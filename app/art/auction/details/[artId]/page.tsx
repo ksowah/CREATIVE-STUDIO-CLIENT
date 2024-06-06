@@ -21,6 +21,8 @@ import { MyContext } from "@/context/Context";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import DetailSlider from "@/components/art/DetailSlider";
+import ArtCover from "@/components/art/ArtCover";
+import ArtImage from "@/components/art/ArtImage";
 
 
 const AuctionDetails = ({ params }: { params: any }) => {
@@ -241,7 +243,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                   {/* content */}
                   <div className="flex flex-col sm:flex-row items-center space-x-2 sm:space-x-8 p-[1rem] sm:p-[1.5rem] ">
                     <div className="relative w-full h-[18rem] sm:w-[18rem]">
-                      <Image
+                      <ArtImage
                         className="group-hover:scale-105 duration-500"
                         src={artDetails?.artPreview}
                         fill
@@ -311,7 +313,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                       />
                     )}
                     <div className="relative w-full">
-                      <Image
+                      <ArtImage
                         onClick={() => {
                           setShowArtImage(true);
                           setInitialSlide(0);
@@ -332,7 +334,7 @@ const AuctionDetails = ({ params }: { params: any }) => {
                         key={idx}
                         className="relative h-[10rem] w-[10rem] mr-4 cursor-pointer"
                       >
-                        <Image
+                        <ArtImage
                           onClick={() => {
                             setShowArtImage(true);
                             setInitialSlide(idx + 1);

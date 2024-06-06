@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FaRegCalendar } from "react-icons/fa";
 import SessionAvatar from "../SessionAvatar";
 import { useRouter } from "next/navigation";
+import ArtImage from "./ArtImage";
 
 const AuctionRoomItem = ({ group }: { group: any }) => {
   const router = useRouter();
@@ -14,7 +15,7 @@ const AuctionRoomItem = ({ group }: { group: any }) => {
         <div className="px-[1rem]">
           <div className="h-[10rem] flex overflow-hidden rounded-2xl flex-1 bg-white ">
             <div className="relative h-full w-[10rem] ">
-              <Image
+              <ArtImage
                 src={art?.artPreview}
                 fill
                 style={{ objectFit: "cover" }}

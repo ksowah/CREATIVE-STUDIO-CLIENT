@@ -7,6 +7,8 @@ import { Skeleton } from "@mui/material";
 import { formatAmount } from "@/helpers/functions";
 import { useMutation } from "@apollo/client";
 import { EXPIRE_AUCTION } from "@/apollo/mutations/auction";
+import ArtCover from "./ArtCover";
+import ArtImage from "./ArtImage";
 
 interface Props {
   art: ArtPiece;
@@ -75,7 +77,7 @@ const ArtCard = ({ art }: Props) => {
             height={320}
           />
         )}
-        <Image
+        <ArtImage
           onLoad={() => setImageLoading(false)}
           className="group-hover:scale-105 duration-500"
           src={art?.artPreview}

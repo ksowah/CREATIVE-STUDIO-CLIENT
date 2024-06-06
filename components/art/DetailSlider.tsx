@@ -6,6 +6,7 @@ import Container from "../Container";
 import { useRef, useState } from "react";
 import { IoMdPlay } from "react-icons/io";
 import { LiaTimesSolid } from "react-icons/lia";
+import ArtImage from "./ArtImage";
 
 const DetailSlider = ({
   artDetails,
@@ -55,7 +56,7 @@ const DetailSlider = ({
             {[artDetails?.artPreview, ...(artDetails?.artImages || [])].map(
               (image, idx) => (
                 <div key={idx} className="relative h-[45rem] w-[45rem] ">
-                  <Image
+                  <ArtImage
                     src={image}
                     layout="fill"
                     style={{ objectFit: "contain" }}

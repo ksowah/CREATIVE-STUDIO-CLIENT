@@ -17,6 +17,7 @@ import Image from "next/image";
 import { RiMenu2Line } from "react-icons/ri";
 import SideMenu from "./SideMenu";
 import { IoMdClose } from "react-icons/io";
+import { FaBell } from "react-icons/fa";
 
 const Header = () => {
   const pathname = usePathname();
@@ -37,12 +38,20 @@ const Header = () => {
 
   return (
     <div className="w-full">
-      <div className={`${isOpenMenu ? "fixed" : "absolute"} w-full h-[5rem] bg-white z-50`}>
+      <div
+        className={`${
+          isOpenMenu ? "fixed" : "absolute"
+        } w-full h-[5rem] bg-white z-50`}
+      >
         <Container>
           <div className="w-full h-full flex items-center justify-between">
             <div className="flex space-x-2 items-center">
               {isOpenMenu ? (
-                <IoMdClose  onClick={()=>setIsOpenMenu(false)} className="xl:hidden" size={22} />
+                <IoMdClose
+                  onClick={() => setIsOpenMenu(false)}
+                  className="xl:hidden"
+                  size={22}
+                />
               ) : (
                 <RiMenu2Line
                   onClick={() => setIsOpenMenu(true)}
@@ -131,11 +140,19 @@ const Header = () => {
               </Tooltip>
 
               {user ? (
-                <Link href={`/profile/${user?.username}`}>
-                  <div className="cursor-pointer">
-                    <SessionAvatar image={user?.avatar} size={45} />
-                  </div>
-                </Link>
+                <div className="flex items-center space-x-2">
+                  <Link href={`/profile/${user?.username}`}>
+                    <div className="cursor-pointer">
+                      <SessionAvatar image={user?.avatar} size={45} />
+                    </div>
+                  </Link>
+                  <Tooltip title="Notifications">
+                    <Link className="relative" href={`/profile/${user?.username}/settings/notifications`}>
+                      <div className="h-2 w-2 border border-white rounded-full bg-[#FC0909] absolute top-0 right-0  "/>
+                      <FaBell className="cursor-pointer" size={20} />
+                    </Link>
+                  </Tooltip>
+                </div>
               ) : (
                 <div className="flex items-center space-x-4">
                   <Link href={"/login"}>
