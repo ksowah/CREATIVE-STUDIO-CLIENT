@@ -18,3 +18,19 @@ export const GET_CART_ITEMS = gql`
     }
   }
 `;
+
+export const GET_USER_ORDERS = gql`
+  query Query {
+  getOrders {
+    _id
+    title
+    artist {
+      fullName
+    }
+    artPreview
+    price
+    dimensions
+    category
+  }
+}
+`;

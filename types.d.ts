@@ -97,3 +97,11 @@ type Address = {
     houseNumber: string;
     telephone: string;
 }
+
+type UserNotification = {
+  _id: string;
+  user: string;
+  notificationType: string;
+  summary: string;
+  artWorks: [string];
+}

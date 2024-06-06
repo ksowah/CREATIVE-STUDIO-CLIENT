@@ -1,5 +1,6 @@
 "use client";
 
+import { CONFIRM_ORDER } from "@/apollo/mutations/cart";
 import { GET_CART_ITEMS } from "@/apollo/queries/cart";
 import { GET_DELIVERY_ADDRESS } from "@/apollo/queries/user";
 import ButtonSolid from "@/components/ButtonSolid";
@@ -9,7 +10,7 @@ import Header from "@/components/Header";
 import CartItem from "@/components/art/CartItem";
 import { MyContext } from "@/context/Context";
 import { formatAmount } from "@/helpers/functions";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Radio, RadioGroup } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
@@ -28,11 +29,18 @@ const ConfirmOrder = () => {
   const { data: deliveryData, error } = useQuery(GET_DELIVERY_ADDRESS, {
     variables: { userId: user?._id },
   });
-
+  
+  
   const address: Address = deliveryData?.getDeliveryAddress;
-
+  
   const cartItems = data?.getCartItems;
+  
+  const itemIds = cartItems?.map((item:any) => item.item._id);
 
+  const [confirmOrder, {data:connfirmData, loading:confirmLoading}] = useMutation(CONFIRM_ORDER, {
+    variables: {items:itemIds}
+  })
+  
   const numberOfCartItems = data?.getCartItems.length;
 
   // get the subtotal price of all items in the cart
@@ -42,6 +50,16 @@ const ConfirmOrder = () => {
 
   const deliveryFees = 10;
 
+  const confirmUserOrders = async ()=> {
+    try {
+      await confirmOrder()
+      console.log("doneeee!!")
+      router.push(`/profile/${user?.username}/settings/orders`)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <main>
       <Header />
@@ -50,12 +68,8 @@ const ConfirmOrder = () => {
         <div className="w-full mt-[7rem] my-[2rem] rounded-xl  border ">
           <div className="px-4 flex items-center justify-between h-[4rem] border-b ">
             <p className="text-[#595862] font-medium text-[1.4rem] ">Address</p>
-            <div
-              onClick={() =>
-                router.push(`/profile/${user?.username}/settings/address`)
-              }
-              className="group flex items-center cursor-pointer "
-            >
+            <div onClick={() => router.push(`/profile/${user?.username}/settings/address`) }
+              className="group flex items-center cursor-pointer">
               <p className="text-sm group-hover:scale-110 duration-300">
                 Change
               </p>
@@ -168,6 +182,7 @@ const ConfirmOrder = () => {
         <ButtonSolid
           className="w-[8rem] flex self-end "
           title="Confirm Order"
+          onClick={confirmUserOrders}
         />
 
         <Footer />

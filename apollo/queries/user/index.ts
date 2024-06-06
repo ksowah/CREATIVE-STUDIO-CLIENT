@@ -108,15 +108,27 @@ export const GET_FOLLOWING = gql`
 `;
 
 export const GET_DELIVERY_ADDRESS = gql`
-query GetDeliveryAddress($userId: ID!) {
-  getDeliveryAddress(userId: $userId) {
-    _id
-    user
-    city
-    street
-    postalCode
-    houseNumber
-    telephone
+  query GetDeliveryAddress($userId: ID!) {
+    getDeliveryAddress(userId: $userId) {
+      _id
+      user
+      city
+      street
+      postalCode
+      houseNumber
+      telephone
+    }
   }
-}
-`
+`;
+
+export const GET_NOTIFICATIONS = gql`
+  query Query {
+    getNotifications {
+      _id
+      user
+      notificationType
+      summary
+      artWorks
+    }
+  }
+`;

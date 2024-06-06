@@ -4,8 +4,8 @@ import { REMOVE_FROM_CART } from "@/apollo/mutations/cart";
 import { GET_CART_ITEMS } from "@/apollo/queries/cart";
 import { formatAmount } from "@/helpers/functions";
 import { useMutation } from "@apollo/client";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ArtImage from "./ArtImage";
 
 
 
@@ -44,7 +44,7 @@ const CartItem = ({ cartItem, removable }: {cartItem: ArtPiece, removable:boolea
         onClick={() => router.push(`/art/details/${cartItem?._id}`)}
         className="relative h-[5rem] w-[5rem] md:h-[8rem] md:w-[8rem] rounded-lg overflow-hidden cursor-pointer "
       >
-        <Image
+        <ArtImage
           src={cartItem?.artPreview}
           fill
           style={{ objectFit: "cover" }}
