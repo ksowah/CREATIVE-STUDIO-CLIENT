@@ -45,13 +45,9 @@ interface Props {
   setSelectedImage: any;
   getPreviewImage: () => Promise<SingleFileUpload | undefined>;
   getDesignImagesURLs: () => Promise<MultipleImageUpload>;
-  getDesignFile: () => Promise<SingleFileUpload | undefined>;
-  selectDesignFile: (e:any) => void;
-  designFilePickerRef: any;
-  designFileSelected: any;
-  selectedDesignFileName: string;
   projectTitle: string;
   setProjectTitle: any;
+  designUri:String;
 }
 
 export default function UploadDialogue({
@@ -61,11 +57,6 @@ export default function UploadDialogue({
   setSelectedImage,
   getPreviewImage,
   getDesignImagesURLs,
-  getDesignFile,
-  selectDesignFile,
-  designFilePickerRef,
-  designFileSelected,
-  selectedDesignFileName,
   projectTitle,
   setProjectTitle,
 }: Props) {
@@ -80,6 +71,7 @@ export default function UploadDialogue({
     description: "",
     category: "",
     subscription: "",
+    designUri: "",
   });
   const [designUploadDataEmptyState, setDesignUploadDataEmptyState] =
     React.useState({
@@ -87,6 +79,7 @@ export default function UploadDialogue({
       description: false,
       category: false,
       subscription: false,
+      designUri: false
     });
 
   const { appState, setAppState } = React.useContext(MyContext);
@@ -118,6 +111,7 @@ export default function UploadDialogue({
       description: "",
       category: "",
       subscription: "",
+      designUri: "",
     });
     setProjectTitle("");
     handleClose();
@@ -129,7 +123,6 @@ export default function UploadDialogue({
   const filloutDesignData = async (
     designImages: MultipleImageUpload,
     preview: SingleFileUpload | undefined,
-    designFile: SingleFileUpload | undefined
   ) => {
     let designTags = designUploadData.tags.split(",");
 
@@ -141,8 +134,7 @@ export default function UploadDialogue({
             description: designUploadData.description,
             category: designUploadData.category,
             designSubscription: designUploadData.subscription,
-            designFile: designFile?.file,
-            designFileRef: designFile?.reference,
+            designUri: designUploadData.designUri,
             designImages: designImages?.images,
             designImagesRef: designImages?.references,
             preview: preview?.file,
@@ -192,7 +184,7 @@ export default function UploadDialogue({
   const CREATE_NEW_DESIGN = async () => {
     setPublishLoading(true);
 
-    if (designUploadData.tags.length === 0) {
+    if (!designUploadData.tags) {
       setDesignUploadDataEmptyState({
         ...designUploadDataEmptyState,
         tags: true,
@@ -201,7 +193,7 @@ export default function UploadDialogue({
       return;
     }
 
-    if (designUploadData.description.length === 0) {
+    if (!designUploadData.description) {
       setDesignUploadDataEmptyState({
         ...designUploadDataEmptyState,
         description: true,
@@ -210,7 +202,7 @@ export default function UploadDialogue({
       return;
     }
 
-    if (designUploadData.category.length === 0) {
+    if (!designUploadData.category) {
       setDesignUploadDataEmptyState({
         ...designUploadDataEmptyState,
         category: true,
@@ -218,7 +210,7 @@ export default function UploadDialogue({
       setPublishLoading(false);
       return;
     }
-    if (designUploadData.subscription.length === 0) {
+    if (!designUploadData.subscription) {
       setDesignUploadDataEmptyState({
         ...designUploadDataEmptyState,
         subscription: true,
@@ -227,12 +219,15 @@ export default function UploadDialogue({
       return;
     }
 
-    if (!designFileSelected) {
-      setErrorMessage("Please select a design file");
+    if (!designUploadData.designUri) {
+      setDesignUploadDataEmptyState({
+        ...designUploadDataEmptyState,
+        designUri: true,
+      });
       setPublishLoading(false);
-      setIsErrorOccured(true);
       return;
     }
+
 
     if (user?.userType !== "DESIGNER" && user?.userType !== "CREATOR") {
       setErrorMessage("You are not authorized to publish designs");
@@ -244,9 +239,8 @@ export default function UploadDialogue({
     try {
       const designImages = await getDesignImagesURLs();
       const preview = await getPreviewImage();
-      const designFile = await getDesignFile();
 
-      await filloutDesignData(designImages, preview, designFile);
+      await filloutDesignData(designImages, preview);
       cancelUpload();
       setPublishLoading(false);
       setErrorMessage("");
@@ -357,7 +351,7 @@ export default function UploadDialogue({
                   <CssTextField
                     id="outlined-basic"
                     multiline
-                    rows={4}
+                    rows={3}
                     label="description"
                     variant="outlined"
                     className="w-full"
@@ -428,6 +422,22 @@ export default function UploadDialogue({
                   </FormControl>
                 </div>
 
+
+                <CssTextField
+                    id="outlined-basic"
+                    label="design shareable url "
+                    variant="outlined"
+                    className="w-full"
+                    error={designUploadDataEmptyState.designUri}
+                    value={designUploadData.designUri}
+                    onChange={(e:any) =>
+                      setDesignUploadData({
+                        ...designUploadData,
+                        designUri: e.target.value,
+                      })
+                    }
+                  />
+
                 <FormControl className="w-[20rem] ">
                   <InputLabel id="demo-simple-select-label">
                   <p className='text-black'>Design Subscription</p>
@@ -462,35 +472,6 @@ export default function UploadDialogue({
                   </Select>
                 </FormControl>
 
-                <div className="pt-4 flex-1 flex items-center justify-between ">
-                  <input
-                    type={"file"}
-                    accept=".fig, .jam, .psd"
-                    hidden
-                    onChange={selectDesignFile}
-                    ref={designFilePickerRef}
-                  />
-                  <ButtonSolid
-                    onClick={() => designFilePickerRef.current.click()}
-                    title="Select design file"
-                  />
-
-                  {designFileSelected && (
-                    <div className="flex items-center space-x-3 ">
-                      <div className="relative h-[3rem] w-[3rem] rounded-lg overflow-hidden">
-                        <Image
-                          src={"/images/figma_logo.png"}
-                          alt="file logo"
-                          fill
-                          style={{objectFit:"cover"}}
-                        />
-                      </div>
-                      <p className="font-medium text-sm ">
-                        {selectedDesignFileName}
-                      </p>
-                    </div>
-                  )}
-                </div>
 
                 <div className="flex items-center justify-between pt-6 ">
                   <ButtonOutlined

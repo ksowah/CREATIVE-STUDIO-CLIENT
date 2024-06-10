@@ -19,6 +19,7 @@ export const CREATE_DESIGN = gql`
       title
       previewImageRef
       designImagesRef
+      designUri
     }
   }
 `;
@@ -112,6 +113,7 @@ mutation Mutation($updateDesignInput: UpdateDesignInput) {
     title
     previewImageRef
     designImagesRef
+    designUri
   }
 }
 `
