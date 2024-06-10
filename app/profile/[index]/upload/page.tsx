@@ -12,25 +12,19 @@ import { MyContext } from "@/context/Context";
 import { appInitializer } from "@/firebase";
 import { uploadFileToFB, uploadMultipleImagesToFB } from "@/helpers/functions";
 import {
-  getDesignFileReference,
   getDesignMultipleImagesReference,
   getDesignPreviewImageReference,
 } from "@/helpers/firebaseFileReferences";
 import { getStorage } from "firebase/storage";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 
 
 const UploadDesign = () => {
-  const { appState, setAppState } = useContext(MyContext);
+  const { appState } = useContext(MyContext);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImages, setSelectedImages] = useState([]);
   const [projectTitle, setProjectTitle] = useState("");
 
-  const [designFileSelected, setDesignFileSelected] = React.useState(null);
-  const [selectedDesignFileName, setSelectedDesignFileName] = useState("");
-  const [selectedFileExtension, setselectedFileExtension] = React.useState("");
-
-  const designFilePickerRef: any = React.useRef(null);
 
   const user = appState?.session;
 
@@ -45,20 +39,6 @@ const UploadDesign = () => {
     }
     reader.onload = (readerEvent: any) => {
       setSelectedImage(readerEvent.target.result);
-    };
-  };
-
-  const selectDesignFile = (e:any) => {
-    const reader = new FileReader();
-    if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0]);
-      console.log("file name", e.target.files[0].name);
-      setSelectedDesignFileName(e.target.files[0].name);
-      setselectedFileExtension(e.target.files[0].name.split(".").pop());
-      console.log("extension >>", e.target.files[0].name.split(".").pop());
-    }
-    reader.onload = (readerEvent: any) => {
-      setDesignFileSelected(readerEvent.target.result);
     };
   };
 
@@ -131,27 +111,12 @@ const UploadDesign = () => {
                       )
                     )
                   }
-                  getDesignFile={() =>
-                    uploadFileToFB(
-                      designFileSelected,
-                      getDesignFileReference(
-                        user?._id,
-                        fileId.toString(),
-                        selectedDesignFileName,
-                        selectedFileExtension
-                      )
-                    )
-                  }
                   projectTitle={projectTitle}
                   setProjectTitle={setProjectTitle}
                   setSelectedImage={setSelectedImage}
                   setSelectedImages={setSelectedImages}
                   selectedDesignImages={selectedImages}
                   selectedImage={selectedImage}
-                  designFilePickerRef={designFilePickerRef}
-                  designFileSelected={designFileSelected}
-                  selectDesignFile={selectDesignFile}
-                  selectedDesignFileName={selectedDesignFileName}
                 />
               </div>
             </div>

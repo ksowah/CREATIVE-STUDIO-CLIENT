@@ -349,10 +349,13 @@ const DesignDetails = ({ params }: { params: any }) => {
               </div>
             </div>
 
-            <SliderComponent sliderImages={designImages} />
+            <div className="w-full mb-[6rem] ">
+              <SliderComponent sliderImages={designImages} />
+            </div>
 
-            <div className="w-full flex flex-col lg:flex-row items-center justify-center mt-[6rem] space-y-4 lg:space-y-0 lg:space-x-4 ">
-              <Button
+            {designDetails?.designFile && (
+              <div className="w-full flex flex-col lg:flex-row items-center justify-center space-y-4 lg:space-y-0 lg:space-x-4 ">
+                <Button
                 variant="contained"
                 style={{ backgroundColor: "#000" }}
                 className="h-[3rem] w-[10rem] lg:h-[3.5rem] lg:w-[12rem] rounded-lg"
@@ -376,6 +379,15 @@ const DesignDetails = ({ params }: { params: any }) => {
                 </div>
               </div>
             </div>
+            )}
+
+            {designDetails?.designUri && (
+              <div className="flex items-center w-full justify-center mt-6">
+                <Link target="_blank" href={designDetails?.designUri} className="underline text-[#27346A]">
+                  Open design in figma
+                </Link>
+              </div>
+            )}
 
             <div className="my-[8rem] ">
               <h2 className="font-medium text-[1.5rem] lg:text-[2.5rem] lg:mb-[2rem] ">

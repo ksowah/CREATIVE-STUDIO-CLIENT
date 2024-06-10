@@ -1,3 +1,4 @@
+
 type User = {
   _id: string;
   fullName: string;
@@ -22,6 +23,7 @@ type Design = {
   preview: string;
   views: Number;
   saves: Number;
+  designUri: string;
   description: string;
   designSubscription: string;
   designFile: string;

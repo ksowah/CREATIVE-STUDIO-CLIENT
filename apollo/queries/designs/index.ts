@@ -28,6 +28,7 @@ export const GET_ALL_DESIGNS = gql`
       title
       previewImageRef
       designImagesRef
+      designUri
     }
   }
 `;
@@ -60,6 +61,7 @@ export const GET_DESIGN_BY_ID = gql`
       title
       previewImageRef
       designImagesRef
+      designUri
     }
   }
 `;
@@ -90,6 +92,7 @@ export const GET_USER_DESIGNS = gql`
       title
       previewImageRef
       designImagesRef
+      designUri
     }
   }
 `;
@@ -134,6 +137,7 @@ export const GET_SAVED_DESIGNS = gql`
         title
         previewImageRef
         designImagesRef
+        designUri
       }
       savedBy
       savedAt
@@ -204,6 +208,7 @@ export const GET_DESIGNS_BY_CATEGORY = gql`
       title
       previewImageRef
       designImagesRef
+      designUri
     }
   }
 `;
