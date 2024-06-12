@@ -36,7 +36,7 @@ const PaymentCard = ({
     return <ButtonSolid className="my-4" title="PLACE BID" />;
   };
 
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <div className="w-full lg:w-[24rem] border h-[28rem] rounded-lg mb:mb-[4rem] text-[#595862] ">
@@ -106,9 +106,18 @@ const PaymentCard = ({
         <div className="flex items-center justify-between w-full">
           {isAuctionPage ? (
             isAuctionEnd ? (
-              <div className="w-full mt-[3rem] ">
+              <div className="w-full flex flex-col items-center justify-center ">
+                <Image src={"/images/auction_end.svg"} alt="ended" height={180} width={180} />
                 <p className="text-[.8rem] sm:text-[1rem] text-center font-medium text-red-700 ">
-                  Auction Closed
+                  We apologize, but the auction has ended. Please select from
+                  our{" "}
+                  <span
+                    onClick={() => router.push("/art/auctionroom")}
+                    className="underline cursor-pointer"
+                  >
+                    active auctions
+                  </span>
+                  .
                 </p>
               </div>
             ) : (
@@ -171,7 +180,11 @@ const PaymentCard = ({
             />
           )
         ) : (
-          <ButtonSolid onClick={()=>router.push("/art/cart/confirm")} className="mt-6" title="CHECKOUT" />
+          <ButtonSolid
+            onClick={() => router.push("/art/cart/confirm")}
+            className="mt-6"
+            title="CHECKOUT"
+          />
         )}
       </div>
     </div>
