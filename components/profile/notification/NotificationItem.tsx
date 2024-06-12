@@ -4,17 +4,40 @@ import { IoChevronDown } from "react-icons/io5";
 import BidPlacedDetails from "./BidPlacedDetails";
 import Link from "next/link";
 import { MyContext } from "@/context/Context";
+import { useRouter } from "next/navigation";
 
 const NotificationItem = ({notification}:{notification:UserNotification}) => {
 
   const [badgeTitle, setBadgeTitle] = useState("")
   const [badgeColor, setBadgeColor] = useState("")
+  const [notificationSummary, setNotificationSummary] = useState("")
+  const [userFollowing, setUserFollowing] = useState("")
 
   const notificationType = notification?.notificationType
 
   const {appState} = useContext(MyContext)
 
   const user:User = appState?.session
+  const router = useRouter()
+
+    const formatNotificationSummary = () => {
+        const regex = /@(\w+)/;
+        const match = notification?.summary?.match(regex);
+    
+        if (match) {
+          setUserFollowing(match[1]);
+          setNotificationSummary(notification?.summary.replace(match[0], ""));
+        } else {
+            setNotificationSummary(notification?.summary);
+        }
+      };
+
+    useEffect(() => {
+      formatNotificationSummary()
+    }, [])
+    
+    console.log("checkkk >>>>", notificationSummary, userFollowing)
+
 
   useEffect(() => {
 
@@ -26,7 +49,7 @@ const NotificationItem = ({notification}:{notification:UserNotification}) => {
           break;
         case "bidOutbid":
           setBadgeTitle("Outbidded")
-          setBadgeColor("#4B60CE")
+          setBadgeColor("#DA9D65")
           break;
         case "newFollower":
           setBadgeTitle("New Follower")
@@ -38,7 +61,7 @@ const NotificationItem = ({notification}:{notification:UserNotification}) => {
           break;
         case "orderConfirmed":
           setBadgeTitle("Order Confirmed")
-          setBadgeColor("#9DD253")
+          setBadgeColor("#DA65B9")
           break;
         case "newBid":
           setBadgeTitle("New Bid")
@@ -57,7 +80,7 @@ const NotificationItem = ({notification}:{notification:UserNotification}) => {
   
 
   return (
-    <Accordion >
+    <Accordion defaultExpanded={notificationType === "newFollower"}>
       <AccordionSummary
         expandIcon={<IoChevronDown />}
         aria-controls="panel1-content"
@@ -69,7 +92,9 @@ const NotificationItem = ({notification}:{notification:UserNotification}) => {
               <p className="text-white font-medium text-sm">{badgeTitle}</p>
             </div>
             <p className="mt-2 font-medium text-[#444444] ">
-              {notification?.summary}
+              {userFollowing && (
+                <span onClick={()=>router.push(`/profile/${userFollowing}`)} className="text-sky-600 underline">{`@${userFollowing}`}</span>
+                )} {notificationSummary}
             </p>
           </div>
 
@@ -84,6 +109,8 @@ const NotificationItem = ({notification}:{notification:UserNotification}) => {
           <p className="text-[#8291A6] text-sm mb-2">your order has been successfully placed.</p>
           <Link href={`/profile/${user?.username}/settings/orders`} className="text-[#056DFF] underline">view order details</Link>
           </>
+        ) : notificationType === "newFollower" ? (
+            <p className="text-[#8291A6] text-sm mb-2">You have a new follower</p>
         ) : (
           <p>yoooo</p>
         )}
