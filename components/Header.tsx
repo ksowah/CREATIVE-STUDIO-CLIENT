@@ -17,7 +17,8 @@ import Image from "next/image";
 import { RiMenu2Line } from "react-icons/ri";
 import SideMenu from "./SideMenu";
 import { IoMdClose } from "react-icons/io";
-import { FaBell } from "react-icons/fa";
+import { LuBell } from "react-icons/lu";
+
 
 const Header = () => {
   const pathname = usePathname();
@@ -141,17 +142,22 @@ const Header = () => {
 
               {user ? (
                 <div className="flex items-center space-x-2">
+                  <Tooltip title="Notifications">
+                    <Link
+                      className="relative h-[2.6rem] cursor-pointer w-[2.6rem] border rounded-md flex items-center justify-center"
+                      href={`/profile/${user?.username}/settings/notifications`}
+                    >
+                      <div className="absolute flex items-center justify-center h-4 w-4 border rounded-full -top-1 -right-1 bg-white" >
+                        <div className="h-2 w-2 rounded-full bg-[#FC0909]" />
+                      </div>
+                      <LuBell className="cursor-pointer" size={20} />
+                    </Link>
+                  </Tooltip>
                   <Link href={`/profile/${user?.username}`}>
                     <div className="cursor-pointer">
                       <SessionAvatar image={user?.avatar} size={45} />
                     </div>
                   </Link>
-                  <Tooltip title="Notifications">
-                    <Link className="relative" href={`/profile/${user?.username}/settings/notifications`}>
-                      <div className="h-2 w-2 border border-white rounded-full bg-[#FC0909] absolute top-0 right-0  "/>
-                      <FaBell className="cursor-pointer" size={20} />
-                    </Link>
-                  </Tooltip>
                 </div>
               ) : (
                 <div className="flex items-center space-x-4">
