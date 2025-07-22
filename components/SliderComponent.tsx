@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Slider from "react-slick";
+const Slider = require("react-slick").default;
 import SlideItem from "./SlideItem";
 import { useRef } from "react";
 import { IoChevronForward } from "react-icons/io5";

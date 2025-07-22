@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Slider from "react-slick";
+const Slider = require("react-slick").default;
 import { IoIosArrowRoundBack, IoIosArrowRoundForward } from "react-icons/io";
 import Container from "../Container";
 import { useRef, useState } from "react";

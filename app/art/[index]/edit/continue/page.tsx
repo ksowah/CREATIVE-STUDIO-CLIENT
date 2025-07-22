@@ -204,7 +204,7 @@ const ContinueArtEdit = ({ params }: { params: any }) => {
       let artDetailsImageRef: any = [...artDetails?.artImagesRef];
       let newImagesUploaded: any = [];
       let allArtimagesAlreadyUploaded = [...artImages].filter((image: string) =>
-        image.startsWith("https://" || "localhost:")
+        image.startsWith("https://") || image.startsWith("localhost:")
       );
 
       if (remainingImageRefFromArtDetails.length < artDetailsImageRef.length) {
