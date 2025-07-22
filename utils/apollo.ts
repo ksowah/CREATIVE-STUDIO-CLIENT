@@ -10,11 +10,14 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 import { setContext } from "@apollo/client/link/context";
 
+// AWS: https://creative-studio-graph.duckdns.org/graphql
+// Koyeb: https://creative-studio-ksowahsoftwares.koyeb.app/graphql
+
 const httpLink = createHttpLink({
   uri:
     process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
       ? "http://localhost:8000/graphql"
-      : "https://creative-studio-ksowahsoftwares.koyeb.app/graphql",
+      : "https://creative-studio-graph.duckdns.org/graphql",
 });
 
 
@@ -23,7 +26,7 @@ const wsLink = new GraphQLWsLink(
     url:
       process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
         ? "ws://localhost:8000/graphql"
-        : "wss://creative-studio-ksowahsoftwares.koyeb.app/graphql",
+        : "wss://creative-studio-graph.duckdns.org/graphql",
   })
 );
 

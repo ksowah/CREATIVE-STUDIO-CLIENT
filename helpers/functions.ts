@@ -47,7 +47,7 @@ export const handleLogin = async (
   setErrorMessage: any
 ) => {
   try {
-    const { data } = await login({
+    const { data, error } = await login({
       variables: {
         loginInput: loginData,
       },

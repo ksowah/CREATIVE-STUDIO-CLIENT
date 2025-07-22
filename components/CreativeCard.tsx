@@ -1,14 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { CiHeart } from "react-icons/ci";
-import { FaBookmark, FaRegComment } from "react-icons/fa";
+import { FaBookmark } from "react-icons/fa";
 import { Skeleton } from "@mui/material";
-import { cache, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import SessionAvatar from "./SessionAvatar";
-import { IoEyeOutline } from "react-icons/io5";
-import { useMutation, useQuery, useSubscription } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_DESIGN_LIKES, GET_SAVED_DESIGNS } from "@/apollo/queries/designs";
 import {
   LIKE_DESIGN,
@@ -16,11 +14,9 @@ import {
   UNLIKE_DESIGN,
   UNSAVE_DESIGN,
 } from "@/apollo/mutations/designs";
-import { NEW_LIKE_SUBSCRIPTION } from "@/apollo/subscriptions";
 import { MyContext } from "@/context/Context";
 import { FaRegHeart } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa6";
-import { IoBookmarkOutline } from "react-icons/io5";
 import { FaRegBookmark } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import { handleLikeDesign, handleSaveDesign } from "@/helpers/functions";
