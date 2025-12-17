@@ -17,7 +17,7 @@ const httpLink = createHttpLink({
   uri:
     process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
       ? "http://localhost:8000/graphql"
-      : "https://creative-studio-graph.duckdns.org/graphql",
+      : "https://creative-studio-ksowahsoftwares.koyeb.app/graphql",
 });
 
 
