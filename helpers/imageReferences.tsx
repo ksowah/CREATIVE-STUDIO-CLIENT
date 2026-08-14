@@ -1,4 +1,3 @@
-//  `images/${refId}/user_${userId}`
 export const getProfileImageReference = (userId: string, refId:string) => {
     return `images/profile_image_${refId}/user_${userId}`;
 }

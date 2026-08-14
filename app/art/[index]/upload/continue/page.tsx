@@ -8,8 +8,8 @@ import { MyContext } from "@/context/Context";
 import {
   getArtMultipleImagesReference,
   getArtPreviewImageReference,
-} from "@/helpers/firebaseFileReferences";
-import { uploadFileToFB, uploadMultipleImagesToFB } from "@/helpers/functions";
+} from "@/helpers/imageReferences";
+import { uploadFileToCloudinary, uploadMultipleImagesToCloudinary } from "@/helpers/functions";
 import { CREATE_ART } from "@/apollo/mutations/arts";
 import { useMutation } from "@apollo/client";
 import {
@@ -141,7 +141,7 @@ const ContinueArtUpload = () => {
 
     try {
       setErrorOccured(false);
-      let previewImage: SingleFileUpload | undefined = await uploadFileToFB(
+      let previewImage: SingleFileUpload | undefined = await uploadFileToCloudinary(
         artUpload.selectedImage,
         getArtPreviewImageReference(session?._id, fileId.toString())
       );
@@ -150,7 +150,7 @@ const ContinueArtUpload = () => {
 
       let artImagesToUpload: any =
         artImages.length > 0
-          ? await uploadMultipleImagesToFB(
+          ? await uploadMultipleImagesToCloudinary(
               artImages,
               getArtMultipleImagesReference(session?._id, fileId.toString())
             )

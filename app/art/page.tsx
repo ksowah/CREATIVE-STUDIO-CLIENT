@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { MyContext } from "@/context/Context";
 import PromptSigninPopup from "@/components/PromptSigninPopup";
+import { isFirebaseImageUrl } from "@/helpers/functions";
 
 const Art = () => {
   const { loading, error, data } = useQuery(GET_ALL_ARTS);
@@ -99,7 +100,9 @@ const Art = () => {
           <SkeletonLoader />
         ) : (
           <ImageList variant="masonry" cols={cols} gap={8}>
-            {[...(data?.getAllArtWorks || [])].map((item: ArtPiece, idx) => (
+            {(data?.getAllArtWorks || [])
+              .filter((item: ArtPiece) => !isFirebaseImageUrl(item.artPreview))
+              .map((item: ArtPiece) => (
               <ImageListItem
                 key={item._id}
                 sx={{

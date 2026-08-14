@@ -8,13 +8,11 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import SessionAvatar from "@/components/SessionAvatar";
 import SettingsContainer from "@/components/SettingsContainer";
-import { appInitializer } from "@/firebase";
-import { selectImage, uploadFileToFB } from "@/helpers/functions";
-import { getProfileImageReference } from "@/helpers/firebaseFileReferences";
+import { selectImage, uploadFileToCloudinary } from "@/helpers/functions";
+import { getProfileImageReference } from "@/helpers/imageReferences";
 import { EDIT_PROFILE, GET_ME, GET_USER_BY_USERNAME } from "@/apollo/queries/user";
 import { useMutation, useQuery } from "@apollo/client";
 import { Alert } from "@mui/material";
-import { getStorage } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import CssTextField from "@/components/CSSTextField";
@@ -23,7 +21,6 @@ const Settings = () => {
   const { data: session } = useQuery(GET_ME);
   const currentUserData:User = session?.getMe?.user;
 
-  const storage = getStorage(appInitializer);
   const imageId = new Date().getTime();
 
   const [editProfileData, setEditProfileData] = useState({
@@ -68,7 +65,7 @@ const Settings = () => {
     let profileImageURL = currentUserData?.avatar
 
     if (pickedImage) {
-      const imageURL = await uploadFileToFB(
+      const imageURL = await uploadFileToCloudinary(
         pickedImage,
         getProfileImageReference(currentUserData?._id, imageId.toString())
       ); 

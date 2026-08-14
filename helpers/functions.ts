@@ -1,16 +1,14 @@
-import { appInitializer } from "@/firebase";
 import { GET_ALL_DESIGNS, GET_DESIGN_LIKES, GET_SAVED_DESIGNS, GET_USER_DESIGNS } from "@/apollo/queries/designs";
-import {
-  deleteObject,
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadString,
-} from "firebase/storage";
 import { GET_ALL_ARTS, GET_USER_ARTS } from "@/apollo/queries/arts";
 import { GET_FOLLOWERS } from "@/apollo/queries/user";
 
-const storage = getStorage(appInitializer);
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+// Firebase Storage stopped serving files after the Spark plan deprecation -
+// any record still pointing at it has a permanently broken image.
+export const isFirebaseImageUrl = (url?: string | null) =>
+  !!url && url.includes("firebasestorage.googleapis.com");
 
 export const registerNewUser = async (
   registerData: any,
@@ -85,28 +83,44 @@ export const selectImage = (e: any, setPickedImage: any) => {
   };
 }
 
-export const uploadFileToFB = async (
+export const uploadFileToCloudinary = async (
   selectedFile: any,
-  imageReference: any
+  imageReference: string
 ) => {
   try {
-    const fileRef = ref(storage, imageReference);
-    if (selectedFile) {
-      await uploadString(fileRef, selectedFile, "data_url");
-      const url = await getDownloadURL(fileRef);
+    if (!selectedFile) return;
 
-      const data: SingleFileUpload = {
-        reference: imageReference,
-        file: url,
-      };
-      return data;
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET as string);
+    formData.append("public_id", imageReference);
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const uploaded = await response.json();
+
+    if (!response.ok) {
+      console.log("Error uploading image:", uploaded);
+      return;
     }
+
+    const data: SingleFileUpload = {
+      reference: uploaded.public_id,
+      file: uploaded.secure_url,
+    };
+    return data;
   } catch (error) {
     console.log("Error uploading image:", error);
   }
 }
 
-export const uploadMultipleImagesToFB = async (
+export const uploadMultipleImagesToCloudinary = async (
   selectedImages: any,
   imageReference: string
 ) => {
@@ -117,7 +131,7 @@ export const uploadMultipleImagesToFB = async (
     for (let i = 0; i < selectedImages.length; i++) {
       const selectedImage = selectedImages[i];
       const storedImageReference = `${imageReference}__${i}`;
-      const url = await uploadFileToFB(
+      const url = await uploadFileToCloudinary(
         selectedImage,
         storedImageReference
       );
@@ -136,13 +150,13 @@ export const uploadMultipleImagesToFB = async (
   }
 }
 
-export const deleteImageFromFB = async (imgReferences: [string]) => {
+export const deleteImageFromCloudinary = async (imgReferences: string[]) => {
   try {
-    for (let i = 0; i < imgReferences.length; i++) {
-      let imageRef = ref(storage, imgReferences[i]);
-      await deleteObject(imageRef);
-      console.log("File deleted successfully", i);
-    }
+    await fetch("/api/cloudinary/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ publicIds: imgReferences }),
+    });
   } catch (e) {
     console.log("Error deleting file", e);
   }
@@ -155,7 +169,7 @@ export const deleteDesignData = async (
   userId: string
 ) => {
   try {
-    await deleteImageFromFB(designImagesRefs)
+    await deleteImageFromCloudinary(designImagesRefs)
 
     await deleteDesign({
       variables: { designId },
@@ -208,7 +222,7 @@ export const deleteArtData = async (
   userId: string
 ) => {
   try {
-    await deleteImageFromFB(artImagesRefs)
+    await deleteImageFromCloudinary(artImagesRefs)
 
     await deleteArtFunc({
       variables: { artId },

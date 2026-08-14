@@ -16,6 +16,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { MyContext } from "@/context/Context";
+import { isFirebaseImageUrl } from "@/helpers/functions";
 
 export default function Home() {
   const [category, setCategory] = useState("");
@@ -84,17 +85,15 @@ export default function Home() {
           <SkeletonLoader />
         ) : (
           <div className="flex items-center justify-center flex-wrap xl:grid grid-cols-4 ">
-            {
-              category ? (
-                [...(byCategoryData?.getDesignsByCategory || [])].map((item: Design, idx) => (
-                  <CreativeCard key={item._id} designDetails={item} />
-                ))
-              ) : (
-                [...(data?.getAllDesigns || [])].map((item: Design, idx) => (
-                  <CreativeCard key={item._id} designDetails={item} />
-                ))
-              )
-            }
+            {(
+              category
+                ? byCategoryData?.getDesignsByCategory
+                : data?.getAllDesigns
+            )
+              ?.filter((item: Design) => !isFirebaseImageUrl(item.preview))
+              .map((item: Design) => (
+                <CreativeCard key={item._id} designDetails={item} />
+              ))}
           </div>
         )}
 

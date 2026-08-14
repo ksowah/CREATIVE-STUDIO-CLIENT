@@ -9,13 +9,11 @@ import MultiImageUploader from "@/components/MultiImageUploader";
 import UploadDialogue from "@/components/UploadDialogue";
 import Uploader from "@/components/Uploader";
 import { MyContext } from "@/context/Context";
-import { appInitializer } from "@/firebase";
-import { uploadFileToFB, uploadMultipleImagesToFB } from "@/helpers/functions";
+import { uploadFileToCloudinary, uploadMultipleImagesToCloudinary } from "@/helpers/functions";
 import {
   getDesignMultipleImagesReference,
   getDesignPreviewImageReference,
-} from "@/helpers/firebaseFileReferences";
-import { getStorage } from "firebase/storage";
+} from "@/helpers/imageReferences";
 import React, { useContext, useState } from "react";
 
 
@@ -27,8 +25,6 @@ const UploadDesign = () => {
 
 
   const user = appState?.session;
-
-  const storage = getStorage(appInitializer);
 
   const fileId = new Date().getTime();
 
@@ -94,7 +90,7 @@ const UploadDesign = () => {
                 <UploadDialogue
                   getDesignImagesURLs={() =>
                     // @ts-ignore
-                    uploadMultipleImagesToFB(
+                    uploadMultipleImagesToCloudinary(
                       selectedImages,
                       getDesignMultipleImagesReference(
                         user?._id,
@@ -103,7 +99,7 @@ const UploadDesign = () => {
                     )
                   }
                   getPreviewImage={() =>
-                    uploadFileToFB(
+                    uploadFileToCloudinary(
                       selectedImage,
                       getDesignPreviewImageReference(
                         user?._id,

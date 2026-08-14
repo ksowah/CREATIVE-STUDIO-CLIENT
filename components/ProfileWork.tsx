@@ -23,7 +23,6 @@ import { useRouter } from "next/navigation";
 import ActionConfirmationDialogue from "./ActionConfirmationDialogue";
 import {
   deleteDesignData,
-  deleteImageFromFB,
   handleLikeDesign,
   handleSaveDesign,
 } from "@/helpers/functions";

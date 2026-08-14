@@ -8,11 +8,11 @@ import { MyContext } from "@/context/Context";
 import {
   getArtMultipleImagesReference,
   getArtPreviewImageReference,
-} from "@/helpers/firebaseFileReferences";
+} from "@/helpers/imageReferences";
 import {
-  deleteImageFromFB,
-  uploadFileToFB,
-  uploadMultipleImagesToFB,
+  deleteImageFromCloudinary,
+  uploadFileToCloudinary,
+  uploadMultipleImagesToCloudinary,
 } from "@/helpers/functions";
 import { CREATE_ART, EDIT_ART } from "@/apollo/mutations/arts";
 import { useMutation, useQuery } from "@apollo/client";
@@ -189,12 +189,12 @@ const ContinueArtEdit = ({ params }: { params: any }) => {
       let newArtPreviewImageRef = "";
       if (artUpload.selectedImage.startsWith("data:image")) {
         const newPreviewImage: SingleFileUpload | undefined =
-          await uploadFileToFB(
+          await uploadFileToCloudinary(
             artUpload.selectedImage,
             getArtPreviewImageReference(session?._id, fileId.toString())
           );
 
-        await deleteImageFromFB([artDetails?.previewImageRef]);
+        await deleteImageFromCloudinary([artDetails?.previewImageRef]);
         console.log("database preview imagee deleted from fb!!...");
         newArtPreviewImage = newPreviewImage?.file;
         newArtPreviewImageRef = newPreviewImage?.reference;
@@ -212,7 +212,7 @@ const ContinueArtEdit = ({ params }: { params: any }) => {
           image.startsWith("data:image")
         );
         if (allArtImagesToUpload.length > 0) {
-          newImagesUploaded = await uploadMultipleImagesToFB(
+          newImagesUploaded = await uploadMultipleImagesToCloudinary(
             allArtImagesToUpload,
             getArtMultipleImagesReference(session?._id, fileId.toString())
           );
@@ -222,7 +222,7 @@ const ContinueArtEdit = ({ params }: { params: any }) => {
           (ref: string) => !remainingImageRefFromArtDetails.includes(ref)
         );
         if (artDetailsImageRef.length > 0) {
-          await deleteImageFromFB(artDetailsImageRef);
+          await deleteImageFromCloudinary(artDetailsImageRef);
         }
         console.log("database art image deleted!!...");
       }
