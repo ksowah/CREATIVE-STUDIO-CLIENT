@@ -15,6 +15,7 @@ if (!CLOUD_NAME || !UPLOAD_PRESET) {
 const IMAGES_DIR = path.join(process.cwd(), "public", "images");
 const img = (name) => path.join(IMAGES_DIR, name);
 const log = (...args) => console.log(new Date().toISOString(), ...args);
+const slugify = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 async function gql(query, variables, token) {
   const res = await fetch(GRAPHQL_URL, {
@@ -234,8 +235,74 @@ async function createDesign(token, owner, opts) {
     token
   );
   log(`  [${owner}] created design "${data.createDesign.title}" _id=${data.createDesign._id}`);
-  return data.createDesign;
+  return { ...data.createDesign, owner };
 }
+
+const ART_SPECS = [
+  { title: "Amber Fields", description: "A sun-drenched wheat field caught in late afternoon light.", category: "painting", dimensions: "30*40in", artState: "onSale", price: 380 },
+  { title: "Steel Bloom", description: "Welded steel sculpture inspired by unfurling petals.", category: "sculpture", dimensions: "20*20in", artState: "showcase" },
+  { title: "Midnight Transit", description: "Digital piece exploring motion blur through a city at night.", category: "digitalArt", dimensions: "45*60cm", artState: "auction", auctionStartPrice: 180, auctionDays: 5 },
+  { title: "Whispering Reeds", description: "Graphite study of reeds bending in the wind.", category: "pencilDrawing", dimensions: "16*20in", artState: "onSale", price: 150 },
+  { title: "Vermillion Study", description: "Bold color-field study in red and ochre.", category: "painting", dimensions: "24*24in", artState: "showcase" },
+  { title: "Concrete Garden", description: "Cast concrete forms arranged as a miniature rock garden.", category: "sculpture", dimensions: "14*14in", artState: "onSale", price: 410 },
+  { title: "Glass Horizon", description: "Digital rendering of light refracting through glass panels.", category: "digitalArt", dimensions: "50*70cm", artState: "showcase" },
+  { title: "Threadbound", description: "Hand-woven wall hanging using reclaimed fabric scraps.", category: "textileArt", dimensions: "36*48in", artState: "onSale", price: 290 },
+  { title: "Ink & Ash", description: "Calligraphic piece built from layered ink washes.", category: "calligraphy", dimensions: "18*24in", artState: "showcase" },
+  { title: "Departure Lounge", description: "Digital collage assembled from airport signage and light trails.", category: "digitalArt", dimensions: "40*50cm", artState: "auction", auctionStartPrice: 220, auctionDays: 6 },
+  { title: "Sunbaked Clay", description: "Terracotta relief study of cracked desert ground.", category: "sculpture", dimensions: "16*16in", artState: "onSale", price: 340 },
+  { title: "Paper Lanterns", description: "Pencil study of hanging lanterns at dusk.", category: "pencilDrawing", dimensions: "14*18in", artState: "showcase" },
+  { title: "Electric Bloom", description: "Neon-toned digital florals rendered in high contrast.", category: "digitalArt", dimensions: "30*40cm", artState: "onSale", price: 260 },
+  { title: "Woven Horizon", description: "Large-format tapestry blending geometric and organic motifs.", category: "textileArt", dimensions: "48*60cm", artState: "auction", auctionStartPrice: 190, auctionDays: 5 },
+  { title: "Marble Whisper", description: "Minimalist marble form exploring negative space.", category: "sculpture", dimensions: "22*10in", artState: "showcase" },
+  { title: "Copper Tide", description: "Oil painting of waves rendered in metallic tones.", category: "painting", dimensions: "28*36in", artState: "onSale", price: 470 },
+  { title: "Faded Script", description: "Calligraphy piece using distressed lettering techniques.", category: "calligraphy", dimensions: "20*20in", artState: "onSale", price: 130 },
+  { title: "Neon Orchard", description: "Digital orchard scene rendered in a synthwave palette.", category: "digitalArt", dimensions: "36*48cm", artState: "showcase" },
+  { title: "Salt & Stone", description: "Coastal landscape painting capturing salt flats at sunset.", category: "painting", dimensions: "32*44in", artState: "auction", auctionStartPrice: 210, auctionDays: 7 },
+  { title: "Loom of Dawn", description: "Textile piece using naturally dyed threads to depict sunrise.", category: "textileArt", dimensions: "30*36in", artState: "showcase" },
+];
+
+const DESIGN_SPECS = [
+  { title: "Orbit Travel App", description: "Flight booking and itinerary app concept.", category: "Mobile", subscription: "FREE", tags: ["ui", "mobile", "travel"] },
+  { title: "Basil Restaurant Site", description: "Warm, editorial website for a neighborhood restaurant.", category: "Web", subscription: "PAID", tags: ["web", "restaurant", "branding"] },
+  { title: "Kinfolk Type System", description: "Modular type system built for editorial layouts.", category: "Typography", subscription: "FREE", tags: ["typography", "editorial"] },
+  { title: "Solstice Editorial Shoot", description: "Fashion editorial photography series shot at golden hour.", category: "Photography", subscription: "PAID", tags: ["photography", "fashion", "editorial"] },
+  { title: "Meadow Skincare Branding", description: "Botanical illustration set for a skincare label.", category: "Illustration", subscription: "FREE", tags: ["illustration", "packaging", "skincare"] },
+  { title: "Beacon Onboarding Flow", description: "Multi-step onboarding flow for a productivity app.", category: "Mobile", subscription: "PAID", tags: ["ui", "onboarding", "mobile"] },
+  { title: "Fernwood Portfolio Site", description: "Minimalist portfolio site for a landscape architect.", category: "Web", subscription: "FREE", tags: ["web", "portfolio"] },
+  { title: "Type & Texture Study", description: "Experimental typography paired with tactile textures.", category: "Typography", subscription: "FREE", tags: ["typography", "experimental"] },
+  { title: "Harbor Light Product Shots", description: "Product photography series for a coastal homeware brand.", category: "Photography", subscription: "PAID", tags: ["photography", "product"] },
+  { title: "Petal Press Packaging", description: "Illustrated packaging system for a stationery brand.", category: "Illustration", subscription: "PAID", tags: ["illustration", "packaging"] },
+  { title: "Loopline Logo Animation", description: "Animated logo reveal for a music streaming startup.", category: "Animation", subscription: "PAID", tags: ["animation", "logo", "motion"] },
+  { title: "Nimbus Weather App", description: "Weather app redesign with a focus on data clarity.", category: "Mobile", subscription: "FREE", tags: ["ui", "mobile", "weather"] },
+  { title: "Anchor Agency Rebrand", description: "Full rebrand concept for a digital agency.", category: "Web", subscription: "PAID", tags: ["branding", "web", "agency"] },
+  { title: "Grain Type Specimen", description: "Display typeface specimen with grain texture overlays.", category: "Typography", subscription: "FREE", tags: ["typography", "type-specimen"] },
+  { title: "Wanderlust Travel Series", description: "Documentary-style travel photography series.", category: "Photography", subscription: "FREE", tags: ["photography", "travel"] },
+  { title: "Sprout Kids App", description: "Playful learning app concept for young children.", category: "Mobile", subscription: "PAID", tags: ["ui", "mobile", "kids"] },
+  { title: "Foundry Studio Site", description: "Bold, type-driven website for a design foundry.", category: "Web", subscription: "FREE", tags: ["web", "typography"] },
+  { title: "Thistle Illustration Pack", description: "Botanical illustration pack for editorial use.", category: "Illustration", subscription: "FREE", tags: ["illustration", "botanical"] },
+  { title: "Momentum Splash Screen", description: "Animated splash screen concept for a fitness app.", category: "Animation", subscription: "FREE", tags: ["animation", "splash-screen"] },
+  { title: "Coastal Table Menu Design", description: "Print and digital menu design for a seaside restaurant.", category: "Web", subscription: "PAID", tags: ["web", "menu", "hospitality"] },
+];
+
+const COMMENT_POOL = [
+  "Love the color palette here!",
+  "This is such a clean concept, great work.",
+  "The composition really draws the eye in.",
+  "Would love to see this as a full case study.",
+  "Really solid execution on this one.",
+  "The attention to detail is impressive.",
+  "This has such a nice, calm energy to it.",
+  "Great use of negative space.",
+  "This would look amazing printed large.",
+  "One of my favorites in this collection.",
+];
+
+const REPLY_POOL = [
+  "Thank you, really appreciate that!",
+  "Glad it resonates with you.",
+  "That means a lot, thanks for checking it out.",
+  "Appreciate the kind words!",
+];
 
 async function main() {
   log("=== Registering accounts ===");
@@ -265,336 +332,63 @@ async function main() {
   const davinci = await loginOnly("knosowah@st.ug.edu.gh", "123456"); // ARTIST
   const mj = await loginOnly("ksowahhh@gmail.com", "123456"); // DESIGNER
 
-  log("=== Creating art pieces ===");
+  log(`=== Creating ${ART_SPECS.length} more art pieces ===`);
   const arts = [];
-  arts.push(
-    await createArt(pim.token, "Pim", {
-      title: "Golden Hour Reverie",
-      description: "An oil painting exploring warm light and quiet stillness.",
-      category: "painting",
-      dimensions: "24*36in",
-      artState: "onSale",
-      price: 450,
-      previewFile: img("art10.jpg"),
-      previewPublicId: "seed/arts/golden_hour/preview",
-      imageFiles: [img("work1.jpg"), img("work2.jpg")],
-      imagePublicIdPrefix: "seed/arts/golden_hour/image",
-    })
-  );
-  arts.push(
-    await createArt(davinci.token, "davinci", {
-      title: "Fractured Light",
-      description: "Digital art piece experimenting with refraction and color.",
-      category: "digitalArt",
-      dimensions: "40*60cm",
-      artState: "auction",
-      auctionStartPrice: 100,
-      auctionDays: 5,
-      previewFile: img("drawings.png"),
-      previewPublicId: "seed/arts/fractured_light/preview",
-      imageFiles: [img("drawings2.png")],
-      imagePublicIdPrefix: "seed/arts/fractured_light/image",
-    })
-  );
-  arts.push(
-    await createArt(pim.token, "Pim", {
-      title: "Silent Grove",
-      description: "Pencil drawing study of a quiet forest scene.",
-      category: "pencilDrawing",
-      dimensions: "18*24in",
-      artState: "showcase",
-      previewFile: img("work3.jpg"),
-      previewPublicId: "seed/arts/silent_grove/preview",
-      imageFiles: [img("more1.jpg")],
-      imagePublicIdPrefix: "seed/arts/silent_grove/image",
-    })
-  );
-  arts.push(
-    await createArt(davinci.token, "davinci", {
-      title: "Terracotta Vessel Study",
-      description: "Sculpture study inspired by ancient pottery forms.",
-      category: "sculpture",
-      dimensions: "12*18in",
-      artState: "onSale",
-      price: 620,
-      previewFile: img("card1.png"),
-      previewPublicId: "seed/arts/terracotta_vessel/preview",
-      imageFiles: [img("card2.png"), img("card3.png")],
-      imagePublicIdPrefix: "seed/arts/terracotta_vessel/image",
-    })
-  );
-  arts.push(
-    await createArt(pim.token, "Pim", {
-      title: "Woven Threads",
-      description: "Textile art piece combining traditional weaving with modern motifs.",
-      category: "textileArt",
-      dimensions: "30*45cm",
-      artState: "auction",
-      auctionStartPrice: 150,
-      auctionDays: 4,
-      previewFile: img("card4.png"),
-      previewPublicId: "seed/arts/woven_threads/preview",
-      imageFiles: [img("card5.png")],
-      imagePublicIdPrefix: "seed/arts/woven_threads/image",
-    })
-  );
-  arts.push(
-    await createArt(davinci.token, "davinci", {
-      title: "Ink Calligraphy No. 3",
-      description: "Traditional calligraphy piece exploring rhythm and negative space.",
-      category: "calligraphy",
-      dimensions: "20*30in",
-      artState: "showcase",
-      previewFile: img("card6.png"),
-      previewPublicId: "seed/arts/ink_calligraphy/preview",
-      imageFiles: [img("card7.png")],
-      imagePublicIdPrefix: "seed/arts/ink_calligraphy/image",
-    })
-  );
-  arts.push(
-    await createArt(davinci.token, "davinci", {
-      title: "Coastal Drift",
-      description: "A study in tide lines and shifting sand, shot on location.",
-      category: "digitalArt",
-      dimensions: "36*24in",
-      artState: "onSale",
-      price: 320,
-      previewPicsumSeed: "cs-art-coastal-drift",
-      previewPublicId: "seed/arts/coastal_drift/preview",
-      imagePicsumSeeds: ["cs-art-coastal-drift-2", "cs-art-coastal-drift-3"],
-      imagePublicIdPrefix: "seed/arts/coastal_drift/image",
-    })
-  );
-  arts.push(
-    await createArt(pim.token, "Pim", {
-      title: "Urban Fragments",
-      description: "Mixed-media piece assembled from cityscape photography.",
-      category: "digitalArt",
-      dimensions: "50*70cm",
-      artState: "auction",
-      auctionStartPrice: 200,
-      auctionDays: 6,
-      previewPicsumSeed: "cs-art-urban-fragments",
-      previewPublicId: "seed/arts/urban_fragments/preview",
-      imagePicsumSeeds: ["cs-art-urban-fragments-2"],
-      imagePublicIdPrefix: "seed/arts/urban_fragments/image",
-    })
-  );
-  arts.push(
-    await createArt(pim.token, "Pim", {
-      title: "Highland Study",
-      description: "Landscape study capturing early morning fog over the hills.",
-      category: "painting",
-      dimensions: "28*40in",
-      artState: "showcase",
-      previewPicsumSeed: "cs-art-highland-study",
-      previewPublicId: "seed/arts/highland_study/preview",
-      imagePicsumSeeds: ["cs-art-highland-study-2"],
-      imagePublicIdPrefix: "seed/arts/highland_study/image",
-    })
-  );
-  arts.push(
-    await createArt(davinci.token, "davinci", {
-      title: "Quiet Harbor",
-      description: "A calm harbor scene rendered in muted tones.",
-      category: "painting",
-      dimensions: "24*30in",
-      artState: "onSale",
-      price: 275,
-      previewPicsumSeed: "cs-art-quiet-harbor",
-      previewPublicId: "seed/arts/quiet_harbor/preview",
-      imagePicsumSeeds: ["cs-art-quiet-harbor-2", "cs-art-quiet-harbor-3"],
-      imagePublicIdPrefix: "seed/arts/quiet_harbor/image",
-    })
-  );
+  for (let i = 0; i < ART_SPECS.length; i++) {
+    const spec = ART_SPECS[i];
+    const owner = i % 2 === 0 ? pim : davinci;
+    const ownerName = i % 2 === 0 ? "Pim" : "davinci";
+    const slug = slugify(spec.title);
+    arts.push(
+      await createArt(owner.token, ownerName, {
+        ...spec,
+        previewPicsumSeed: `cs2-art-${slug}`,
+        previewPublicId: `seed2/arts/${slug}/preview`,
+        imagePicsumSeeds: [`cs2-art-${slug}-2`, `cs2-art-${slug}-3`],
+        imagePublicIdPrefix: `seed2/arts/${slug}/image`,
+      })
+    );
+  }
 
-  log("=== Creating designs ===");
+  log(`=== Creating ${DESIGN_SPECS.length} more designs ===`);
   const designs = [];
-  designs.push(
-    await createDesign(kelvin.token, "ksowah", {
-      title: "Finch Mobile Banking App",
-      description: "A clean, modern mobile banking experience concept.",
-      category: "Mobile",
-      subscription: "FREE",
-      tags: ["ui", "mobile", "fintech"],
-      designUri: "https://www.figma.com/design/placeholder-finch-app",
-      previewFile: img("smallpic.png"),
-      previewPublicId: "seed/designs/finch_app/preview",
-      imageFiles: [img("smallpic1.png")],
-      imagePublicIdPrefix: "seed/designs/finch_app/image",
-    })
-  );
-  designs.push(
-    await createDesign(kelvin.token, "ksowah", {
-      title: "Lumen Web Landing Page",
-      description: "Landing page design for a lighting brand.",
-      category: "Web",
-      subscription: "PAID",
-      tags: ["web", "landing-page", "branding"],
-      designUri: "https://www.figma.com/design/placeholder-lumen-web",
-      previewFile: img("slide1.jpg"),
-      previewPublicId: "seed/designs/lumen_web/preview",
-      imageFiles: [img("slide2.jpg")],
-      imagePublicIdPrefix: "seed/designs/lumen_web/image",
-    })
-  );
-  designs.push(
-    await createDesign(kelvin.token, "ksowah", {
-      title: "Nova Type Specimen",
-      description: "Typography exploration for a display typeface.",
-      category: "Typography",
-      subscription: "FREE",
-      tags: ["typography", "type-specimen"],
-      designUri: "https://www.figma.com/design/placeholder-nova-type",
-      previewFile: img("slide3.jpg"),
-      previewPublicId: "seed/designs/nova_type/preview",
-      imageFiles: [img("more2.jpg")],
-      imagePublicIdPrefix: "seed/designs/nova_type/image",
-    })
-  );
-  designs.push(
-    await createDesign(mj.token, "mj", {
-      title: "Golden Coast Photo Series",
-      description: "Editorial photography series shot along the coastline.",
-      category: "Photography",
-      subscription: "PAID",
-      tags: ["photography", "editorial"],
-      designUri: "https://www.figma.com/design/placeholder-golden-coast",
-      previewFile: img("art-overlay.jpg"),
-      previewPublicId: "seed/designs/golden_coast/preview",
-      imageFiles: [img("authbg.jpg")],
-      imagePublicIdPrefix: "seed/designs/golden_coast/image",
-    })
-  );
-  designs.push(
-    await createDesign(mj.token, "mj", {
-      title: "Botanica Illustration Set",
-      description: "Hand-illustrated botanical set for packaging use.",
-      category: "Illustration",
-      subscription: "FREE",
-      tags: ["illustration", "botanical", "packaging"],
-      designUri: "https://www.figma.com/design/placeholder-botanica",
-      previewFile: img("card8.png"),
-      previewPublicId: "seed/designs/botanica/preview",
-      imageFiles: [img("designoverlay.png")],
-      imagePublicIdPrefix: "seed/designs/botanica/image",
-    })
-  );
-  designs.push(
-    await createDesign(mj.token, "mj", {
-      title: "Motionwave Logo Reveal",
-      description: "Animated logo reveal concept for a media startup.",
-      category: "Animation",
-      subscription: "PAID",
-      tags: ["animation", "motion", "logo"],
-      designUri: "https://www.figma.com/design/placeholder-motionwave",
-      previewFile: img("mainpicture.png"),
-      previewPublicId: "seed/designs/motionwave/preview",
-      imageFiles: [img("figma_logo.png")],
-      imagePublicIdPrefix: "seed/designs/motionwave/image",
-    })
-  );
-  designs.push(
-    await createDesign(kelvin.token, "ksowah", {
-      title: "Aster Dashboard UI",
-      description: "Analytics dashboard concept for a SaaS product.",
-      category: "Web",
-      subscription: "FREE",
-      tags: ["ui", "dashboard", "saas"],
-      designUri: "https://www.figma.com/design/placeholder-aster-dashboard",
-      previewPicsumSeed: "cs-design-aster-dashboard",
-      previewPublicId: "seed/designs/aster_dashboard/preview",
-      imagePicsumSeeds: ["cs-design-aster-dashboard-2"],
-      imagePublicIdPrefix: "seed/designs/aster_dashboard/image",
-    })
-  );
-  designs.push(
-    await createDesign(kelvin.token, "ksowah", {
-      title: "Pulse Fitness App",
-      description: "Onboarding and workout tracking flow for a fitness app.",
-      category: "Mobile",
-      subscription: "PAID",
-      tags: ["ui", "mobile", "fitness"],
-      designUri: "https://www.figma.com/design/placeholder-pulse-fitness",
-      previewPicsumSeed: "cs-design-pulse-fitness",
-      previewPublicId: "seed/designs/pulse_fitness/preview",
-      imagePicsumSeeds: ["cs-design-pulse-fitness-2"],
-      imagePublicIdPrefix: "seed/designs/pulse_fitness/image",
-    })
-  );
-  designs.push(
-    await createDesign(mj.token, "mj", {
-      title: "Marble & Co. Branding",
-      description: "Brand identity and packaging concept for a stationery label.",
-      category: "Illustration",
-      subscription: "PAID",
-      tags: ["branding", "packaging", "identity"],
-      designUri: "https://www.figma.com/design/placeholder-marble-co",
-      previewPicsumSeed: "cs-design-marble-co",
-      previewPublicId: "seed/designs/marble_co/preview",
-      imagePicsumSeeds: ["cs-design-marble-co-2"],
-      imagePublicIdPrefix: "seed/designs/marble_co/image",
-    })
-  );
-  designs.push(
-    await createDesign(mj.token, "mj", {
-      title: "Wildlight Photography Portfolio",
-      description: "Portfolio site concept for a nature photographer.",
-      category: "Photography",
-      subscription: "FREE",
-      tags: ["photography", "portfolio", "web"],
-      designUri: "https://www.figma.com/design/placeholder-wildlight",
-      previewPicsumSeed: "cs-design-wildlight",
-      previewPublicId: "seed/designs/wildlight/preview",
-      imagePicsumSeeds: ["cs-design-wildlight-2", "cs-design-wildlight-3"],
-      imagePublicIdPrefix: "seed/designs/wildlight/image",
-    })
-  );
-
-  log("=== Social interactions ===");
-  const tryFollow = async (follower, followed, followerName, followedName) => {
-    try {
-      await gql(
-        `mutation Follow($followedUser: ID!) { follow(followedUser: $followedUser) { followedUser } }`,
-        { followedUser: followed._id },
-        follower.token
-      );
-      log(`  ${followerName} followed ${followedName}`);
-    } catch (e) {
-      log(`  ${followerName} -> ${followedName} follow skipped (${e.message})`);
-    }
-  };
-
-  await tryFollow(kelvin, studio, "ksowah", "ksowahstudio");
-  await tryFollow(studio, kelvin, "ksowahstudio", "ksowah");
-  await tryFollow(studio, pim, "ksowahstudio", "Pim");
-  await tryFollow(studio, davinci, "ksowahstudio", "davinci");
-  await tryFollow(studio, mj, "ksowahstudio", "mj");
-  await tryFollow(kelvin, pim, "ksowah", "Pim");
-  await tryFollow(kelvin, davinci, "ksowah", "davinci");
+  for (let i = 0; i < DESIGN_SPECS.length; i++) {
+    const spec = DESIGN_SPECS[i];
+    const owner = i % 2 === 0 ? kelvin : mj;
+    const ownerName = i % 2 === 0 ? "ksowah" : "mj";
+    const slug = slugify(spec.title);
+    designs.push(
+      await createDesign(owner.token, ownerName, {
+        ...spec,
+        designUri: `https://www.figma.com/design/placeholder-${slug}`,
+        previewPicsumSeed: `cs2-design-${slug}`,
+        previewPublicId: `seed2/designs/${slug}/preview`,
+        imagePicsumSeeds: [`cs2-design-${slug}-2`],
+        imagePublicIdPrefix: `seed2/designs/${slug}/image`,
+      })
+    );
+  }
 
   const auctionArts = arts.filter((a) => a.artState === "auction");
 
-  log("=== Wallet deposit + bidding ===");
+  log("=== Wallet deposit + bidding on new auction pieces ===");
   await gql(
     `mutation Deposit($amount: Float!) { deposit(amount: $amount) { balance } }`,
     { amount: 5000 },
     studio.token
   );
-  log(`  ksowahstudio deposited 5000 to wallet`);
   await gql(
     `mutation Deposit($amount: Float!) { deposit(amount: $amount) { balance } }`,
     { amount: 5000 },
     kelvin.token
   );
-  log(`  ksowah deposited 5000 to wallet`);
 
   auctionArts.forEach((art, i) => {
     art.bidder = i % 2 === 0 ? studio : kelvin;
   });
 
   for (const art of auctionArts) {
-    const bidAmount = 250;
+    const bidAmount = 300;
     const data = await gql(
       `mutation PlaceBid($bidAmount: Float!, $artId: ID!) {
         placeBid(bidAmount: $bidAmount, artId: $artId) { _id bidAmount }
@@ -605,14 +399,63 @@ async function main() {
     log(`  bid placed on "${art.title}": ${data.placeBid.bidAmount}`);
   }
 
+  log("=== Adding comments to all visible designs ===");
+  const allDesignsData = await gql(`{ getAllDesigns { _id title preview } }`);
+  const visibleDesigns = (allDesignsData.getAllDesigns || []).filter(
+    (d) => !(d.preview || "").includes("firebasestorage.googleapis.com")
+  );
+  log(`  found ${visibleDesigns.length} visible designs to comment on`);
+
+  const commenters = [kelvin, studio, pim, davinci, mj];
+  const commenterNames = ["ksowah", "ksowahstudio", "Pim", "davinci", "mj"];
+  let commentCounter = 0;
+
+  for (const design of visibleDesigns) {
+    const numComments = 2 + (commentCounter % 2); // alternate between 2 and 3 comments
+    for (let c = 0; c < numComments; c++) {
+      const commenterIdx = commentCounter % commenters.length;
+      const commenter = commenters[commenterIdx];
+      const commenterName = commenterNames[commenterIdx];
+      const commentText = COMMENT_POOL[commentCounter % COMMENT_POOL.length];
+
+      const data = await gql(
+        `mutation CreateComment($designId: String!, $comment: String!) {
+          createComment(designId: $designId, comment: $comment) { _id comment }
+        }`,
+        { designId: design._id, comment: commentText },
+        commenter.token
+      );
+      log(`  [${commenterName}] commented on "${design.title}": "${commentText}"`);
+
+      // reply to roughly every other comment, from a different account
+      if (commentCounter % 2 === 0) {
+        const replierIdx = (commenterIdx + 1) % commenters.length;
+        const replier = commenters[replierIdx];
+        const replierName = commenterNames[replierIdx];
+        const replyText = REPLY_POOL[commentCounter % REPLY_POOL.length];
+        await gql(
+          `mutation ReplyToComment($commentId: String!, $reply: String!) {
+            replyToComment(commentId: $commentId, reply: $reply) { reply }
+          }`,
+          { commentId: data.createComment._id, reply: replyText },
+          replier.token
+        );
+        log(`    [${replierName}] replied: "${replyText}"`);
+      }
+
+      commentCounter++;
+    }
+  }
+
   log("=== Done ===");
   log(`ksowah: ${kelvin._id}`);
   log(`ksowahstudio: ${studio._id}`);
   log(`Pim (artist): ${pim._id}`);
   log(`davinci (artist): ${davinci._id}`);
   log(`mj (designer): ${mj._id}`);
-  log(`arts created: ${arts.length}`);
-  log(`designs created: ${designs.length}`);
+  log(`new arts created: ${arts.length}`);
+  log(`new designs created: ${designs.length}`);
+  log(`comments added across ${visibleDesigns.length} designs: ${commentCounter}`);
 }
 
 main().catch((e) => {
